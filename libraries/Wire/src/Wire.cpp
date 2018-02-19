@@ -97,10 +97,10 @@ static inline bool TWI_STATUS_NACK(uint32_t status) {
 }
 
 TwoWire::TwoWire(Twi *_twi, void(*_beginCb)(void), void(*_endCb)(void)) :
-	twi(_twi), rxBufferIndex(0), rxBufferLength(0), txAddress(0),
-			txBufferLength(0), srvBufferIndex(0), srvBufferLength(0), status(
-					UNINITIALIZED), onBeginCallback(_beginCb), 
-						onEndCallback(_endCb), twiClock(TWI_CLOCK) {
+	rxBufferIndex(0), rxBufferLength(0), txAddress(0), txBufferLength(0),
+	srvBufferIndex(0), srvBufferLength(0), onBeginCallback(_beginCb),
+	onEndCallback(_endCb), twi(_twi), status(UNINITIALIZED),
+	twiClock(TWI_CLOCK) {
 }
 
 void TwoWire::begin(void) {
