@@ -181,7 +181,12 @@ void UARTClass::IrqHandler( void )
 
   // Did we receive data?
   if ((status & UART_SR_RXRDY) == UART_SR_RXRDY)
-    _rx_buffer->store_char(_pUart->UART_RHR);
+  {
+    if (! _rx_buffer->store_char(_pUart->UART_RHR))
+    {
+      setOverflowed();
+    }
+  }
 
   // Do we need to keep sending data?
   if ((status & UART_SR_TXRDY) == UART_SR_TXRDY) 

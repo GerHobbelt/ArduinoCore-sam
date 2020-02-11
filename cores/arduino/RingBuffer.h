@@ -45,7 +45,7 @@ class RingBuffer
   public:
 	RingBuffer();
 
-	virtual void store_char( uint8_t c ) = 0;
+	virtual bool store_char( uint8_t c ) = 0;
 };
 
 template <uint16_t RB_BUFFER_SIZE = SERIAL_BUFFER_SIZE_DEFAULT>
@@ -67,7 +67,7 @@ class SizedRingBuffer final : public RingBuffer
 	  return index % RB_BUFFER_SIZE;
 	}
 
-	virtual void store_char( uint8_t c ) override {
+	virtual bool store_char( uint8_t c ) override {
 	  int i = (uint32_t)(_iHead + 1) % size();
 
 	  // if we should be storing the received character into the location
@@ -78,7 +78,9 @@ class SizedRingBuffer final : public RingBuffer
 	  {
 	    buffer()[_iHead] = c;
 	    _iHead = i;
+		return true;
 	  }
+	  return false;
 	}
 
   public:

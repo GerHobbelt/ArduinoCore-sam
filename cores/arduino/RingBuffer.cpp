@@ -30,7 +30,7 @@ RingBuffer::RingBuffer()
 
 #if 0
 
-inline void RingBuffer::store_char( uint8_t c )
+inline bool RingBuffer::store_char( uint8_t c )
 {
   int i = (uint32_t)(_iHead + 1) % size();
 
@@ -42,7 +42,10 @@ inline void RingBuffer::store_char( uint8_t c )
   {
     buffer()[_iHead] = c;
     _iHead = i;
+    return true;
   }
+
+  return false;
 }
 
 #endif

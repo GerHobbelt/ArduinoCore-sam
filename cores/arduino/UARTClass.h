@@ -61,7 +61,16 @@ class UARTClass : public HardwareSerial
     uint32_t getInterruptPriority();
 
     void IrqHandler(void);
+    volatile bool overflowed;
 
+    bool getOverflowed() {
+      bool v = overflowed;
+      overflowed = false;
+      return v;
+    }
+    void setOverflowed() {
+      overflowed = true;
+    }
     operator bool() { return true; }; // UART always active
 
   protected:
