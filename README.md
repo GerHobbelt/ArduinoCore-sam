@@ -1,101 +1,29 @@
-Optimised host <-> Arduino Due streaming data transfer over native USB port
-============================================================================
+# Arduino Core for SAM3X CPU
 
-Streaming data over the native USB to the Arduino Due was disappointingly slow, about 60kb/s, yet transmission from Arduino to host computer could run at Mb/s, suggesting that the USB connection was not limiting. Inspection of the code showed that data was received byte by byte through a chain of functions with an overhead of massively redundant checks.
+This repository contains the source code and configuration files of the Arduino Core for Atmel's SAM3X processor (used on the [Arduino Due](https://www.arduino.cc/en/Main/ArduinoBoardDue) board).
 
-This repository is a fork of the official code and contains optimisations of the USB code. With them, it was possible to perform round-trip streaming of data to and from the Arduino Due at 2.5Mb/s.
+## Installation on Arduino IDE
 
-Only 3 files have been changed. If you don't wish to deal with the whole git repository, the files CDC.cpp, USBAPI.h and USBCore.cpp in the ArduinoCore-sam/cores/arduino/USB/ directory can be transferred into your local board package, which under my linux is found here:
-~/.arduino15/packages/arduino/hardware/sam/<version>/cores/arduino/USB/
+This core is available as a package in the Arduino IDE cores manager.
+Just open the "Boards Manager" and install the package called:
 
-A pull request has been submitted but not acted upon.
+ * **Arduino SAM Boards (32-bit ARM Cortex-M3)**
 
-Changes to the arduino libraries
-================================
+## Support
 
-A (non-blocking) overloaded read function that accepts as parameters a buffer and size is now provided as a member of the SerialUSB class. If neither of the read functions is used, for instance during a DMA application, the user may need to call "SerialUSB.accept()" periodically if there is a danger that the buffer will sometimes be too full to accept a full FIFO (512 bytes) of data upon interrupt, as this will cause reception to block. The CDC_SERIAL_BUFFER_SIZE can be increased (in the library code) from the original 512 bytes to reduce this risk.
+There is a dedicated section of the Arduino Forum for general discussion and project assistance:
 
-The SerialUSB (Serial_) class has been modified to remove all mention of the RingBuffer used elsewhere in the Arduino code but NOT here. This was confusing at best.
+http://forum.arduino.cc/index.php?board=87.0
 
-The ring_buffer that IS used in SerialUSB has been made a member of the class. This enables access to it during DMA applications (e.g. streaming to DAC), eliminating needless copy operations.
+## Bugs or Issues
 
-The implementation of the ring_buffer has been altered slightly to facilitate DMA applications; head and tail are now ever-increasing 64-bit integers.
+If you find a bug you can submit an issue here on github:
 
-The Arduino Due code uses a poor-man's interrupts, scheduling them between loop iterations. Proper USB interrupts can now be enabled via new member functions and interrupt-driven code can handle most, and in some scenarios all, data reception.
+https://github.com/arduino/ArduinoCore-sam/issues
 
-The code has been reworked to remove the need for locking even with interrupts enabled. This is achieved by using the FIFO signals for synchronisation.
+Before posting a new issue, please check if the same problem has been already reported by someone else to avoid duplicates.
 
-Block transfers are now used throughout the reception chain and their overhead has been minimised. The accept function has been rewritten.
+## Contributions
 
-The changes to the code are under the same licences as the original files.
-
-Examples
-========
-
-Speed test
-----------
-
-This is a simple speed test. The Arduino sketch just reads available data on the native USB serial port using the new block read member and sends it back, in a loop. On the host computer, a large array is written to and read back from the serial tty by a short C++ program making use of the "select" call for efficient sequencing of the i/o operations. The port is specified as a parameter ("0" in the example).
-
-$ g++ -O3 -o speed_test speed_test.cpp
-
-$ time ./speed_test 0
-
-Test round-trip streaming with 100000000 bytes.
-
-/dev/ttyACM0
-
-Arrays equal!
-
-
-real    0m37.852s
-
-user    0m0.288s
-
-sys     0m1.576s
-
-100 Mb in ~40s is 2.5 Mb/s.
-
-Bidirectional streaming with DAC and ADC DMA
---------------------------------------------
-
-This example is much more involved, but reflects the motivation for this project. An array is streamed from the host computer to the arduino, where it is transferred to the DAC by DMA. At the same time, two ADC channels are acquired at the same total frequency and streamed back to the host. Here the speed is limited by the maximum ADC rate of 1 MHz, corresponding to an arduino -> host data rate of 2 Mb/s (with 1 Mb/s flowing in the opposite direction). A timer library is included from https://github.com/OliviliK/DueTC
-A file is generated by the python script that contains a few control parameters in the header and data for the DAC, as well as space for the ADC data to be acquired, an error flag and a timestamp. The file is memory-mapped to enable simultaneous i/o. The path to the data file and the tty port are given as parameters.
-
-Connect DAC0 to A0 and GND to A1 (for instance).
-
-$ python genfile.py 
-
-$ g++ -O3 -o bidi bidi.cpp
-
-$ time ./bidi test.dat /dev/ttyACM0 
-
-test.dat
-
-1000000 42000000 42 2
-
-2019-03-05_12:26:33
-
-real    0m2.011s
-
-user    0m0.144s
-
-sys     0m1.802s
-
-$ python display.py
-
-header (1000000, 42000000, 42, 2)
-
-error 0
-
-timestamp 2019-03-04_01:05:30
-
-<plot of input and uninterleaved outputs>
-
-If you find the streaming to be unreliable (an error is raised), there is probably a bottleneck somewhere. Things to try:
-- use an SSD instead of a normal disk
-- modify the host code to work only in memory
-- increase the sizes of the buffers in the arduino library code or for the DAC, ADC buffers.
-
-
-The examples are licensed in the public domain.
+Contributions are always welcome.
+The preferred way to receive code contribution is by submitting a Pull Request on github.
