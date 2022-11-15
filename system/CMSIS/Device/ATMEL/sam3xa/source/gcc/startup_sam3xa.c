@@ -50,6 +50,7 @@ int main(void);
 // Arduino: handlers weak symbols moved into main
 
 /* Exception Table */
+__attribute__ ((used))
 __attribute__ ((section(".vectors")))
 const DeviceVectors exception_table = {
 
