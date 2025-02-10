@@ -112,6 +112,7 @@ static const unsigned char test_packet_buffer[] = {
 volatile uint32_t _usbConfiguration = 0;
 volatile uint32_t _usbInitialized = 0;
 uint32_t _usbSetInterface = 0;
+uint32_t _usbAlternateSetting = 0;
 uint32_t _cdcComposite = 0;
 
 //==================================================================
@@ -146,12 +147,10 @@ uint32_t USBD_Recv(uint32_t ep, void* d, uint32_t len)
         return -1;
 
     LockEP lock(ep);
-    uint32_t n = UDD_FifoByteCount(ep & 0xF);
-    len = min(n,len);
-    n = len;
+	len = min(UDD_FifoByteCount(ep & 0xF), len);
     uint8_t* dst = (uint8_t*)d;
-    while (n--)
-        *dst++ = UDD_Recv8(ep & 0xF);
+    UDD_Recv(ep & 0xF, dst, len);
+    
     if (len && !UDD_FifoByteCount(ep & 0xF)) // release empty buffer
         UDD_ReleaseRX(ep & 0xF);
 
@@ -811,8 +810,9 @@ static void USB_ISR(void)
             }
             else if (SET_INTERFACE == r)
             {
-                _usbSetInterface = setup.wValueL;
-                TRACE_CORE(puts(">>> EP0 Int: SET_INTERFACE\r\n");)
+                _usbSetInterface = setup.wIndex;
+                _usbAlternateSetting = setup.wValueL;
+                TRACE_CORE(printf(">>> EP0 Int: SET_INTERFACE interface=%d alternateSetting=%d\r\n", _usbSetInterface, _usbAlternateSetting);)
             }
         }
         else
