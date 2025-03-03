@@ -118,6 +118,22 @@ PinStatus digitalRead( pin_size_t ulPin )
   return LOW ;
 }
 
+void digitalToggle(pin_size_t ulPin)
+{
+  // Handle the case the pin isn't usable as PIO
+  if (g_APinDescription[ulPin].ulPinType == PIO_NOT_A_PIN)
+  {
+    return;
+  }
+
+  EPortType port = g_APinDescription[ulPin].ulPort;
+  uint32_t pin = g_APinDescription[ulPin].ulPin;
+  uint32_t pinMask = (1ul << pin);
+
+  PORT->Group[port].OUTTGL.reg = pinMask;
+  return;
+}
+
 #ifdef __cplusplus
 }
 #endif
