@@ -169,15 +169,23 @@ static const uint8_t SCK1  = PIN_SPI1_SCK;
 /*
  * Wire Interfaces
  */
-#define WIRE_INTERFACES_COUNT 1
+#define WIRE_INTERFACES_COUNT 2
 
   // "external" public i2c interface
 #define PIN_WIRE_SDA         (7u)
 #define PIN_WIRE_SCL         (8u)
-#define PERIPH_WIRE          sercom2
-#define WIRE_IT_HANDLER      SERCOM2_Handler
+#define PERIPH_WIRE          sercom0
+#define WIRE_IT_HANDLER      SERCOM0_Handler
 static const uint8_t SDA = PIN_WIRE_SDA;
 static const uint8_t SCL = PIN_WIRE_SCL;
+
+  // Second i2c interface
+#define PIN_WIRE1_SDA        (13u)
+#define PIN_WIRE1_SCL        (14u)
+#define PERIPH_WIRE1         sercom2
+#define WIRE1_IT_HANDLER     SERCOM2_Handler
+static const uint8_t SDA1 = PIN_WIRE1_SDA;
+static const uint8_t SCL1 = PIN_WIRE1_SCL;
 
 // USB
 // ---
@@ -202,9 +210,9 @@ static const uint8_t SCL = PIN_WIRE_SCL;
 #include "Uart.h"
 
 // Instances of SERCOM
-extern SERCOM sercom0;
+extern SERCOM sercom0;  // wire (PA8/PA9)
 extern SERCOM sercom1;  // spi1 LoRa 
-extern SERCOM sercom2;  // wire
+extern SERCOM sercom2;  // wire1 (PA12/PA13)
 extern SERCOM sercom3;  // spi eth
 extern SERCOM sercom4;  // serial2 RS232
 extern SERCOM sercom5;  // serial1 RS485

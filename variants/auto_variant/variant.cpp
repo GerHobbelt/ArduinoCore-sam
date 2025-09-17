@@ -26,105 +26,108 @@
 const PinDescription g_APinDescription[] = {
 /*
  +------------+------------------+--------+-----------------+--------+-----------------------+---------+---------+--------+--------+----------+----------+
- | Pin number | NANO  Board pin  |  PIN   | Notes           | Peri.A |     Peripheral B      | Perip.C | Perip.D | Peri.E | Peri.F | Periph.G | Periph.H |
+ | Pin number | Board Function   |  PIN   | Notes           | Peri.A |     Peripheral B      | Perip.C | Perip.D | Peri.E | Peri.F | Periph.G | Periph.H |
  |            |                  |        |                 |   EIC  | ADC |  AC | PTC | DAC | SERCOMx | SERCOMx |  TCCx  |  TCCx  |    COM   | AC/GLCK  |
  |            |                  |        |                 |(EXTINT)|(AIN)|(AIN)|     |     | (x/PAD) | (x/PAD) | (x/WO) | (x/WO) |          |          |
  +------------+------------------+--------+-----------------+--------+-----+-----+-----+-----+---------+---------+--------+--------+----------+----------+
- |            | Digital Low      |        |                 |        |     |     |     |     |         |         |        |        |          |          |
+ |            | DAC/Analog       |        |                 |        |     |     |     |     |         |         |        |        |          |          |
  +------------+------------------+--------+-----------------+--------+-----+-----+-----+-----+---------+---------+--------+--------+----------+----------+
- | 0          | 0 -> RX          |  PB23  |                 |   07   |     |     |     |     |         |  *5/03  |  TC7/1 |        |          | GCLK_IO1 |
- | 1          | 1 <- TX          |  PB22  |                 |   06   |     |     |     |     |         |  *5/02  |  TC7/0 |        |          | GCLK_IO0 |
- | 2          | ~D2              |  PB10  |                 |  *10   |     |     |     |     |         |   4/02  |* TC5/0 | TCC0/4 | I2S/MCK1 | GCLK_IO4 |
- | 3          | ~D3              |  PB11  |                 |  *11   |     |     |     |     |         |   4/03  |* TC5/1 | TCC0/5 | I2S/SCK1 | GCLK_IO5 |
- | 4          | D4               |  PA07  |                 |   07   | *07 |  03 | Y05 |     |         |   0/03  |*TCC1/1 |        | I2S/SD0  |          |
- | 5          | ~D5              |  PA05  |                 |   05   | *05 |  01 | Y03 |     |         |   0/01  |*TCC0/1 |        |          |          |
- | 6          | ~D6              |  PA04  |                 |   04   | *04 |  00 | Y02 |     |         |   0/00  |*TCC0/0 |        |          |          |
- | 7          | D7               |  PA06  |                 |   06   | *06 |  02 | Y04 |     |         |   0/02  | TCC1/0 |        |          |          |
- +------------+------------------+--------+-----------------+------------------------------------------+---------+--------+------------------------------+
- |            | Digital High     |        |                 |        |     |     |     |     |         |         |        |        |          |          |
+ | 0          | A0/DAC           |  PA02  | DAC Output      |   02   | *00 |     | Y00 | OUT |         |         |        |        |          |          |
  +------------+------------------+--------+-----------------+--------+-----+-----+-----+-----+---------+---------+--------+--------+----------+----------+
- | 8          | D8               |  PA18  |                 |   02   |     |     | X06 |     |   1/02  |   3/02  |  TC3/0 | TCC0/2 |          | AC/CMP0  |
- | 9          | ~D9              |  PA20  |                 |  *04   |     |     | X08 |     |   5/02  |   3/02  |  TC7/0 |*TCC0/6 |          | GCLK_IO4 |
- | 10         | ~D10             |  PA21  |                 |  *05   |     |     | X09 |     |   5/03  |   3/02  |  TC7/1 |*TCC0/7 | I2S/FS0  | GCLK_IO5 |
- | 11         | ~D11             |  PA16  |                 |  *00   |     |     | X04 |     |  *1/00  |   3/00  |*TCC2/0 | TCC0/6 |          | GCLK_IO2 |
- | 12         | ~D12             |  PA19  |                 |   03   |     |     | X07 |     |  *1/03  |   3/03  |* TC3/1 | TCC0/3 | I2S/SD0  | AC/CMP0  |
- | 13         | D13              |  PA17  | LED             |   01   |     |     | X05 |     |  *1/01  |   3/01  | TCC2/1 | TCC0/7 |          | GCLK_IO3 |
+ |            | Isolated Inputs  |        |                 |        |     |     |     |     |         |         |        |        |          |          |
  +------------+------------------+--------+-----------------+--------+-----+-----+-----+-----+---------+---------+--------+--------+----------+----------+
- +------------+------------------+--------+-----------------+--------+-----------------------+---------+---------+--------+--------+----------+----------+
- | Pin number |  NANO Board pin  |  PIN   | Notes           | Peri.A |     Peripheral B      | Perip.C | Perip.D | Peri.E | Peri.F | Periph.G | Periph.H |
- |            |                  |        |                 |   EIC  | ADC |  AC | PTC | DAC | SERCOMx | SERCOMx |  TCCx  |  TCCx  |    COM   | AC/GLCK  |
- |            |                  |        |                 |(EXTINT)|(AIN)|(AIN)|     |     | (x/PAD) | (x/PAD) | (x/WO) | (x/WO) |          |          |
+ | 1          | ISO_7            |  PB08  | Isolated In 7   |   08   | *02 |     | Y14 |     |         |  *4/00  |  TC4/0 |        |          |          |
+ | 2          | ISO_8            |  PB09  | Isolated In 8   |  *09   | *03 |     | Y15 |     |         |  *4/01  |* TC4/1 |        |          |          |
  +------------+------------------+--------+-----------------+--------+-----+-----+-----+-----+---------+---------+--------+--------+----------+----------+
- |            | Analog Connector |        |                 |        |     |     |     |     |         |         |        |        |          |          |
+ |            | Digital I/O      |        |                 |        |     |     |     |     |         |         |        |        |          |          |
  +------------+------------------+--------+-----------------+--------+-----+-----+-----+-----+---------+---------+--------+--------+----------+----------+
- | 14         | A0               |  PA02  | A0              |   02   | *00 |     | Y00 | OUT |         |         |        |        |          |          |
- | 15         | A1               |  PB02  | A1              |  *02   | *10 |     | Y08 |     |         |   5/00  |  TC6/0 |        |          |          |
- | 16         | A2               |  PA11  | A2              |   11   | *19 |     | X03 |     |   0/03  |   2/03  | TCC1/1 |*TCC0/3 | I2S/FS0  | GCLK_IO5 |
- | 17         | A3               |  PA10  | A3              |   10   | *18 |     | X02 |     |   0/02  |   2/02  | TCC1/0 |*TCC0/2 | I2S/SCK0 | GCLK_IO4 |
- | 18         | A4               |  PB08  | A4 SDA          |   08   | *02 |     | Y14 |     |         |  *4/00  |  TC4/0 |        |          |          |
- | 19         | A5               |  PB09  | A5 SCL          |  *09   | *03 |     | Y15 |     |         |  *4/01  |* TC4/1 |        |          |          |
- | 20         | A6               |  PA09  | A6              |   09   | *17 |     | X01 |     |   0/01  |   2/01  | TCC0/1 | TCC1/3 | I2S/MCK0 |          |
- | 21         | A7               |  PB03  | A7              |  *03   | *11 |     | Y09 |     |         |   5/01  |  TC6/1 |        |          |          |
+ | 3          | D4               |  PA04  | Digital I/O     |   04   | *04 |  00 | Y02 |     |         |   0/00  |*TCC0/0 |        |          |          |
+ | 4          | D5               |  PA05  | Digital I/O     |   05   | *05 |  01 | Y03 |     |         |   0/01  |*TCC0/1 |        |          |          |
+ | 5          | D6               |  PA06  | Digital I/O     |   06   | *06 |  02 | Y04 |     |         |   0/02  | TCC1/0 |        |          |          |
+ | 6          | D7               |  PA07  | Digital I/O     |   07   | *07 |  03 | Y05 |     |         |   0/03  |*TCC1/1 |        | I2S/SD0  |          |
  +------------+------------------+--------+-----------------+--------+-----+-----+-----+-----+---------+---------+--------+--------+----------+----------+
- +------------+------------------+--------+-----------------+--------+-----------------------+---------+---------+--------+--------+----------+----------+
- | Pin number |  NANO Board pin  |  PIN   | Notes           | Peri.A |     Peripheral B      | Perip.C | Perip.D | Peri.E | Peri.F | Periph.G | Periph.H |
- |            |                  |        |                 |   EIC  | ADC |  AC | PTC | DAC | SERCOMx | SERCOMx |  TCCx  |  TCCx  |    COM   | AC/GLCK  |
- |            |                  |        |                 |(EXTINT)|(AIN)|(AIN)|     |     | (x/PAD) | (x/PAD) | (x/WO) | (x/WO) |          |          |
+ |            | I2C Interface    |        |                 |        |     |     |     |     |         |         |        |        |          |          |
  +------------+------------------+--------+-----------------+--------+-----+-----+-----+-----+---------+---------+--------+--------+----------+----------+
- |            |SPI (Legacy ICSP) |        |                 |        |     |     |     |     |         |         |        |        |          |          |
+ | 7          | SDA              |  PA08  | I2C Data        |   NMI  |  16 |     | X00 |     |  *0/00  |   2/00  | TCC0/0 | TCC1/2 | I2S/SD1  |          |
+ | 8          | SCL              |  PA09  | I2C Clock       |   09   | *17 |     | X01 |     |  *0/01  |   2/01  | TCC0/1 | TCC1/3 | I2S/MCK0 |          |
  +------------+------------------+--------+-----------------+--------+-----+-----+-----+-----+---------+---------+--------+--------+----------+----------+
- | 22         | 1                |  PA12  | NINA_MOSI       |   12   |     |     |     |     |  *2/00  |   4/00  | TCC2/0 | TCC0/6 |          | AC/CMP0  |
- | 23         | 2                |  PA13  | NINA_MISO       |   13   |     |     |     |     |  *2/01  |   4/01  | TCC2/1 | TCC0/7 |          | AC/CMP1  |
- | 24         | 4                |  PA14  | NINA_CS         |   14   |     |     |     |     |   2/02  |   4/02  |  TC3/0 | TCC0/4 |          | GCLK_IO0 |
- | 25         | 3                |  PA15  | NINA_SCK        |   15   |     |     |     |     |  *2/03  |   4/03  |  TC3/1 | TCC0/5 |          | GCLK_IO1 |
- | 26         |                  |  PA27  | NINA_GPIO0      |  *15   |     |     |     |     |         |         |        |        |          | GCLK_IO0 |
- | 27         |                  |  PA08  | NINA_RESETN     |   NMI  |  16 |     | X00 |     |   0/00  |   2/00  | TCC0/0 | TCC1/2 | I2S/SD1  |          |
- | 28         |                  |  PA28  | NINA_ACK        |   08   |     |     |     |     |         |         |        |        |          | GCLK_IO0 |
+ |            | Analog Inputs    |        |                 |        |     |     |     |     |         |         |        |        |          |          |
  +------------+------------------+--------+-----------------+--------+-----+-----+-----+-----+---------+---------+--------+--------+----------+----------+
- +------------+------------------+--------+-----------------+--------+-----------------------+---------+---------+--------+--------+----------+----------+
- | Pin number |  NANO Board pin  |  PIN   | Notes           | Peri.A |     Peripheral B      | Perip.C | Perip.D | Peri.E | Peri.F | Periph.G | Periph.H |
- |            |                  |        |                 |   EIC  | ADC |  AC | PTC | DAC | SERCOMx | SERCOMx |  TCCx  |  TCCx  |    COM   | AC/GLCK  |
- |            |                  |        |                 |(EXTINT)|(AIN)|(AIN)|     |     | (x/PAD) | (x/PAD) | (x/WO) | (x/WO) |          |          |
+ | 9          | A3               |  PA10  | Analog Input    |   10   | *18 |     | X02 |     |   0/02  |   2/02  | TCC1/0 |*TCC0/2 | I2S/SCK0 | GCLK_IO4 |
+ | 10         | A2               |  PA11  | Analog Input    |   11   | *19 |     | X03 |     |   0/03  |   2/03  | TCC1/1 |*TCC0/3 | I2S/FS0  | GCLK_IO5 |
  +------------+------------------+--------+-----------------+--------+-----+-----+-----+-----+---------+---------+--------+--------+----------+----------+
- |            |        USB       |        |                 |        |     |     |     |     |         |         |        |        |          |          |
- | 29         |                  |  PA22  |                 |  *06   |     |     | X10 |     |   3/00  |   5/00  |* TC4/0 | TCC0/4 |          | GCLK_IO6 |
- | 30         |                  |  PA23  |                 |  *07   |     |     | X11 |     |   3/01  |   5/01  |* TC4/1 | TCC0/5 | USB/SOF  | GCLK_IO7 |
- | 31         |                  |  PA24  | USB_N           |   12   |     |     |     |     |   3/02  |   5/02  |  TC5/0 | TCC1/2 | USB/DM   |          |
- | 32         |                  |  PA25  | USB_P           |   13   |     |     |     |     |   3/03  |   5/03  |  TC5/1 | TCC1/3 | USB/DP   |          |
+ |            | Isolated Inputs  |        |                 |        |     |     |     |     |         |         |        |        |          |          |
  +------------+------------------+--------+-----------------+--------+-----+-----+-----+-----+---------+---------+--------+--------+----------+----------+
- +------------+------------------+--------+-----------------+--------+-----------------------+---------+---------+--------+--------+----------+----------+
- | Pin number |  NANO Board pin  |  PIN   | Notes           | Peri.A |     Peripheral B      | Perip.C | Perip.D | Peri.E | Peri.F | Periph.G | Periph.H |
- |            |                  |        |                 |   EIC  | ADC |  AC | PTC | DAC | SERCOMx | SERCOMx |  TCCx  |  TCCx  |    COM   | AC/GLCK  |
- |            |                  |        |                 |(EXTINT)|(AIN)|(AIN)|     |     | (x/PAD) | (x/PAD) | (x/WO) | (x/WO) |          |          |
+ | 11         | ISO_1            |  PB10  | Isolated In 1   |  *10   |     |     |     |     |         |   4/02  |* TC5/0 | TCC0/4 | I2S/MCK1 | GCLK_IO4 |
+ | 12         | ISO_2            |  PB11  | Isolated In 2   |  *11   |     |     |     |     |         |   4/03  |* TC5/1 | TCC0/5 | I2S/SCK1 | GCLK_IO5 |
  +------------+------------------+--------+-----------------+--------+-----+-----+-----+-----+---------+---------+--------+--------+----------+----------+
- | 33         | AREF             |  PA03  |                 |   03   |  01 |     | Y01 |     |         |         |        |        |          |          |
+ |            | I2C1 Interface   |        |                 |        |     |     |     |     |         |         |        |        |          |          |
  +------------+------------------+--------+-----------------+--------+-----+-----+-----+-----+---------+---------+--------+--------+----------+----------+
- | 34         |                  |  PA30  |                 |   10   |     |     |     |     |         |   1/00  |        |        |   SWCLK  |          |
- | 35         |                  |  PA31  |                 |   11   |     |     |     |     |         |   1/03  |        |        |   SWDIO  |          |
+ | 13         | SDA1             |  PA12  | I2C1 Data       |   12   |     |     |     |     |  *2/00  |   4/00  | TCC2/0 | TCC0/6 |          | AC/CMP0  |
+ | 14         | SCL1             |  PA13  | I2C1 Clock      |   13   |     |     |     |     |  *2/01  |   4/01  | TCC2/1 | TCC0/7 |          | AC/CMP1  |
+ +------------+------------------+--------+-----------------+--------+-----+-----+-----+-----+---------+---------+--------+--------+----------+----------+
+ |            | Unused           |        |                 |        |     |     |     |     |         |         |        |        |          |          |
+ +------------+------------------+--------+-----------------+--------+-----+-----+-----+-----+---------+---------+--------+--------+----------+----------+
+ | 15         | -                |  PA14  | Unused          |   14   |     |     |     |     |   2/02  |   4/02  |  TC3/0 | TCC0/4 |          | GCLK_IO0 |
+ | 16         | -                |  PA15  | Unused          |   15   |     |     |     |     |  *2/03  |   4/03  |  TC3/1 | TCC0/5 |          | GCLK_IO1 |
+ +------------+------------------+--------+-----------------+--------+-----+-----+-----+-----+---------+---------+--------+--------+----------+----------+
+ |            | SPI Ethernet     |        |                 |        |     |     |     |     |         |         |        |        |          |          |
+ +------------+------------------+--------+-----------------+--------+-----+-----+-----+-----+---------+---------+--------+--------+----------+----------+
+ | 17         | SPI_MISO         |  PA16  | SPI MISO        |  *00   |     |     | X04 |     |  *1/00  |   3/00  |*TCC2/0 | TCC0/6 |          | GCLK_IO2 |
+ | 18         | SPI_SCK          |  PA17  | SPI Clock       |   01   |     |     | X05 |     |  *1/01  |   3/01  | TCC2/1 | TCC0/7 |          | GCLK_IO3 |
+ | 19         | SPI_SS           |  PA18  | SPI Select      |   02   |     |     | X06 |     |   1/02  |   3/02  |  TC3/0 | TCC0/2 |          | AC/CMP0  |
+ | 20         | SPI_MOSI         |  PA19  | SPI MOSI        |   03   |     |     | X07 |     |  *1/03  |   3/03  |* TC3/1 | TCC0/3 | I2S/SD0  | AC/CMP0  |
+ +------------+------------------+--------+-----------------+--------+-----+-----+-----+-----+---------+---------+--------+--------+----------+----------+
+ |            | SPI1 LoRa        |        |                 |        |     |     |     |     |         |         |        |        |          |          |
+ +------------+------------------+--------+-----------------+--------+-----+-----+-----+-----+---------+---------+--------+--------+----------+----------+
+ | 21         | SPI1_MISO        |  PA20  | SPI1 MISO       |  *04   |     |     | X08 |     |   5/02  |  *3/02  |  TC7/0 |*TCC0/6 |          | GCLK_IO4 |
+ | 22         | SPI1_RST         |  PA21  | SPI1 Reset      |  *05   |     |     | X09 |     |   5/03  |  *3/02  |  TC7/1 |*TCC0/7 | I2S/FS0  | GCLK_IO5 |
+ | 23         | SPI1_MOSI        |  PA22  | SPI1 MOSI       |  *06   |     |     | X10 |     |  *3/00  |   5/00  |* TC4/0 | TCC0/4 |          | GCLK_IO6 |
+ | 24         | SPI1_SCK         |  PA23  | SPI1 Clock      |  *07   |     |     | X11 |     |  *3/01  |   5/01  |* TC4/1 | TCC0/5 | USB/SOF  | GCLK_IO7 |
+ +------------+------------------+--------+-----------------+--------+-----+-----+-----+-----+---------+---------+--------+--------+----------+----------+
+ |            | USB              |        |                 |        |     |     |     |     |         |         |        |        |          |          |
+ +------------+------------------+--------+-----------------+--------+-----+-----+-----+-----+---------+---------+--------+--------+----------+----------+
+ | 25         | USB_DM           |  PA24  | USB D-          |   12   |     |     |     |     |   3/02  |   5/02  |  TC5/0 | TCC1/2 | USB/DM   |          |
+ | 26         | USB_DP           |  PA25  | USB D+          |   13   |     |     |     |     |   3/03  |   5/03  |  TC5/1 | TCC1/3 | USB/DP   |          |
+ +------------+------------------+--------+-----------------+--------+-----+-----+-----+-----+---------+---------+--------+--------+----------+----------+
+ |            | RS485            |        |                 |        |     |     |     |     |         |         |        |        |          |          |
+ +------------+------------------+--------+-----------------+--------+-----+-----+-----+-----+---------+---------+--------+--------+----------+----------+
+ | 27         | RS485_TX         |  PB22  | RS485 TX        |   06   |     |     |     |     |         |  *5/02  |  TC7/0 |        |          | GCLK_IO0 |
+ | 28         | RS485_RX         |  PB23  | RS485 RX        |   07   |     |     |     |     |         |  *5/03  |  TC7/1 |        |          | GCLK_IO1 |
+ +------------+------------------+--------+-----------------+--------+-----+-----+-----+-----+---------+---------+--------+--------+----------+----------+
+ |            | System           |        |                 |        |     |     |     |     |         |         |        |        |          |          |
+ +------------+------------------+--------+-----------------+--------+-----+-----+-----+-----+---------+---------+--------+--------+----------+----------+
+ | 29         | LED              |  PA27  | Status LED      |  *15   |     |     |     |     |         |         |        |        |          | GCLK_IO0 |
+ | 30         | NV               |  PA28  | Non-volatile    |   08   |     |     |     |     |         |         |        |        |          | GCLK_IO0 |
+ +------------+------------------+--------+-----------------+--------+-----+-----+-----+-----+---------+---------+--------+--------+----------+----------+
+ |            | Sync             |        |                 |        |     |     |     |     |         |         |        |        |          |          |
+ +------------+------------------+--------+-----------------+--------+-----+-----+-----+-----+---------+---------+--------+--------+----------+----------+
+ | 31         | SYNC1            |  PB02  | Sync Output 1   |  *02   | *10 |     | Y08 |     |         |   5/00  |  TC6/0 |        |          |          |
+ | 32         | SYNC2            |  PB03  | Sync Output 2   |  *03   | *11 |     | Y09 |     |         |   5/01  |  TC6/1 |        |          |          |
  +------------+------------------+--------+-----------------+--------+-----+-----+-----+-----+---------+---------+--------+--------+----------+----------+
  */
   // 0 - Not connected
   { PORTA,  2, PIO_ANALOG,  (PIN_ATTR_DIGITAL|PIN_ATTR_ANALOG /*DAC*/         ), ADC_Channel0,   NOT_ON_PWM, NOT_ON_TIMER, EXTERNAL_INT_NONE },
 
   // 1/2 Isolated input 7 and 8
-  { PORTB,  8, PIO_SERCOM_ALT,  (PIN_ATTR_DIGITAL|PIN_ATTR_ANALOG             ), ADC_Channel2,   NOT_ON_PWM, NOT_ON_TIMER, EXTERNAL_INT_NONE }, // TX:   SERCOM5/PAD[2]
-  { PORTB,  9, PIO_SERCOM_ALT,  (PIN_ATTR_PWM|PIN_ATTR_TIMER                  ), ADC_Channel3,   PWM4_CH1,   TC4_CH1,      EXTERNAL_INT_9    }, // RX:   SERCOM5/PAD[2]
+  { PORTB,  8, PIO_SERCOM_ALT,  (PIN_ATTR_DIGITAL|PIN_ATTR_ANALOG             ), ADC_Channel2,   NOT_ON_PWM, NOT_ON_TIMER, EXTERNAL_INT_NONE }, // TX:   SERCOM4/PAD[2]
+  { PORTB,  9, PIO_SERCOM_ALT,  (PIN_ATTR_PWM|PIN_ATTR_TIMER                  ), ADC_Channel3,   PWM4_CH1,   TC4_CH1,      EXTERNAL_INT_9    }, // RX:   SERCOM4/PAD[2]
 
   // 3..10 Digital
   { PORTA,  4, PIO_DIGITAL,  (PIN_ATTR_DIGITAL|PIN_ATTR_PWM|PIN_ATTR_TIMER    ), ADC_Channel4,   PWM0_CH0,   TCC0_CH0,     EXTERNAL_INT_NONE },
   { PORTA,  5, PIO_DIGITAL,  (PIN_ATTR_DIGITAL|PIN_ATTR_PWM|PIN_ATTR_TIMER    ), ADC_Channel5,   PWM0_CH1,   TCC0_CH1,     EXTERNAL_INT_NONE },
   { PORTA,  6, PIO_DIGITAL,  (PIN_ATTR_DIGITAL                                ), ADC_Channel6,   NOT_ON_PWM, NOT_ON_TIMER, EXTERNAL_INT_NONE },
   { PORTA,  7, PIO_DIGITAL,  (PIN_ATTR_DIGITAL|PIN_ATTR_PWM|PIN_ATTR_TIMER    ), ADC_Channel7,   PWM1_CH1,   TCC1_CH1,     EXTERNAL_INT_NONE }, 
-  { PORTA,  8, PIO_SERCOM_ALT, (PIN_ATTR_DIGITAL                              ), No_ADC_Channel, NOT_ON_PWM, NOT_ON_TIMER, EXTERNAL_INT_NONE }, // SDA: SERCOM4/PAD[0]
-  { PORTA,  9, PIO_SERCOM_ALT, (PIN_ATTR_DIGITAL                              ), No_ADC_Channel, NOT_ON_PWM, NOT_ON_TIMER, EXTERNAL_INT_NONE }, // SCL: SERCOM4/PAD[1]
+  { PORTA,  8, PIO_SERCOM,   (PIN_ATTR_DIGITAL                                ), No_ADC_Channel, NOT_ON_PWM, NOT_ON_TIMER, EXTERNAL_INT_NONE }, // SDA: SERCOM0/PAD[0]
+  { PORTA,  9, PIO_SERCOM,   (PIN_ATTR_DIGITAL                                ), No_ADC_Channel, NOT_ON_PWM, NOT_ON_TIMER, EXTERNAL_INT_NONE }, // SCL: SERCOM0/PAD[1]
   { PORTA, 10, PIO_ANALOG,   (PIN_ATTR_DIGITAL|PIN_ATTR_PWM|PIN_ATTR_TIMER_ALT), ADC_Channel18,  PWM0_CH2,   TCC0_CH2,     EXTERNAL_INT_NONE },
   { PORTA, 11, PIO_ANALOG,   (PIN_ATTR_DIGITAL|PIN_ATTR_PWM|PIN_ATTR_TIMER_ALT), ADC_Channel19,  PWM0_CH3,   TCC0_CH3,     EXTERNAL_INT_NONE },
 
   // 11..16 Isolated inputs 1..6
   { PORTB, 10, PIO_DIGITAL, (PIN_ATTR_DIGITAL|PIN_ATTR_PWM|PIN_ATTR_TIMER     ), No_ADC_Channel, PWM5_CH0,   TC5_CH0,      EXTERNAL_INT_10   },
   { PORTB, 11, PIO_DIGITAL, (PIN_ATTR_DIGITAL|PIN_ATTR_PWM|PIN_ATTR_TIMER     ), No_ADC_Channel, PWM5_CH1,   TC5_CH1,      EXTERNAL_INT_11   },
-  { PORTA, 12, PIO_DIGITAL, (PIN_ATTR_NONE                                    ), No_ADC_Channel, NOT_ON_PWM, NOT_ON_TIMER, EXTERNAL_INT_NONE }, 
-  { PORTA, 13, PIO_DIGITAL, (PIN_ATTR_NONE                                    ), No_ADC_Channel, NOT_ON_PWM, NOT_ON_TIMER, EXTERNAL_INT_NONE }, 
+  { PORTA, 12, PIO_SERCOM, (PIN_ATTR_DIGITAL                                  ), No_ADC_Channel, NOT_ON_PWM, NOT_ON_TIMER, EXTERNAL_INT_NONE }, // SDA1: SERCOM2/PAD[0]
+  { PORTA, 13, PIO_SERCOM, (PIN_ATTR_DIGITAL                                  ), No_ADC_Channel, NOT_ON_PWM, NOT_ON_TIMER, EXTERNAL_INT_NONE }, // SCL1: SERCOM2/PAD[1] 
   { PORTA, 14, PIO_DIGITAL, (PIN_ATTR_NONE                                    ), No_ADC_Channel, NOT_ON_PWM, NOT_ON_TIMER, EXTERNAL_INT_NONE }, 
   { PORTA, 15, PIO_DIGITAL, (PIN_ATTR_NONE                                    ), No_ADC_Channel, NOT_ON_PWM, NOT_ON_TIMER, EXTERNAL_INT_NONE }, 
 
@@ -198,17 +201,3 @@ void SERCOM5_Handler()
 {
   Serial1.IrqHandler();
 }
-
-//Uart Serial2(&sercom3, PIN_SERIAL2_RX, PIN_SERIAL2_TX, PAD_SERIAL2_RX, PAD_SERIAL2_TX);
-
-//void SERCOM3_Handler()
-//{
-//  Serial2.IrqHandler();
-//}
-
-//Uart SerialHCI(&sercom2, PIN_SERIALHCI_RX, PIN_SERIALHCI_TX, PAD_SERIALHCI_RX, PAD_SERIALHCI_TX, PIN_SERIALHCI_RTS, PIN_SERIALHCI_CTS);
-
-//void SERCOM2_Handler()
-//{
-//  SerialHCI.IrqHandler();
-//}
