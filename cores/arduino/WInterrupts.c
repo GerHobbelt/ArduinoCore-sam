@@ -21,7 +21,7 @@
 
 #include <string.h>
 
-static voidFuncPtr ISRcallback[EXTERNAL_NUM_INTERRUPTS];
+static voidFuncPtrParam ISRcallback[EXTERNAL_NUM_INTERRUPTS];
 static void*       ISRcallbackParams[EXTERNAL_NUM_INTERRUPTS];
 static uint32_t    ISRlist[EXTERNAL_NUM_INTERRUPTS];
 static uint32_t    nints; // Stores total number of attached interrupts
@@ -56,7 +56,7 @@ static void __initialize()
  * \brief Specifies a named Interrupt Service Routine (ISR) to call when an interrupt occurs.
  *        Replaces any previous function that was attached to the interrupt.
  */
-void attachInterruptParam(pin_size_t pin, voidFuncPtr callback, PinStatus mode, void* params)
+void attachInterruptParam(pin_size_t pin, voidFuncPtrParam callback, PinStatus mode, void* params)
 {
   static int enabled = 0;
   uint32_t config;
