@@ -110,6 +110,7 @@ class SPIClass {
 	void setBitOrder(uint8_t _pin, BitOrder);
 	void setDataMode(uint8_t _pin, uint8_t);
 	void setClockDivider(uint8_t _pin, uint8_t);
+    void setDataWidth(uint8_t _pin, uint8_t _dataWidth);
 
 	// These methods sets the same parameters but on default pin BOARD_SPI_DEFAULT_SS
 	void setBitOrder(BitOrder _order) { setBitOrder(BOARD_SPI_DEFAULT_SS, _order); };
@@ -124,6 +125,7 @@ class SPIClass {
 	BitOrder bitOrder[SPI_CHANNELS_NUM];
 	uint32_t divider[SPI_CHANNELS_NUM];
 	uint32_t mode[SPI_CHANNELS_NUM];
+    uint32_t dataWidth[SPI_CHANNELS_NUM];
 	void (*initCb)(void);
 	bool initialized;
 	uint8_t interruptMode;    // 0=none, 1-15=mask, 16=global
