@@ -38,12 +38,6 @@
     #define NO_INIT __no_init
 #endif
 
-#if defined (  __GNUC__  )
-    #define TEXT_SEGMENT   __attribute__((section("text"))) 
-#else
-    #define TEXT_SEGMENT   
-#endif
-
 
 /*
  * Peripherals

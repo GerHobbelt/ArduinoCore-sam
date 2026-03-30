@@ -117,7 +117,7 @@ extern "C" {
 /*
  * Pins descriptions
  */
-extern TEXT_SEGMENT const PinDescription g_APinDescription[] =
+extern const PinDescription g_APinDescription[] =
 {
   // 0 .. 53 - Digital pins
   // ----------------------

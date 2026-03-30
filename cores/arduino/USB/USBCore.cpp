@@ -25,7 +25,7 @@
 #define TRACE_CORE(x)
 
 #ifndef PLUGGABLE_USB_ENABLED
-TEXT_SEGMENT const
+const
 #endif
 uint32_t EndPoints[] =
 {
@@ -63,7 +63,7 @@ extern const uint8_t STRING_MANUFACTURER[];
 extern const DeviceDescriptor USB_DeviceDescriptor;
 extern const DeviceDescriptor USB_DeviceDescriptorA;
 
-TEXT_SEGMENT const uint16_t STRING_LANGUAGE[2] = {
+const uint16_t STRING_LANGUAGE[2] = {
     (3<<8) | (2+2),
     0x0409    // English
 };
@@ -72,13 +72,13 @@ TEXT_SEGMENT const uint16_t STRING_LANGUAGE[2] = {
 #define USB_PRODUCT "Arduino Due"
 #endif
 
-TEXT_SEGMENT const uint8_t STRING_PRODUCT[] = USB_PRODUCT;
+const uint8_t STRING_PRODUCT[] = USB_PRODUCT;
 
 #ifndef USB_MANUFACTURER
 #define USB_MANUFACTURER "Arduino LLC"
 #endif
 
-TEXT_SEGMENT const uint8_t STRING_MANUFACTURER[] = USB_MANUFACTURER;
+const uint8_t STRING_MANUFACTURER[] = USB_MANUFACTURER;
 
 #ifdef CDC_ENABLED
 #define DEVICE_CLASS 0x02
@@ -87,17 +87,17 @@ TEXT_SEGMENT const uint8_t STRING_MANUFACTURER[] = USB_MANUFACTURER;
 #endif
 
 //    DEVICE DESCRIPTOR
-TEXT_SEGMENT const DeviceDescriptor USB_DeviceDescriptor =
+const DeviceDescriptor USB_DeviceDescriptor =
     D_DEVICE(0x00,0x00,0x00,64,USB_VID,USB_PID,0x100,IMANUFACTURER,IPRODUCT,ISERIAL,1);
 
-TEXT_SEGMENT const DeviceDescriptor USB_DeviceDescriptorA =
+const DeviceDescriptor USB_DeviceDescriptorA =
     D_DEVICE(0xEF,0x02,0x01,64,USB_VID,USB_PID,0x100,IMANUFACTURER,IPRODUCT,ISERIAL,1);
 
-TEXT_SEGMENT const QualifierDescriptor USB_DeviceQualifier =
+const QualifierDescriptor USB_DeviceQualifier =
     D_QUALIFIER(0x00,0x00,0x00,64,1);
 
 //! 7.1.20 Test Mode Support
-static TEXT_SEGMENT const unsigned char test_packet_buffer[] = {
+static const unsigned char test_packet_buffer[] = {
     0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,                // JKJKJKJK * 9
     0xAA,0xAA,0xAA,0xAA,0xAA,0xAA,0xAA,0xAA,                     // JJKKJJKK * 8
     0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,0xEE,                     // JJJJKKKK * 8
