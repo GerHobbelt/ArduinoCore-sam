@@ -167,7 +167,7 @@ void SPIClass::setDataMode(uint8_t _pin, uint8_t _mode) {
 	mode[ch] = _mode | SPI_CSR_CSAAT;
 	// SPI_CSR_DLYBCT(1) keeps CS enabled for 32 MCLK after a completed
 	// transfer. Some device needs that for working properly.
-	SPI_ConfigureNPCS(spi, ch, mode[ch] | SPI_CSR_SCBR(divider[ch]) | dataWidth[ch] | SPI_CSR_DLYBCT(1));
+	SPI_ConfigureNPCS(spi, ch, mode[ch] | SPI_CSR_SCBR(divider[ch]) | uint32_t(dataWidth[ch]) | SPI_CSR_DLYBCT(1));
 }
 
 void SPIClass::setDataWidth(uint8_t _pin, uint8_t _dataWidth) {
@@ -175,7 +175,7 @@ void SPIClass::setDataWidth(uint8_t _pin, uint8_t _dataWidth) {
 	dataWidth[ch] = _dataWidth;
 	// SPI_CSR_DLYBCT(1) keeps CS enabled for 32 MCLK after a completed
 	// transfer. Some device needs that for working properly.
-	SPI_ConfigureNPCS(spi, ch, mode[ch] | SPI_CSR_SCBR(divider[ch]) | dataWidth[ch] | SPI_CSR_DLYBCT(1));
+	SPI_ConfigureNPCS(spi, ch, mode[ch] | SPI_CSR_SCBR(divider[ch]) | uint32_t(dataWidth[ch]) | SPI_CSR_DLYBCT(1));
 }
 
 void SPIClass::setClockDivider(uint8_t _pin, uint8_t _divider) {
@@ -183,7 +183,7 @@ void SPIClass::setClockDivider(uint8_t _pin, uint8_t _divider) {
 	divider[ch] = _divider;
 	// SPI_CSR_DLYBCT(1) keeps CS enabled for 32 MCLK after a completed
 	// transfer. Some device needs that for working properly.
-	SPI_ConfigureNPCS(spi, ch, mode[ch] | SPI_CSR_SCBR(divider[ch]) | dataWidth[ch] | SPI_CSR_DLYBCT(1));
+	SPI_ConfigureNPCS(spi, ch, mode[ch] | SPI_CSR_SCBR(divider[ch]) | uint32_t(dataWidth[ch]) | SPI_CSR_DLYBCT(1));
 }
 
 // only works if data mode is set correctly to SPI_CSR_BITS_16_BIT
