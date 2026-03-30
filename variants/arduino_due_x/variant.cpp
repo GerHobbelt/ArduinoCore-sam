@@ -301,8 +301,8 @@ uint8_t g_pinStatus[PINS_COUNT] = {0};
 /*
  * UART objects
  */
-RingBuffer rx_buffer1;
-RingBuffer tx_buffer1;
+RingBuffer<SERIAL_BUFFER_SIZE_DEFAULT> rx_buffer1;
+RingBuffer<SERIAL_BUFFER_SIZE_DEFAULT> tx_buffer1;
 
 UARTClass Serial(UART, UART_IRQn, ID_UART, &rx_buffer1, &tx_buffer1);
 void serialEvent() __attribute__((weak));
@@ -318,12 +318,12 @@ void UART_Handler(void)
 /*
  * USART objects
  */
-RingBuffer rx_buffer2;
-RingBuffer rx_buffer3;
-RingBuffer rx_buffer4;
-RingBuffer tx_buffer2;
-RingBuffer tx_buffer3;
-RingBuffer tx_buffer4;
+RingBuffer<SERIAL_BUFFER_SIZE_DEFAULT> rx_buffer2;
+RingBuffer<SERIAL_BUFFER_SIZE_DEFAULT> rx_buffer3;
+RingBuffer<SERIAL_BUFFER_SIZE_DEFAULT> rx_buffer4;
+RingBuffer<SERIAL_BUFFER_SIZE_DEFAULT> tx_buffer2;
+RingBuffer<SERIAL_BUFFER_SIZE_DEFAULT> tx_buffer3;
+RingBuffer<SERIAL_BUFFER_SIZE_DEFAULT> tx_buffer4;
 
 USARTClass Serial1(USART0, USART0_IRQn, ID_USART0, &rx_buffer2, &tx_buffer2);
 void serialEvent1() __attribute__((weak));

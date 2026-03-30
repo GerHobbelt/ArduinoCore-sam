@@ -25,14 +25,18 @@
 // using a ring buffer, in which head is the index of the location
 // to which to write the next incoming character and tail is the index of the
 // location from which to read.
-#define SERIAL_BUFFER_SIZE 128
 
+#define SERIAL_BUFFER_SIZE_DEFAULT   128 // SERIAL_BUFFER_SIZE
+
+template <uint16_t RB_BUFFER_SIZE = SERIAL_BUFFER_SIZE_DEFAULT>
 class RingBuffer
 {
   public:
-    volatile uint8_t _aucBuffer[SERIAL_BUFFER_SIZE] ;
-    volatile int _iHead ;
-    volatile int _iTail ;
+    volatile uint8_t _aucBuffer[RB_BUFFER_SIZE];
+    volatile int16_t _iHead ;
+    volatile int16_t _iTail ;
+	
+    constexpr const uint32_t _size = RB_BUFFER_SIZE;
 
   public:
     RingBuffer( void ) ;
