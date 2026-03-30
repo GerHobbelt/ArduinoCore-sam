@@ -95,7 +95,7 @@ uint32_t adc_init(Adc *p_adc, const uint32_t ul_mck,
 uint32_t adc_init(Adc *p_adc, const uint32_t ul_mck,
 		const uint32_t ul_adc_clock, const uint8_t uc_startuptime)
 {
-	uint32_t startup_table[] = { 0, 8, 16, 24, 64, 80, 96, 112, 512, 576, 640, 704, 768, 832, 896, 960 };
+	static TEXT_SEGMENT const uint32_t startup_table[] = { 0, 8, 16, 24, 64, 80, 96, 112, 512, 576, 640, 704, 768, 832, 896, 960 };
 	uint32_t ul_prescal, ul_startup,  ul_mr_startup, ul_real_adc_clock;
 	p_adc->ADC_CR = ADC_CR_SWRST;
 
