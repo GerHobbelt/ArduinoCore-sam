@@ -54,8 +54,10 @@ uint32_t analogRead(uint32_t ulPin)
   uint32_t ulValue = 0;
   uint32_t ulChannel;
 
+#if ! ( defined __SAM3A8C__ || defined __SAM3A4C__ )
   if (ulPin < A0)
     ulPin += A0;
+#endif
 
   ulChannel = g_APinDescription[ulPin].ulADCChannelNumber ;
 
@@ -129,8 +131,8 @@ uint32_t analogRead(uint32_t ulPin)
 	}
 #endif
 
-#if defined __SAM3X8E__ || defined __SAM3X8H__
-	static uint32_t latestSelectedChannel = -1;
+#if defined __SAM3X8E__ || defined __SAM3X8H__ || defined __SAM3A8C__ || defined __SAM3A4C__
+	static uint32_t latestSelectedChannel = (uint32_t)-1;
 	switch ( g_APinDescription[ulPin].ulAnalogChannel )
 	{
 		// Handling ADC 12 bits channels
@@ -288,16 +290,40 @@ void analogWrite(uint32_t ulPin, uint32_t ulValue) {
 
 		// Setup Timer for this pin
 		ETCChannel channel = g_APinDescription[ulPin].ulTCChannel;
-		static const uint32_t channelToChNo[] = { 0, 0, 1, 1, 2, 2, 0, 0, 1, 1, 2, 2, 0, 0, 1, 1, 2, 2 };
-		static const uint32_t channelToAB[]   = { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 };
-		static Tc *channelToTC[] = {
+		static const uint32_t channelToChNo[] = {
+			0, 0, 1, 1, 2, 2,
+			0, 0, 1, 1, 2, 2,
+#if defined TC2
+			0, 0, 1, 1, 2, 2,
+#endif
+		};
+		static const uint32_t channelToAB[]   = {
+			1, 0, 1, 0, 1, 0,
+			1, 0, 1, 0, 1, 0,
+#if defined TC2
+			1, 0, 1, 0, 1, 0,
+#endif
+		};
+		static const Tc *channelToTC[] = {
 			TC0, TC0, TC0, TC0, TC0, TC0,
 			TC1, TC1, TC1, TC1, TC1, TC1,
-			TC2, TC2, TC2, TC2, TC2, TC2 };
-		static const uint32_t channelToId[] = { 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8 };
+#if defined TC2
+			TC2, TC2, TC2, TC2, TC2, TC2,
+#endif
+		};
+		static const uint32_t channelToId[] = {
+			0, 0, 1, 1, 2, 2,
+			3, 3, 4, 4, 5, 5,
+#if defined TC2
+			6, 6, 7, 7, 8, 8,
+#endif
+		};
+		if (channel >= (sizeof(channelToTC) / sizeof(*channelToTC)))
+			return;
+
 		uint32_t chNo = channelToChNo[channel];
 		uint32_t chA  = channelToAB[channel];
-		Tc *chTC = channelToTC[channel];
+		Tc *chTC = (Tc*)channelToTC[channel];
 		uint32_t interfaceID = channelToId[channel];
 
 		if (!TCChanEnabled[interfaceID]) {
