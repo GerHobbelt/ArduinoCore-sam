@@ -289,7 +289,7 @@ void analogWrite(uint32_t ulPin, uint32_t ulValue) {
 		ulValue = ulValue / TC_MAX_DUTY_CYCLE;
 
 		// Setup Timer for this pin
-		ETCChannel channel = g_APinDescription[ulPin].ulTCChannel;
+		const ETCChannel channel = g_APinDescription[ulPin].ulTCChannel;
 		static const uint32_t channelToChNo[] = {
 			0, 0, 1, 1, 2, 2,
 			0, 0, 1, 1, 2, 2,
@@ -318,7 +318,7 @@ void analogWrite(uint32_t ulPin, uint32_t ulValue) {
 			6, 6, 7, 7, 8, 8,
 #endif
 		};
-		if (channel >= (sizeof(channelToTC) / sizeof(*channelToTC)))
+		if (channel >= (int)(sizeof(channelToTC) / sizeof(*channelToTC)))
 			return;
 
 		uint32_t chNo = channelToChNo[channel];
