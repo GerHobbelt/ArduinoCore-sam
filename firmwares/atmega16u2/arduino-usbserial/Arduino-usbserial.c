@@ -206,8 +206,8 @@ void SetupHardware(void)
 
 	TCNT0 = 0;
 	TCCR0B = (1 << CS01) | (1 << CS00);  // Set prescaler to 64 and start counting (4uS/tick)
-	while(TCNT0 < 24);   // Wait for approx 100 uS
-	TCCR0B=0;  // Stop the counter
+	while (TCNT0 < 24) /**/;   // Wait for approx 100 uS
+	TCCR0B = 0;  // Stop the counter
 	TCNT0 = 0;  // re-init timer count
 
 	setResetPin(false);
