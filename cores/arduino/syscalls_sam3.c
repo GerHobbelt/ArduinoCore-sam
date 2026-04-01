@@ -134,8 +134,10 @@ extern void _exit( int status )
 {
 //  printf is probably not set up by Arduino, and shouldn't be used.
 //    printf( "Exiting with status %d.\n", status ) ;
+
 	// To get rid of compiler warning 
 	( void ) status; 
+	
     for ( ; ; ) ;
 }
 

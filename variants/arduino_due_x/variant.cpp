@@ -351,7 +351,6 @@ __attribute__((weak)) void USART3_Handler(void)
   Serial3.IrqHandler();
 }
 
-
 // ----------------------------------------------------------------------------
 
 void serialEventRun(void)
