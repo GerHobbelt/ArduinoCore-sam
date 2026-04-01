@@ -104,7 +104,7 @@ uint32_t UARTClass::getInterruptPriority()
 
 int UARTClass::available( void )
 {
-  return (uint32_t)(_rx_buffer->size() + _rx_buffer->_iHead - _rx_buffer->_iTail) % _rx_buffer->size();
+  return _rx_buffer->wrapIndex(_rx_buffer->size() + _rx_buffer->_iHead - _rx_buffer->_iTail);
 }
 
 int UARTClass::availableForWrite(void)
@@ -130,7 +130,7 @@ int UARTClass::read( void )
     return -1;
 
   uint8_t uc = _rx_buffer->buffer()[_rx_buffer->_iTail];
-  _rx_buffer->_iTail = (unsigned int)(_rx_buffer->_iTail + 1) % _rx_buffer->size();
+  _rx_buffer->_iTail = _rx_buffer->wrapIndex(_rx_buffer->_iTail + 1);
   return uc;
 }
 
@@ -149,7 +149,7 @@ size_t UARTClass::write( const uint8_t uc_data )
       (_tx_buffer->_iTail != _tx_buffer->_iHead))
   {
     // If busy we buffer
-    int nextWrite = (_tx_buffer->_iHead + 1) % _tx_buffer->size();
+    int nextWrite = _tx_buffer->wrapIndex(_tx_buffer->_iHead + 1);
     while (_tx_buffer->_iTail == nextWrite)
       ; // Spin locks if we're about to overwrite the buffer. This continues once the data is sent
 
@@ -179,7 +179,7 @@ void UARTClass::IrqHandler( void )
   {
     if (_tx_buffer->_iTail != _tx_buffer->_iHead) {
       _pUart->UART_THR = _tx_buffer->buffer()[_tx_buffer->_iTail];
-      _tx_buffer->_iTail = (unsigned int)(_tx_buffer->_iTail + 1) % _tx_buffer->size();
+      _tx_buffer->_iTail = _tx_buffer->wrapIndex(_tx_buffer->_iTail + 1);
     }
     else
     {

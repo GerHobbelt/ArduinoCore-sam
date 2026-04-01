@@ -36,6 +36,10 @@ class RingBuffer
     volatile int16_t _iTail;
 	
     virtual uint16_t size() const = 0;
+	// return (index % size()) :: this method helps prevent using a costly DIV/MOD op 
+	// as the virtual methods prevent the compiler from optimizing the classic indexing
+	// logic.
+    virtual uint16_t wrapIndex(uint16_t index) const = 0;
 	virtual volatile uint8_t *buffer() = 0;
 
   public:
@@ -57,6 +61,10 @@ class SizedRingBuffer final : public RingBuffer
 
 	virtual volatile uint8_t *buffer() override {
 	  return _aucBuffer;
+	}
+
+    virtual uint16_t wrapIndex(uint16_t index) const override {
+	  return index % RB_BUFFER_SIZE;
 	}
 
 	virtual void store_char( uint8_t c ) override {
