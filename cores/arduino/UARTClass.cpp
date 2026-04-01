@@ -28,9 +28,9 @@ UARTClass::UARTClass( Uart *pUart, IRQn_Type dwIrq, uint32_t dwId, RingBuffer *p
   _rx_buffer = pRx_buffer;
   _tx_buffer = pTx_buffer;
 
-  _pUart=pUart;
-  _dwIrq=dwIrq;
-  _dwId=dwId;
+  _pUart = pUart;
+  _dwIrq = dwIrq;
+  _dwId = dwId;
 }
 
 // Public Methods //////////////////////////////////////////////////////////////
@@ -104,14 +104,14 @@ uint32_t UARTClass::getInterruptPriority()
 
 int UARTClass::available( void )
 {
-  return (uint32_t)(_rx_buffer->_size + _rx_buffer->_iHead - _rx_buffer->_iTail) % _rx_buffer->_size;
+  return (uint32_t)(_rx_buffer->size() + _rx_buffer->_iHead - _rx_buffer->_iTail) % _rx_buffer->size();
 }
 
 int UARTClass::availableForWrite(void)
 {
   int head = _tx_buffer->_iHead;
   int tail = _tx_buffer->_iTail;
-  if (head >= tail) return _tx_buffer->_size - 1 - head + tail;
+  if (head >= tail) return _tx_buffer->size() - 1 - head + tail;
   return tail - head - 1;
 }
 
@@ -120,7 +120,7 @@ int UARTClass::peek( void )
   if ( _rx_buffer->_iHead == _rx_buffer->_iTail )
     return -1;
 
-  return _rx_buffer->_aucBuffer[_rx_buffer->_iTail];
+  return _rx_buffer->buffer()[_rx_buffer->_iTail];
 }
 
 int UARTClass::read( void )
@@ -129,8 +129,8 @@ int UARTClass::read( void )
   if ( _rx_buffer->_iHead == _rx_buffer->_iTail )
     return -1;
 
-  uint8_t uc = _rx_buffer->_aucBuffer[_rx_buffer->_iTail];
-  _rx_buffer->_iTail = (unsigned int)(_rx_buffer->_iTail + 1) % _rx_buffer->_size;
+  uint8_t uc = _rx_buffer->buffer()[_rx_buffer->_iTail];
+  _rx_buffer->_iTail = (unsigned int)(_rx_buffer->_iTail + 1) % _rx_buffer->size();
   return uc;
 }
 
@@ -149,11 +149,11 @@ size_t UARTClass::write( const uint8_t uc_data )
       (_tx_buffer->_iTail != _tx_buffer->_iHead))
   {
     // If busy we buffer
-    int nextWrite = (_tx_buffer->_iHead + 1) % _tx_buffer->_size;
+    int nextWrite = (_tx_buffer->_iHead + 1) % _tx_buffer->size();
     while (_tx_buffer->_iTail == nextWrite)
       ; // Spin locks if we're about to overwrite the buffer. This continues once the data is sent
 
-    _tx_buffer->_aucBuffer[_tx_buffer->_iHead] = uc_data;
+    _tx_buffer->buffer()[_tx_buffer->_iHead] = uc_data;
     _tx_buffer->_iHead = nextWrite;
     // Make sure TX interrupt is enabled
     _pUart->UART_IER = UART_IER_TXRDY;
@@ -178,8 +178,8 @@ void UARTClass::IrqHandler( void )
   if ((status & UART_SR_TXRDY) == UART_SR_TXRDY) 
   {
     if (_tx_buffer->_iTail != _tx_buffer->_iHead) {
-      _pUart->UART_THR = _tx_buffer->_aucBuffer[_tx_buffer->_iTail];
-      _tx_buffer->_iTail = (unsigned int)(_tx_buffer->_iTail + 1) % _tx_buffer->_size;
+      _pUart->UART_THR = _tx_buffer->buffer()[_tx_buffer->_iTail];
+      _tx_buffer->_iTail = (unsigned int)(_tx_buffer->_iTail + 1) % _tx_buffer->size();
     }
     else
     {

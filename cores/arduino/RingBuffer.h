@@ -20,6 +20,7 @@
 #define _RING_BUFFER_
 
 #include <stdint.h>
+#include <string.h>			// memset, ...
 
 // Define constants and variables for buffering incoming serial data.  We're
 // using a ring buffer, in which head is the index of the location
@@ -28,19 +29,57 @@
 
 #define SERIAL_BUFFER_SIZE_DEFAULT   128 // SERIAL_BUFFER_SIZE
 
-template <uint16_t RB_BUFFER_SIZE = SERIAL_BUFFER_SIZE_DEFAULT>
 class RingBuffer
 {
   public:
-    volatile uint8_t _aucBuffer[RB_BUFFER_SIZE];
-    volatile int16_t _iHead ;
-    volatile int16_t _iTail ;
+    volatile int16_t _iHead;
+    volatile int16_t _iTail;
 	
-    constexpr const uint32_t _size = RB_BUFFER_SIZE;
+    virtual uint16_t size() const = 0;
+	virtual volatile uint8_t *buffer() = 0;
 
   public:
-    RingBuffer( void ) ;
-    void store_char( uint8_t c ) ;
-} ;
+	RingBuffer();
+
+	virtual void store_char( uint8_t c ) = 0;
+};
+
+template <uint16_t RB_BUFFER_SIZE = SERIAL_BUFFER_SIZE_DEFAULT>
+class SizedRingBuffer final : public RingBuffer
+{
+  protected:
+    volatile uint8_t _aucBuffer[RB_BUFFER_SIZE];
+	
+  public:
+    virtual uint16_t size() const override {
+	  return RB_BUFFER_SIZE;
+	}
+
+	virtual volatile uint8_t *buffer() override {
+	  return _aucBuffer;
+	}
+
+	virtual void store_char( uint8_t c ) override {
+	  int i = (uint32_t)(_iHead + 1) % size();
+
+	  // if we should be storing the received character into the location
+	  // just before the tail (meaning that the head would advance to the
+	  // current location of the tail), we're about to overflow the buffer
+	  // and so we don't write the character or advance the head.
+	  if ( i != _iTail )
+	  {
+	    buffer()[_iHead] = c;
+	    _iHead = i;
+	  }
+	}
+
+  public:
+	SizedRingBuffer() : RingBuffer() {
+	  memset((void *)_aucBuffer, 0, sizeof(_aucBuffer));
+	}
+};
+
+using SmallRingBuffer = SizedRingBuffer<SERIAL_BUFFER_SIZE_DEFAULT>;
+using LargeRingBuffer = SizedRingBuffer<1024>;
 
 #endif /* _RING_BUFFER_ */
