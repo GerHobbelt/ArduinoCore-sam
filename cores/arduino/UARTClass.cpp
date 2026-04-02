@@ -142,6 +142,15 @@ void UARTClass::flush( void )
    ;
 }
 
+void UARTClass::drop( void )
+{
+  // clear the buffer i.e. drop all buffered output!
+  _tx_buffer->_iTail = _tx_buffer->_iHead;
+  // and fix race condition where write interrupt was just busy fetching a byte, so we clashed above:
+  if ((_pUart->UART_SR & UART_SR_TXRDY) != UART_SR_TXRDY)
+    _tx_buffer->_iTail = _tx_buffer->_iHead;
+}
+
 size_t UARTClass::write( const uint8_t uc_data )
 {
   // Is the hardware currently busy?
