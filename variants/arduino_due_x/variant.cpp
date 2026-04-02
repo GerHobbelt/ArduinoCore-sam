@@ -301,7 +301,7 @@ uint8_t g_pinStatus[PINS_COUNT] = {0};
 /*
  * UART objects
  */
-LargeRingBuffer rx_buffer1;
+TinyRingBuffer rx_buffer1;
 LargeRingBuffer tx_buffer1;
 
 UARTClass Serial(UART, UART_IRQn, ID_UART, &rx_buffer1, &tx_buffer1);
