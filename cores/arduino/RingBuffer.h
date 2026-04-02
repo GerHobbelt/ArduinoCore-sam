@@ -89,5 +89,6 @@ class SizedRingBuffer final : public RingBuffer
 
 using SmallRingBuffer = SizedRingBuffer<SERIAL_BUFFER_SIZE_DEFAULT>;
 using LargeRingBuffer = SizedRingBuffer<1024>;
+using TinyRingBuffer  = SizedRingBuffer<64>;
 
 #endif /* _RING_BUFFER_ */
