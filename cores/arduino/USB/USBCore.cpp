@@ -25,6 +25,9 @@
 //#define TRACE_CORE(x)    x
 #define TRACE_CORE(x)
 
+#ifndef PLUGGABLE_USB_ENABLED
+const
+#endif
 uint32_t EndPoints[] =
 {
     EP_TYPE_CONTROL,
@@ -110,6 +113,7 @@ static const unsigned char test_packet_buffer[] = {
 volatile uint32_t _usbConfiguration = 0;
 volatile uint32_t _usbInitialized = 0;
 uint32_t _usbSetInterface = 0;
+uint32_t _usbAlternateSetting = 0;
 uint32_t _cdcComposite = 0;
 
 //==================================================================
@@ -148,12 +152,10 @@ uint32_t USBD_Recv(uint32_t ep, void* d, uint32_t len)
     if (!_usbConfiguration)
         return -1;
 
-    uint32_t n = UDD_FifoByteCount(ep & 0xF);
-    len = min(n,len);
-    n = len;
+	len = min(UDD_FifoByteCount(ep & 0xF), len);
     uint8_t* dst = (uint8_t*)d;
-    while (n--)
-        *dst++ = UDD_Recv8(ep & 0xF);
+    UDD_Recv(ep & 0xF, dst, len);
+    
     return len;
 }
 
@@ -810,8 +812,9 @@ static void USB_ISR(void)
             }
             else if (SET_INTERFACE == r)
             {
-                _usbSetInterface = setup.wValueL;
-                TRACE_CORE(puts(">>> EP0 Int: SET_INTERFACE\r\n");)
+                _usbSetInterface = setup.wIndex;
+                _usbAlternateSetting = setup.wValueL;
+                TRACE_CORE(printf(">>> EP0 Int: SET_INTERFACE interface=%d alternateSetting=%d\r\n", _usbSetInterface, _usbAlternateSetting);)
             }
         }
         else

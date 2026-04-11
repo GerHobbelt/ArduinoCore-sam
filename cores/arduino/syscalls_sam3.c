@@ -77,7 +77,7 @@ extern caddr_t _sbrk ( int incr )
     return (caddr_t) prev_heap ;
 }
 
-extern int link( UNUSED(char *cOld), UNUSED(char *cNew) )
+extern int link( UNUSED(const char *cOld), UNUSED(const char *cNew) )
 {
     return -1 ;
 }
@@ -135,6 +135,9 @@ extern void _exit( int status )
 //  printf is probably not set up by Arduino, and shouldn't be used.
 //    printf( "Exiting with status %d.\n", status ) ;
 
+	// To get rid of compiler warning 
+	( void ) status; 
+	
     for ( ; ; ) ;
 }
 
