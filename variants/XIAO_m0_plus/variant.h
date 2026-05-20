@@ -62,12 +62,6 @@
 // #define digitalPinToTimer(P)
 
 
-// LEDs
-// ----
-#define PIN_LED_13  (13u)
-#define PIN_LED     PIN_LED_13
-#define LED_BUILTIN PIN_LED
-
 // RGB LED (WS2812B) on PA27
 #define PIN_LED_RGB  (11u)
 #define PIN_NEOPIXEL PIN_LED_RGB
