@@ -37,9 +37,9 @@
 // ----
 
 // Number of pins defined in PinDescription array
-#define PINS_COUNT           (32u)
-#define NUM_DIGITAL_PINS     (32u)
-#define NUM_ANALOG_INPUTS    (11u)
+#define PINS_COUNT           (33u)
+#define NUM_DIGITAL_PINS     (33u)
+#define NUM_ANALOG_INPUTS    (12u)
 #define NUM_ANALOG_OUTPUTS   (1u)
 
 // Low-level pin register query macros
@@ -78,6 +78,9 @@
 // VBAT_EN on PB02
 #define PIN_VBAT_EN  (31u)
 
+// AIN11_VBAT on PB03
+#define PIN_VBAT_ADC (32u)
+
 
 /*
  * Analog pins
@@ -93,6 +96,7 @@
 #define PIN_A8               (PIN_A0 + 8)
 #define PIN_A9               (PIN_A0 + 9)
 #define PIN_A10              (PIN_A0 + 10)
+#define PIN_A11              (PIN_A0 + 11)
 
 #define PIN_DAC0             (PIN_A0)
 
@@ -108,6 +112,7 @@ static const uint8_t A7  = PIN_A7 ;
 static const uint8_t A8  = PIN_A8 ;
 static const uint8_t A9  = PIN_A9 ;
 static const uint8_t A10  = PIN_A10 ;
+static const uint8_t A11  = PIN_A11 ;
 static const uint8_t DAC0 = PIN_DAC0;
 
 #define ADC_RESOLUTION		12
@@ -141,6 +146,7 @@ static const uint8_t DAC0 = PIN_DAC0;
 #define D26 (26u)
 #define D27 (27u)
 #define D31 (31u)
+#define D32 (32u)
 
 /*
  * SPI Interfaces
