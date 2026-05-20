@@ -37,8 +37,8 @@
 // ----
 
 // Number of pins defined in PinDescription array
-#define PINS_COUNT           (31u)
-#define NUM_DIGITAL_PINS     (31u)
+#define PINS_COUNT           (32u)
+#define NUM_DIGITAL_PINS     (32u)
 #define NUM_ANALOG_INPUTS    (11u)
 #define NUM_ANALOG_OUTPUTS   (1u)
 
@@ -74,6 +74,9 @@
 
 // User Button on PB22
 #define PIN_BUTTON   (28u)
+
+// VBAT_EN on PB02
+#define PIN_VBAT_EN  (31u)
 
 
 /*
@@ -137,6 +140,7 @@ static const uint8_t DAC0 = PIN_DAC0;
 #define D25 (25u)
 #define D26 (26u)
 #define D27 (27u)
+#define D31 (31u)
 
 /*
  * SPI Interfaces
