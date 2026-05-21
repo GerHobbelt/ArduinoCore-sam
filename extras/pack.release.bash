@@ -31,3 +31,13 @@ cd -
 
 mv ../samd-$VERSION.tar.bz2 .
 
+echo ""
+echo "=========================================="
+echo "  Package: samd-$VERSION.tar.bz2"
+echo "=========================================="
+FILESIZE=$(stat -c%s samd-$VERSION.tar.bz2)
+SHA256=$(sha256sum samd-$VERSION.tar.bz2 | awk '{print $1}')
+echo "  Size:     $FILESIZE"
+echo "  SHA256:   $SHA256"
+echo "=========================================="
+
