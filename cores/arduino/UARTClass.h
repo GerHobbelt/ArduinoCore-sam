@@ -62,8 +62,11 @@ class UARTClass : public HardwareSerial
     uint32_t getInterruptPriority();
 
     void IrqHandler(void);
+
+  protected:
     volatile bool overflowed;
 
+  public:
     bool getOverflowed() {
       bool v = overflowed;
       overflowed = false;
