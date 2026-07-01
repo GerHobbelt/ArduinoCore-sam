@@ -310,6 +310,7 @@ void serialEvent() __attribute__((weak));
 void serialEvent() { }
 
 // IT handlers
+void UART_Handler(void)  __attribute__((weak));
 void UART_Handler(void)
 {
   Serial.IrqHandler();
