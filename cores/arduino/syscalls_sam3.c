@@ -77,39 +77,39 @@ extern caddr_t _sbrk ( int incr )
     return (caddr_t) prev_heap ;
 }
 
-extern int link( UNUSED(const char *cOld), UNUSED(const char *cNew) )
+__attribute((weak)) extern int link( UNUSED(const char *cOld), UNUSED(const char *cNew) )
 {
     return -1 ;
 }
 
-extern int _close( UNUSED(int file) )
+__attribute((weak)) extern int _close( UNUSED(int file) )
 {
     return -1 ;
 }
 
-extern int _fstat( UNUSED(int file), struct stat *st )
+__attribute((weak)) extern int _fstat( UNUSED(int file), struct stat *st )
 {
     st->st_mode = S_IFCHR ;
 
     return 0 ;
 }
 
-extern int _isatty( UNUSED(int file) )
+__attribute((weak)) extern int _isatty( UNUSED(int file) )
 {
     return 1 ;
 }
 
-extern int _lseek( UNUSED(int file), UNUSED(int ptr), UNUSED(int dir) )
+__attribute((weak)) extern int _lseek( UNUSED(int file), UNUSED(int ptr), UNUSED(int dir) )
 {
     return 0 ;
 }
 
-extern int _read(UNUSED(int file), UNUSED(char *ptr), UNUSED(int len) )
+__attribute((weak)) extern int _read(UNUSED(int file), UNUSED(char *ptr), UNUSED(int len) )
 {
     return 0 ;
 }
 
-extern int _write( UNUSED(int file), char *ptr, int len )
+__attribute((weak)) extern int _write( UNUSED(int file), char *ptr, int len )
 {
     int iIndex ;
 
@@ -146,7 +146,7 @@ extern void _kill( UNUSED(int pid), UNUSED(int sig) )
     return ;
 }
 
-extern int _getpid ( void )
+__attribute((weak)) extern int _getpid ( void )
 {
     return -1 ;
 }
