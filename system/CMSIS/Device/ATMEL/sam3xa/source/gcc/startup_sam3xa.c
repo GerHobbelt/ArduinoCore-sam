@@ -159,7 +159,7 @@ const DeviceVectors exception_table = {
 	(void*) (0UL),           /* 42 Reserved */
 #endif /* _SAM3XA_EMAC_INSTANCE_ */
 	(void*) CAN0_Handler,    /* 43 CAN Controller 0 */
-	(void*) CAN1_Handler    /* 44 CAN Controller 1 */
+	(void*) CAN1_Handler     /* 44 CAN Controller 1 */
 };
 
 /**

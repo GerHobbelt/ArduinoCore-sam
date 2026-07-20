@@ -310,6 +310,7 @@ void serialEvent() __attribute__((weak));
 void serialEvent() { }
 
 // IT handlers
+void UART_Handler(void)  __attribute__((weak));
 void UART_Handler(void)
 {
   Serial.IrqHandler();
@@ -319,12 +320,12 @@ void UART_Handler(void)
 /*
  * USART objects
  */
-SmallRingBuffer rx_buffer2;
-SmallRingBuffer rx_buffer3;
-SmallRingBuffer rx_buffer4;
-SmallRingBuffer tx_buffer2;
-SmallRingBuffer tx_buffer3;
-SmallRingBuffer tx_buffer4;
+TinyRingBuffer rx_buffer2;
+TinyRingBuffer rx_buffer3;
+TinyRingBuffer rx_buffer4;
+TinyRingBuffer tx_buffer2;
+TinyRingBuffer tx_buffer3;
+TinyRingBuffer tx_buffer4;
 
 USARTClass Serial1(USART0, USART0_IRQn, ID_USART0, &rx_buffer2, &tx_buffer2);
 void serialEvent1() __attribute__((weak));
@@ -380,9 +381,6 @@ void init( void )
     // Capture error
     while (true);
   }
-
-  // Initialize C library
-  __libc_init_array();
 
   // Disable pull-up on every pin
   for (unsigned i = 0; i < PINS_COUNT; i++)
@@ -446,6 +444,9 @@ void init( void )
 
   // Initialize analogOutput module
   analogOutputInit();
+
+  // Initialize C library and run C++ constructors
+  __libc_init_array();
 }
 
 #ifdef __cplusplus

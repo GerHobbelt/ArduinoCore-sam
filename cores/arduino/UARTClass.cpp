@@ -60,8 +60,8 @@ void UARTClass::init(const uint32_t dwBaudRate, const uint32_t modeReg)
   // Configure mode
   _pUart->UART_MR = modeReg;
 
-  // Configure baudrate (asynchronous, no oversampling)
-  _pUart->UART_BRGR = (SystemCoreClock / dwBaudRate) >> 4;
+  // Configure baudrate (asynchronous, no oversampling, with rounding)
+  _pUart->UART_BRGR = ((SystemCoreClock / dwBaudRate) + 8) >> 4;
 
   // Configure interrupts
   _pUart->UART_IDR = 0xFFFFFFFF;
@@ -151,6 +151,11 @@ void UARTClass::drop( void )
     _tx_buffer->_iTail = _tx_buffer->_iHead;
 }
 
+bool UARTClass::isFlushed( void )
+{
+  return ((_pUart->UART_SR & UART_SR_TXRDY) == UART_SR_TXRDY) && (_tx_buffer->_iTail == _tx_buffer->_iHead);
+}
+
 size_t UARTClass::write( const uint8_t uc_data )
 {
   // Is the hardware currently busy?
@@ -181,7 +186,12 @@ void UARTClass::IrqHandler( void )
 
   // Did we receive data?
   if ((status & UART_SR_RXRDY) == UART_SR_RXRDY)
-    _rx_buffer->store_char(_pUart->UART_RHR);
+  {
+    if (! _rx_buffer->store_char(_pUart->UART_RHR))
+    {
+      setOverflowed();
+    }
+  }
 
   // Do we need to keep sending data?
   if ((status & UART_SR_TXRDY) == UART_SR_TXRDY) 

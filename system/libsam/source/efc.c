@@ -193,6 +193,21 @@ uint32_t efc_get_wait_state(Efc *p_efc)
  * \note This function will automatically choose to use IAP function.
  *
  * \return 0 if successful, otherwise returns an error code.
+ *
+ * Notes:
+ *
+ * See also Atmel/Microchip SAM3x8 datasheet, page 322:
+ *
+ * 20.4.4  In Application Programming (IAP) Feature
+ *
+The IAP feature is a function located in ROM that can be called by any software application.
+When called, this function sends the desired FLASH command to the EEFC and waits for the Flash to be ready
+(looping while the FRDY bit is not set in the EEFC_FSR).
+Since this function is executed from ROM, this allows Flash programming (such as sector write) to be done by
+code running in Flash.
+The IAP function entry point is retrieved by reading the NMI vector in ROM (0x00100008).
+This function takes one argument in parameter: the command to be sent to the EEFC.
+This function returns the value of the EEFC_FSR.
  */
 uint32_t efc_perform_command(Efc *p_efc, uint32_t ul_command,
 		uint32_t ul_argument)
