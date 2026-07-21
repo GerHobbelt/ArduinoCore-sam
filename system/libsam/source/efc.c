@@ -55,8 +55,8 @@ extern "C" {
 /**
  * \defgroup sam_drivers_efc_group Enhanced Embedded Flash Controller (EEFC)
  *
- * The Enhanced Embedded Flash Controller ensures the interface of the Flash block with
- * the 32-bit internal bus.
+ * The Enhanced Embedded Flash Controller ensures the interface of the Flash
+ * block with the 32-bit internal bus.
  *
  * @{
  */
@@ -78,7 +78,7 @@ extern "C" {
 
 #if SAM4S_SERIES
 #define EEFC_FCR_FCMD(value) \
-    ((EEFC_FCR_FCMD_Msk & ((value) << EEFC_FCR_FCMD_Pos)))
+	((EEFC_FCR_FCMD_Msk & ((value) << EEFC_FCR_FCMD_Pos)))
 #define EEFC_ERROR_FLAGS  (EEFC_FSR_FLOCKE | EEFC_FSR_FCMDE | EEFC_FSR_FLERR)
 #else
 #define EEFC_ERROR_FLAGS  (EEFC_FSR_FLOCKE | EEFC_FSR_FCMDE)
@@ -327,7 +327,7 @@ uint32_t efc_perform_read_sequence(Efc *p_efc,
 	p_efc->EEFC_FCR = EEFC_FCR_FKEY_PASSWD | EEFC_FCR_FARG(0)
 			| EEFC_FCR_FCMD(ul_cmd_st);
 #else
-    p_efc->EEFC_FCR = EEFC_FCR_FKEY(FWP_KEY) | EEFC_FCR_FARG(0)
+	p_efc->EEFC_FCR = EEFC_FCR_FKEY(FWP_KEY) | EEFC_FCR_FARG(0)
 			| EEFC_FCR_FCMD(ul_cmd_st);
 #endif
 	/* Wait for the FRDY bit in the Flash Programming Status Register

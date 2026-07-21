@@ -54,15 +54,15 @@ extern "C" {
 /**INDENT-ON**/
 /// @endcond
 
-/*! \name EFC return codes */
+/*! \name EFC return codes, which are mixed with the EEFC_FSR register's error status bits: FLOCKE & FCMDE */
 //! @{
 typedef enum efc_rc {
-	EFC_RC_OK = 0,	    //!< Operation OK
-	EFC_RC_YES = 0,	    //!< Yes
-	EFC_RC_NO = 1,	    //!< No
-	EFC_RC_ERROR = 1,	//!< General error
-	EFC_RC_INVALID,	    //!< Invalid argument input
-	EFC_RC_NOT_SUPPORT = 0xFFFFFFFF	//!< Operation is not supported
+	EFC_RC_OK = 0,      //!< Operation OK
+	EFC_RC_YES = 0,     //!< Yes
+	EFC_RC_NO = 1,      //!< No
+	EFC_RC_ERROR = 0x10,            //!< General error
+	EFC_RC_INVALID = 0x20,          //!< Invalid argument input
+	EFC_RC_NOT_SUPPORT = 0xFFFFFFFF //!< Operation is not supported
 } efc_rc_t;
 //! @}
 
