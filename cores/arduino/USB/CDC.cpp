@@ -173,6 +173,8 @@ void Serial_::end(void)
 
 void Serial_::accept(void)
 {
+	if (!Is_otg_enabled()) return;
+	
 	static uint32_t guard = 0;
 
 	// synchronized access to guard
@@ -191,17 +193,17 @@ void Serial_::accept(void)
 	// current location of the tail), we're about to overflow the buffer
 	// and so we don't write the character or advance the head.
 	while (i != buffer->tail) {
-		uint32_t c;
 		if (!USBD_Available(CDC_RX)) {
 			udd_ack_fifocon(CDC_RX);
 			break;
 		}
-		c = USBD_Recv(CDC_RX);
-		// c = UDD_Recv8(CDC_RX & 0xF);
-		buffer->buffer[buffer->head] = c;
-		buffer->head = i;
-
-		i = (i + 1) % CDC_SERIAL_BUFFER_SIZE;
+		uint8_t c[CDC_SERIAL_BUFFER_SIZE];
+        uint32_t k = USBD_Recv(CDC_RX, &c, (buffer->tail - i) % CDC_SERIAL_BUFFER_SIZE);
+		uint32_t j;
+        for (j = 0; j < k; j++) 
+		  buffer->buffer[(buffer->head + j) % CDC_SERIAL_BUFFER_SIZE] = c[j];
+        buffer->head = (buffer->head + k) % CDC_SERIAL_BUFFER_SIZE;
+        i = (i + k) % CDC_SERIAL_BUFFER_SIZE;
 	}
 
 	// release the guard
@@ -210,6 +212,8 @@ void Serial_::accept(void)
 
 int Serial_::available(void)
 {
+	if (!Is_otg_enabled()) return 0;
+	
 	ring_buffer *buffer = &cdc_rx_buffer;
 	return (unsigned int)(CDC_SERIAL_BUFFER_SIZE + buffer->head - buffer->tail) % CDC_SERIAL_BUFFER_SIZE;
 }
@@ -223,6 +227,8 @@ int Serial_::availableForWrite(void)
 
 int Serial_::peek(void)
 {
+	if (!Is_otg_enabled()) return -1;
+	
 	ring_buffer *buffer = &cdc_rx_buffer;
 
 	if (buffer->head == buffer->tail)
@@ -237,6 +243,8 @@ int Serial_::peek(void)
 
 int Serial_::read(void)
 {
+	if (!Is_otg_enabled()) return -1;
+	
 	ring_buffer *buffer = &cdc_rx_buffer;
 
 	// if the head isn't ahead of the tail, we don't have any characters
@@ -256,11 +264,15 @@ int Serial_::read(void)
 
 void Serial_::flush(void)
 {
+	if (!Is_otg_enabled()) return;
+	
 	USBD_Flush(CDC_TX);
 }
 
 size_t Serial_::write(const uint8_t *buffer, size_t size)
 {
+	if (!Is_otg_enabled()) return 0;
+	
 	/* only try to send bytes if the high-level CDC connection itself
 	 is open (not just the pipe) - the OS should set lineState when the port
 	 is opened and clear lineState when the port is closed.
@@ -270,7 +282,7 @@ size_t Serial_::write(const uint8_t *buffer, size_t size)
 	// TODO - ZE - check behavior on different OSes and test what happens if an
 	// open connection isn't broken cleanly (cable is yanked out, host dies
 	// or locks up, or host virtual serial port hangs)
-	if (_usbLineInfo.lineState > 0)
+	if (_usbLineInfo.lineState & 0x01)
 	{
 		int r = USBD_Send(CDC_TX, buffer, size);
 
@@ -306,12 +318,11 @@ Serial_::operator bool()
 
 	bool result = false;
 
-	if (_usbLineInfo.lineState > 0)
+	if (_usbLineInfo.lineState & 0x01)
 	{
 		result = true;
 	}
 
-	delay(10);
 	return result;
 }
 
@@ -336,7 +347,7 @@ int32_t Serial_::readBreak() {
 	return ret;
 }
 
-unsigned long Serial_::baud() {
+uint32_t Serial_::baud() {
 	return _usbLineInfo.dwDTERate;
 }
 

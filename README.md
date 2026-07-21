@@ -1,3 +1,7 @@
+This is a fork from the original repository for Arduino Due. This work solves the problem that some boards cannot be uploaded by the programming port.
+
+The main changes are located in firmwares/atmega16u2.
+
 # Enhanced Arduino Core for SAM3X CPU
 
 This repository is based from the [Arduio Sam SDK for cortex-m3](https://github.com/arduino/ArduinoCore-sam). The sdk was modified to include the following features which are not supported by the main repository:

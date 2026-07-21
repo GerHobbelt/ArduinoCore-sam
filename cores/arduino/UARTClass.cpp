@@ -28,9 +28,9 @@ UARTClass::UARTClass( Uart *pUart, IRQn_Type dwIrq, uint32_t dwId, RingBuffer *p
   _rx_buffer = pRx_buffer;
   _tx_buffer = pTx_buffer;
 
-  _pUart=pUart;
-  _dwIrq=dwIrq;
-  _dwId=dwId;
+  _pUart = pUart;
+  _dwIrq = dwIrq;
+  _dwId = dwId;
 }
 
 // Public Methods //////////////////////////////////////////////////////////////
@@ -60,13 +60,13 @@ void UARTClass::init(const uint32_t dwBaudRate, const uint32_t modeReg)
   // Configure mode
   _pUart->UART_MR = modeReg;
 
-  // Configure baudrate (asynchronous, no oversampling)
-  _pUart->UART_BRGR = (SystemCoreClock / dwBaudRate) >> 4;
+  // Configure baudrate (asynchronous, no oversampling, with rounding)
+  _pUart->UART_BRGR = ((SystemCoreClock / dwBaudRate) + 8) >> 4;
 
   // Configure interrupts
   _pUart->UART_IDR = 0xFFFFFFFF;
   _pUart->UART_IER = UART_IER_RXRDY | UART_IER_OVRE | UART_IER_FRAME;
-  
+
   // Enable UART interrupt in NVIC
   NVIC_EnableIRQ(_dwIrq);
 
@@ -104,14 +104,14 @@ uint32_t UARTClass::getInterruptPriority()
 
 int UARTClass::available( void )
 {
-  return (uint32_t)(SERIAL_BUFFER_SIZE + _rx_buffer->_iHead - _rx_buffer->_iTail) % SERIAL_BUFFER_SIZE;
+  return _rx_buffer->wrapIndex(_rx_buffer->size() + _rx_buffer->_iHead - _rx_buffer->_iTail);
 }
 
 int UARTClass::availableForWrite(void)
 {
   int head = _tx_buffer->_iHead;
   int tail = _tx_buffer->_iTail;
-  if (head >= tail) return SERIAL_BUFFER_SIZE - 1 - head + tail;
+  if (head >= tail) return _tx_buffer->size() - 1 - head + tail;
   return tail - head - 1;
 }
 
@@ -120,7 +120,7 @@ int UARTClass::peek( void )
   if ( _rx_buffer->_iHead == _rx_buffer->_iTail )
     return -1;
 
-  return _rx_buffer->_aucBuffer[_rx_buffer->_iTail];
+  return _rx_buffer->buffer()[_rx_buffer->_iTail];
 }
 
 int UARTClass::read( void )
@@ -129,8 +129,8 @@ int UARTClass::read( void )
   if ( _rx_buffer->_iHead == _rx_buffer->_iTail )
     return -1;
 
-  uint8_t uc = _rx_buffer->_aucBuffer[_rx_buffer->_iTail];
-  _rx_buffer->_iTail = (unsigned int)(_rx_buffer->_iTail + 1) % SERIAL_BUFFER_SIZE;
+  uint8_t uc = _rx_buffer->buffer()[_rx_buffer->_iTail];
+  _rx_buffer->_iTail = _rx_buffer->wrapIndex(_rx_buffer->_iTail + 1);
   return uc;
 }
 
@@ -142,6 +142,20 @@ void UARTClass::flush( void )
    ;
 }
 
+void UARTClass::drop( void )
+{
+  // clear the buffer i.e. drop all buffered output!
+  _tx_buffer->_iTail = _tx_buffer->_iHead;
+  // and fix race condition where write interrupt was just busy fetching a byte, so we clashed above:
+  if ((_pUart->UART_SR & UART_SR_TXRDY) != UART_SR_TXRDY)
+    _tx_buffer->_iTail = _tx_buffer->_iHead;
+}
+
+bool UARTClass::isFlushed( void )
+{
+  return ((_pUart->UART_SR & UART_SR_TXRDY) == UART_SR_TXRDY) && (_tx_buffer->_iTail == _tx_buffer->_iHead);
+}
+
 size_t UARTClass::write( const uint8_t uc_data )
 {
   // Is the hardware currently busy?
@@ -149,11 +163,11 @@ size_t UARTClass::write( const uint8_t uc_data )
       (_tx_buffer->_iTail != _tx_buffer->_iHead))
   {
     // If busy we buffer
-    int nextWrite = (_tx_buffer->_iHead + 1) % SERIAL_BUFFER_SIZE;
+    int nextWrite = _tx_buffer->wrapIndex(_tx_buffer->_iHead + 1);
     while (_tx_buffer->_iTail == nextWrite)
       ; // Spin locks if we're about to overwrite the buffer. This continues once the data is sent
 
-    _tx_buffer->_aucBuffer[_tx_buffer->_iHead] = uc_data;
+    _tx_buffer->buffer()[_tx_buffer->_iHead] = uc_data;
     _tx_buffer->_iHead = nextWrite;
     // Make sure TX interrupt is enabled
     _pUart->UART_IER = UART_IER_TXRDY;
@@ -173,11 +187,9 @@ void UARTClass::IrqHandler( void )
   // Did we receive data?
   if ((status & UART_SR_RXRDY) == UART_SR_RXRDY)
   {
-    uint8_t uart_rx_frame=_pUart->UART_RHR;
-    _rx_buffer->store_char(uart_rx_frame);
-    if(pRx_irq_cb != nullptr)
+    if (! _rx_buffer->store_char(_pUart->UART_RHR))
     {
-        pRx_irq_cb(uart_rx_frame,rx_irq_args);
+      setOverflowed();
     }
   }
 
@@ -185,8 +197,8 @@ void UARTClass::IrqHandler( void )
   if ((status & UART_SR_TXRDY) == UART_SR_TXRDY) 
   {
     if (_tx_buffer->_iTail != _tx_buffer->_iHead) {
-      _pUart->UART_THR = _tx_buffer->_aucBuffer[_tx_buffer->_iTail];
-      _tx_buffer->_iTail = (unsigned int)(_tx_buffer->_iTail + 1) % SERIAL_BUFFER_SIZE;
+      _pUart->UART_THR = _tx_buffer->buffer()[_tx_buffer->_iTail];
+      _tx_buffer->_iTail = _tx_buffer->wrapIndex(_tx_buffer->_iTail + 1);
     }
     else
     {
@@ -203,8 +215,3 @@ void UARTClass::IrqHandler( void )
   }
 }
 
-void UARTClass::attachRxIrq(rx_irq_cb cb,void * args)
-{
-    pRx_irq_cb = cb;
-    rx_irq_args = args;
-}

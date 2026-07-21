@@ -95,7 +95,7 @@ uint32_t adc_init(Adc *p_adc, const uint32_t ul_mck,
 uint32_t adc_init(Adc *p_adc, const uint32_t ul_mck,
 		const uint32_t ul_adc_clock, const uint8_t uc_startuptime)
 {
-	uint32_t startup_table[] = { 0, 8, 16, 24, 64, 80, 96, 112, 512, 576, 640, 704, 768, 832, 896, 960 };
+	static const uint32_t startup_table[] = { 0, 8, 16, 24, 64, 80, 96, 112, 512, 576, 640, 704, 768, 832, 896, 960 };
 	uint32_t ul_prescal, ul_startup,  ul_mr_startup, ul_real_adc_clock;
 	p_adc->ADC_CR = ADC_CR_SWRST;
 
@@ -196,7 +196,7 @@ void adc_configure_trigger(Adc *p_adc, const enum adc_trigger_t trigger,
 	p_adc->ADC_MR &= ~(ADC_MR_TRGEN | ADC_MR_TRGSEL_Msk | ADC_MR_FREERUN); //Clear all bits related to triggers and freerun
 	
 	//Configure FreeRun
-	if(uc_freerun & ADC_MR_FREERUN == ADC_MR_FREERUN_ON) {                 //FreeRun is enabled
+	if((uc_freerun & ADC_MR_FREERUN) == ADC_MR_FREERUN_ON) {                 //FreeRun is enabled
 		p_adc->ADC_MR |= ADC_MR_FREERUN_ON;
 		
 		//Free Run Mode: Never wait for any trigger
@@ -205,7 +205,7 @@ void adc_configure_trigger(Adc *p_adc, const enum adc_trigger_t trigger,
 	}
 	
 	//Configure hardware triggers
-	if(trigger & ADC_MR_TRGEN == ADC_MR_TRGEN_EN) {                       //Hardware trigger is enabled
+	if((trigger & ADC_MR_TRGEN) == ADC_MR_TRGEN_EN) {                       //Hardware trigger is enabled
 		p_adc->ADC_MR |= (trigger & ADC_MR_TRGSEL_Msk) | ADC_MR_TRGEN_EN; //Set trigger selection bits and enable hardware trigger
 	}
 }
@@ -222,7 +222,7 @@ void adc_configure_trigger(Adc *p_adc, const enum adc_trigger_t trigger)
 	p_adc->ADC_MR &= ~(ADC_MR_TRGEN | ADC_MR_TRGSEL_Msk);                  //Clear all bits related to triggers
 	
 	//Configure hardware triggers
-	if(trigger & ADC_MR_TRGEN == ADC_MR_TRGEN_EN) {                        //Hardware trigger is enabled
+	if((trigger & ADC_MR_TRGEN) == ADC_MR_TRGEN_EN) {                        //Hardware trigger is enabled
 		p_adc->ADC_MR |= (trigger & ADC_MR_TRGSEL_Msk) | ADC_MR_TRGEN_EN;  //Set trigger selection bits and enable hardware trigger
 	}
 }
