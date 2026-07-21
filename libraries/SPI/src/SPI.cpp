@@ -167,7 +167,15 @@ void SPIClass::setDataMode(uint8_t _pin, uint8_t _mode) {
 	mode[ch] = _mode | SPI_CSR_CSAAT;
 	// SPI_CSR_DLYBCT(1) keeps CS enabled for 32 MCLK after a completed
 	// transfer. Some device needs that for working properly.
-	SPI_ConfigureNPCS(spi, ch, mode[ch] | SPI_CSR_SCBR(divider[ch]) | SPI_CSR_DLYBCT(1));
+	SPI_ConfigureNPCS(spi, ch, mode[ch] | SPI_CSR_SCBR(divider[ch]) | uint32_t(dataWidth[ch]) | SPI_CSR_DLYBCT(1));
+}
+
+void SPIClass::setDataWidth(uint8_t _pin, uint8_t _dataWidth) {
+	uint32_t ch = BOARD_PIN_TO_SPI_CHANNEL(_pin);
+	dataWidth[ch] = _dataWidth;
+	// SPI_CSR_DLYBCT(1) keeps CS enabled for 32 MCLK after a completed
+	// transfer. Some device needs that for working properly.
+	SPI_ConfigureNPCS(spi, ch, mode[ch] | SPI_CSR_SCBR(divider[ch]) | uint32_t(dataWidth[ch]) | SPI_CSR_DLYBCT(1));
 }
 
 void SPIClass::setClockDivider(uint8_t _pin, uint8_t _divider) {
@@ -175,7 +183,32 @@ void SPIClass::setClockDivider(uint8_t _pin, uint8_t _divider) {
 	divider[ch] = _divider;
 	// SPI_CSR_DLYBCT(1) keeps CS enabled for 32 MCLK after a completed
 	// transfer. Some device needs that for working properly.
-	SPI_ConfigureNPCS(spi, ch, mode[ch] | SPI_CSR_SCBR(divider[ch]) | SPI_CSR_DLYBCT(1));
+	SPI_ConfigureNPCS(spi, ch, mode[ch] | SPI_CSR_SCBR(divider[ch]) | uint32_t(dataWidth[ch]) | SPI_CSR_DLYBCT(1));
+}
+
+// only works if data mode is set correctly to SPI_CSR_BITS_16_BIT
+uint16_t SPIClass::transfer16(byte _pin, uint16_t _data, SPITransferMode _mode) {
+	uint32_t ch = BOARD_PIN_TO_SPI_CHANNEL(_pin);
+	// Reverse bit order
+	if (bitOrder[ch] == LSBFIRST)
+		_data = __REV(__RBIT(_data));
+	uint32_t d = _data | SPI_PCS(ch);
+	if (_mode == SPI_LAST)
+		d |= SPI_TDR_LASTXFER;
+
+	// SPI_Write(spi, _channel, _data);
+	while ((spi->SPI_SR & SPI_SR_TDRE) == 0)
+		;
+	spi->SPI_TDR = d;
+
+	// return SPI_Read(spi);
+	while ((spi->SPI_SR & SPI_SR_RDRF) == 0)
+		;
+	d = spi->SPI_RDR;
+	// Reverse bit order
+	if (bitOrder[ch] == LSBFIRST)
+		d = __REV(__RBIT(d));
+	return d & 0xFFFF;
 }
 
 byte SPIClass::transfer(byte _pin, uint8_t _data, SPITransferMode _mode) {
@@ -200,23 +233,6 @@ byte SPIClass::transfer(byte _pin, uint8_t _data, SPITransferMode _mode) {
 	if (bitOrder[ch] == LSBFIRST)
 		d = __REV(__RBIT(d));
 	return d & 0xFF;
-}
-
-uint16_t SPIClass::transfer16(byte _pin, uint16_t _data, SPITransferMode _mode) {
-	union { uint16_t val; struct { uint8_t lsb; uint8_t msb; }; } t;
-	uint32_t ch = BOARD_PIN_TO_SPI_CHANNEL(_pin);
-
-	t.val = _data;
-
-	if (bitOrder[ch] == LSBFIRST) {
-		t.lsb = transfer(_pin, t.lsb, SPI_CONTINUE);
-		t.msb = transfer(_pin, t.msb, _mode);
-	} else {
-		t.msb = transfer(_pin, t.msb, SPI_CONTINUE);
-		t.lsb = transfer(_pin, t.lsb, _mode);
-	}
-
-	return t.val;
 }
 
 void SPIClass::transfer(byte _pin, void *_buf, size_t _count, SPITransferMode _mode) {

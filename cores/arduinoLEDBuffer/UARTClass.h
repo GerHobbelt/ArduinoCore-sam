@@ -52,7 +52,10 @@ class UARTClass : public HardwareSerial
     int peek(void);
     int read(void);
     void flush(void);
+    void drop(void);
+    bool isFlushed(void);
     size_t write(const uint8_t c);
+
     using Print::write; // pull in write(str) and write(buf, size) from Print
 
     void setInterruptPriority(uint32_t priority);
@@ -60,6 +63,18 @@ class UARTClass : public HardwareSerial
 
     void IrqHandler(void);
 
+  protected:
+    volatile bool overflowed;
+
+  public:
+    bool getOverflowed() {
+      bool v = overflowed;
+      overflowed = false;
+      return v;
+    }
+    void setOverflowed() {
+      overflowed = true;
+    }
     operator bool() { return true; }; // UART always active
 
     volatile unsigned char* getBufferBase() { return _rx_buffer->_aucBuffer; }
@@ -74,7 +89,6 @@ class UARTClass : public HardwareSerial
     Uart* _pUart;
     IRQn_Type _dwIrq;
     uint32_t _dwId;
-
 };
 
 #endif // _UART_CLASS_

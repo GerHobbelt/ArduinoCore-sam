@@ -117,7 +117,7 @@ extern "C" {
 /*
  * Pins descriptions
  */
-extern const PinDescription g_APinDescription[]=
+extern const PinDescription g_APinDescription[] =
 {
   // 0 .. 53 - Digital pins
   // ----------------------
@@ -298,21 +298,19 @@ uint8_t g_pinStatus[PINS_COUNT] = {0};
 }
 #endif
 
-#define MAKE_BUFFER(name, size) \
-volatile uint8_t name##_bytes[size]; \
-RingBuffer name(name##_bytes, size)
-
 /*
  * UART objects
  */
-MAKE_BUFFER(rx_buffer1, SERIAL_BUFFER_SIZE_DEFAULT);
-MAKE_BUFFER(tx_buffer1, SERIAL_BUFFER_SIZE_DEFAULT);
+TinyRingBuffer rx_buffer1;
+TinyRingBuffer tx_buffer1;
 
 UARTClass Serial(UART, UART_IRQn, ID_UART, &rx_buffer1, &tx_buffer1);
+
 void serialEvent() __attribute__((weak));
 void serialEvent() { }
 
 // IT handlers
+void UART_Handler(void)  __attribute__((weak));
 void UART_Handler(void)
 {
   Serial.IrqHandler();
@@ -322,13 +320,12 @@ void UART_Handler(void)
 /*
  * USART objects
  */
- 
-MAKE_BUFFER(rx_buffer2, SERIAL_BUFFER_SIZE_DEFAULT);
-MAKE_BUFFER(rx_buffer3, SERIAL_BUFFER_SIZE_DEFAULT);
-MAKE_BUFFER(rx_buffer4, SERIAL_BUFFER_SIZE_DEFAULT);
-MAKE_BUFFER(tx_buffer2, SERIAL_BUFFER_SIZE_DEFAULT);
-MAKE_BUFFER(tx_buffer3, SERIAL_BUFFER_SIZE_DEFAULT);
-MAKE_BUFFER(tx_buffer4, SERIAL_BUFFER_SIZE_DEFAULT);
+TinyRingBuffer rx_buffer2;
+TinyRingBuffer rx_buffer3;
+TinyRingBuffer rx_buffer4;
+TinyRingBuffer tx_buffer2;
+TinyRingBuffer tx_buffer3;
+TinyRingBuffer tx_buffer4;
 
 USARTClass Serial1(USART0, USART0_IRQn, ID_USART0, &rx_buffer2, &tx_buffer2);
 void serialEvent1() __attribute__((weak));
@@ -341,17 +338,17 @@ void serialEvent3() __attribute__((weak));
 void serialEvent3() { }
 
 // IT handlers
-void USART0_Handler(void)
+__attribute__((weak)) void USART0_Handler(void)
 {
   Serial1.IrqHandler();
 }
 
-void USART1_Handler(void)
+__attribute__((weak)) void USART1_Handler(void)
 {
   Serial2.IrqHandler();
 }
 
-void USART3_Handler(void)
+__attribute__((weak)) void USART3_Handler(void)
 {
   Serial3.IrqHandler();
 }
@@ -384,9 +381,6 @@ void init( void )
     // Capture error
     while (true);
   }
-
-  // Initialize C library
-  __libc_init_array();
 
   // Disable pull-up on every pin
   for (unsigned i = 0; i < PINS_COUNT; i++)
@@ -450,6 +444,9 @@ void init( void )
 
   // Initialize analogOutput module
   analogOutputInit();
+
+  // Initialize C library and run C++ constructors
+  __libc_init_array();
 }
 
 #ifdef __cplusplus
