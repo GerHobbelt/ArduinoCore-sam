@@ -1,3 +1,25 @@
+# Enhanced Arduino Core for SAM3X CPU
+
+This repository is based from the [Arduio Sam SDK for cortex-m3](https://github.com/arduino/ArduinoCore-sam). The sdk was modified to include the following features which are not supported by the main repository:
+
+- Attachment of a callback function to the IRQ handler of USART/UART peripherals. This comes handy when you need to process data in real-time.
+- Addition of USART2 as Serial4.
+- Updated GCC to version 11.2.1.
+- Using by default C++20 and C17
+
+## Installation
+
+Add the following url to your Arduino package manager
+
+```
+https://raw.githubusercontent.com/vChavezB/ArduinoBoards/master/SAM3X/package_vchavezb_sam-enhanced.json
+```
+
+---
+The rest of this readme has been kept unmodified and is as-is from the original repo.
+
+---
+
 Optimised host <-> Arduino Due streaming data transfer over native USB port
 ============================================================================
 
