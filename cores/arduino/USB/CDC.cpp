@@ -267,9 +267,9 @@ int Serial_::read(uint8_t *d, size_t s)
 	uint32_t k = r;
 	// May reach end of buffer before completing transfer.
 	while(r) {
-	  uint32_t tm = (buffer->tail)%b;
+	  uint32_t tm = (buffer->tail) % b;
 	  uint32_t g = min(r, b-tm);
-	  for (int i = 0 ; i < g; i++) { 
+	  for (uint32_t i = 0 ; i < g; i++) { 
 	    d[i] = buffer->buffer[tm + i];
 	  }
 	  d += g;
