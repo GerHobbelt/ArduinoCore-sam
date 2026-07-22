@@ -108,7 +108,8 @@ void tone_handler(void) {
     // Clear the interrupt
     TC_GetStatus(TONE_TC, TONE_TC_CHANNEL);
 
-    if (toggleCount != 0) {
+	auto tc = toggleCount;
+    if (tc != 0) {
         // Toggle the ouput pin
         if (port_pio_registers->PIO_ODSR & port_bitmask) {
             // If high, go low
@@ -118,8 +119,9 @@ void tone_handler(void) {
             port_pio_registers->PIO_SODR = port_bitmask;
         }
 
-        if (toggleCount > 0)
-            toggleCount--;
+        if (tc > 0)
+            tc--;
+		toggleCount = tc;
     } else {
         TC_Stop(TONE_TC, TONE_TC_CHANNEL);
         port_pio_registers->PIO_CODR = port_bitmask;         // Take pin low
