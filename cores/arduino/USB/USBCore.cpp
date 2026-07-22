@@ -152,7 +152,7 @@ uint32_t USBD_Recv(uint32_t ep, void* d, uint32_t len)
     if (!_usbConfiguration)
         return -1;
 
-	len = min(UDD_FifoByteCount(ep & 0xF), len);
+    len = min(UDD_FifoByteCount(ep & 0xF), len);
     uint8_t* dst = (uint8_t*)d;
     UDD_Recv(ep & 0xF, dst, len);
     
