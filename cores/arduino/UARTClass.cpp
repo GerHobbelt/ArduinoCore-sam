@@ -64,6 +64,15 @@ void UARTClass::init(const uint32_t dwBaudRate, const uint32_t modeReg)
   _pUart->UART_BRGR = ((SystemCoreClock / dwBaudRate) + 8) >> 4;
 
   // Configure interrupts
+  //
+  // SAM3X datasheet says:
+  //   On receipt of the interrupt signal, the CPU enters the interrupt handler (Refer to the Interrupt
+  //   Controller). To ascertain which interrupt has been generated, read the interrupt status register. Note that this
+  //   register clears itself when read. At reset, all interrupts are disabled. To enable an interrupt, write to interrupt enable
+  //   register with the pertinent interrupt bit set to 1. To disable an interrupt, write to interrupt disable register with the
+  //   pertinent interrupt bit set to 1. To check whether an interrupt is enabled or disabled, read interrupt mask register: if
+  //   the bit is set to 1, the interrupt is disabled.
+  //
   _pUart->UART_IDR = 0xFFFFFFFF;
   _pUart->UART_IER = UART_IER_RXRDY | UART_IER_OVRE | UART_IER_FRAME;
 
@@ -136,10 +145,12 @@ int UARTClass::read( void )
 
 void UARTClass::flush( void )
 {
-  while (_tx_buffer->_iHead != _tx_buffer->_iTail); //wait for transmit data to be sent
+  while (_tx_buffer->_iHead != _tx_buffer->_iTail)
+    ; // Spin locks: wait for transmit data to be sent
+	
   // Wait for transmission to complete
   while ((_pUart->UART_SR & UART_SR_TXEMPTY) != UART_SR_TXEMPTY)
-   ;
+    ;
 }
 
 void UARTClass::drop( void )
@@ -169,6 +180,7 @@ size_t UARTClass::write( const uint8_t uc_data )
 
     _tx_buffer->buffer()[_tx_buffer->_iHead] = uc_data;
     _tx_buffer->_iHead = nextWrite;
+
     // Make sure TX interrupt is enabled
     _pUart->UART_IER = UART_IER_TXRDY;
   }
