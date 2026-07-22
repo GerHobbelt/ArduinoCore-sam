@@ -65,17 +65,47 @@ class UARTClass : public HardwareSerial
     void IrqHandler(void);
 
   protected:
-    volatile bool overflowed;
+    volatile uint8_t error_state;  // bits: 0: RX overflow; 
 
   public:
     bool getOverflowed() {
-      bool v = overflowed;
-      overflowed = false;
+      bool v = !!(error_state & 0x04);
+      error_state &= ~0x04; // clear the bit
       return v;
     }
     void setOverflowed() {
-      overflowed = true;
+      error_state |= 0x04; // set RX buffer overflow bit
     }
+  protected:
+    // error reporting outside ISR:
+	void setUARTstatusBits(uint8_t errors) {
+	  error_state |= errors & (UART_SR_OVRE | UART_SR_FRAME | UART_SR_PARE);
+	}
+  public:
+    bool hasAnyError() {
+	  return !!error_state;
+	}
+    uint8_t getAndClearAllErrors() {
+	  uint8_t v = error_state;
+	  error_state = 0;
+	  return v;
+	}
+	bool getOverrunError() {
+	  bool v = !!(error_state & UART_SR_OVRE);
+	  error_state &= ~UART_SR_OVRE;
+	  return v;
+	}
+	bool getFramingError() {
+	  bool v = !!(error_state & UART_SR_FRAME);
+	  error_state &= ~UART_SR_FRAME;
+	  return v;
+	}
+	bool getParityError() {
+	  bool v = !!(error_state & UART_SR_PARE);
+	  error_state &= ~UART_SR_PARE;
+	  return v;
+	}
+	
     operator bool() { return true; }; // UART always active
 
   protected:

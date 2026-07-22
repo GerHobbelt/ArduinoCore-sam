@@ -226,9 +226,13 @@ void UARTClass::IrqHandler( void )
   }
 
   // Acknowledge errors
-  if ((status & UART_SR_OVRE) == UART_SR_OVRE || (status & UART_SR_FRAME) == UART_SR_FRAME)
+  uint8_t errors = status & (UART_SR_OVRE | UART_SR_FRAME | UART_SR_PARE); // bits 7, 6 and 5 so it fits into an uint8_t
+  if (errors)
   {
-    // TODO: error reporting outside ISR
+    // error reporting outside ISR:
+	setUARTstatusBits(errors);
+	
+	// reset status bits PARE, FRAME and OVRE
     _pUart->UART_CR |= UART_CR_RSTSTA;
   }
 }
