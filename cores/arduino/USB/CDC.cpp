@@ -252,7 +252,7 @@ int Serial_::read(void)
 	{
 	        uint32_t b = CDC_SERIAL_BUFFER_SIZE;
 		unsigned char c = buffer->buffer[(buffer->tail)%b];
-		buffer->tail++;
+		buffer->tail += 1;
 		return c;
 	}
 }
