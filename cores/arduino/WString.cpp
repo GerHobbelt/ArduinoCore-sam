@@ -687,20 +687,20 @@ void String::replace(const String& find, const String& replace)
 	}
 }
 
-void String::remove(unsigned int index){
+void String::remove(unsigned int index) {
 	// Pass the biggest integer as the count. The remove method
 	// below will take care of truncating it at the end of the
 	// string.
 	remove(index, (unsigned int)-1);
 }
 
-void String::remove(unsigned int index, unsigned int count){
+void String::remove(unsigned int index, unsigned int count) {
 	if (index >= len) { return; }
 	if (count <= 0) { return; }
 	if (count > len - index) { count = len - index; }
 	char *writeTo = buffer + index;
 	len = len - count;
-	strncpy(writeTo, buffer + index + count,len - index);
+	strncpy(writeTo, buffer + index + count, len - index);
 	buffer[len] = 0;
 }
 
