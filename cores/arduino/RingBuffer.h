@@ -149,7 +149,8 @@ class RingBuffer
 
 	void reset( void )
 	{
-	  _iTail = _iHead = 0;
+	  _iTail = 0;
+	  _iHead = 0;
 	}
 
 	bool isFlushed( void ) {
