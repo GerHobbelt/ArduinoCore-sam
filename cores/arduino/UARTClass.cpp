@@ -48,6 +48,10 @@ void UARTClass::begin(const uint32_t dwBaudRate, const UARTModes config)
 
 void UARTClass::init(const uint32_t dwBaudRate, const uint32_t modeReg)
 {
+  // Make sure both ring buffers are initialized back to empty.
+  _rx_buffer->reset();
+  _tx_buffer->reset();
+  
   // Configure PMC
   pmc_enable_periph_clk( _dwId );
 
@@ -79,10 +83,6 @@ void UARTClass::init(const uint32_t dwBaudRate, const uint32_t modeReg)
   // Enable UART interrupt in NVIC
   NVIC_EnableIRQ(_dwIrq);
 
-  // Make sure both ring buffers are initialized back to empty.
-  _rx_buffer->_iHead = _rx_buffer->_iTail = 0;
-  _tx_buffer->_iHead = _tx_buffer->_iTail = 0;
-
   // Enable receiver and transmitter
   _pUart->UART_CR = UART_CR_RXEN | UART_CR_TXEN;
 }
@@ -90,7 +90,7 @@ void UARTClass::init(const uint32_t dwBaudRate, const uint32_t modeReg)
 void UARTClass::end( void )
 {
   // Clear any received data
-  _rx_buffer->_iHead = _rx_buffer->_iTail;
+  _rx_buffer->drop();
 
   // Wait for any outstanding data to be sent
   flush();
@@ -113,40 +113,27 @@ uint32_t UARTClass::getInterruptPriority()
 
 int UARTClass::available( void )
 {
-  return _rx_buffer->wrapIndex(_rx_buffer->size() + _rx_buffer->_iHead - _rx_buffer->_iTail);
+  return _rx_buffer->available();
 }
 
 int UARTClass::availableForWrite(void)
 {
-  int head = _tx_buffer->_iHead;
-  int tail = _tx_buffer->_iTail;
-  if (head >= tail) return _tx_buffer->size() - 1 - head + tail;
-  return tail - head - 1;
+  return _tx_buffer->available();
 }
 
 int UARTClass::peek( void )
 {
-  if ( _rx_buffer->_iHead == _rx_buffer->_iTail )
-    return -1;
-
-  return _rx_buffer->buffer()[_rx_buffer->_iTail];
+  return _rx_buffer->peek_char();
 }
 
 int UARTClass::read( void )
 {
-  // if the head isn't ahead of the tail, we don't have any characters
-  if ( _rx_buffer->_iHead == _rx_buffer->_iTail )
-    return -1;
-
-  uint8_t uc = _rx_buffer->buffer()[_rx_buffer->_iTail];
-  _rx_buffer->_iTail = _rx_buffer->wrapIndex(_rx_buffer->_iTail + 1);
-  return uc;
+  return _rx_buffer->read_char();
 }
 
 void UARTClass::flush( void )
 {
-  while (_tx_buffer->_iHead != _tx_buffer->_iTail)
-    ; // Spin locks: wait for transmit data to be sent
+  _tx_buffer->flush();
 	
   // Wait for transmission to complete
   while ((_pUart->UART_SR & UART_SR_TXEMPTY) != UART_SR_TXEMPTY)
@@ -155,31 +142,25 @@ void UARTClass::flush( void )
 
 void UARTClass::drop( void )
 {
-  // clear the buffer i.e. drop all buffered output!
-  _tx_buffer->_iTail = _tx_buffer->_iHead;
-  // and fix race condition where write interrupt was just busy fetching a byte, so we clashed above:
-  if ((_pUart->UART_SR & UART_SR_TXRDY) != UART_SR_TXRDY)
-    _tx_buffer->_iTail = _tx_buffer->_iHead;
+  _tx_buffer->drop();
 }
 
 bool UARTClass::isFlushed( void )
 {
-  return ((_pUart->UART_SR & UART_SR_TXRDY) == UART_SR_TXRDY) && (_tx_buffer->_iTail == _tx_buffer->_iHead);
+  return ((_pUart->UART_SR & UART_SR_TXRDY) == UART_SR_TXRDY) && _tx_buffer->isFlushed();
 }
 
 size_t UARTClass::write( const uint8_t uc_data )
 {
   // Is the hardware currently busy?
   if (((_pUart->UART_SR & UART_SR_TXRDY) != UART_SR_TXRDY) |
-      (_tx_buffer->_iTail != _tx_buffer->_iHead))
+      !_tx_buffer->isFlushed())
   {
     // If busy we buffer
-    int nextWrite = _tx_buffer->wrapIndex(_tx_buffer->_iHead + 1);
-    while (_tx_buffer->_iTail == nextWrite)
-      ; // Spin locks if we're about to overwrite the buffer. This continues once the data is sent
-
-    _tx_buffer->buffer()[_tx_buffer->_iHead] = uc_data;
-    _tx_buffer->_iHead = nextWrite;
+    bool rv;
+	do {
+	  rv = _tx_buffer->store_char( uc_data );
+	} while (!rv);  // Spin locks if we're about to overwrite the buffer. This continues once the data is sent
 
     // Make sure TX interrupt is enabled
     _pUart->UART_IER = UART_IER_TXRDY;
@@ -192,6 +173,30 @@ size_t UARTClass::write( const uint8_t uc_data )
   return 1;
 }
 
+bool UARTClass::write_if_possible( const uint8_t uc_data )
+{
+  // Is the hardware currently busy?
+  if (((_pUart->UART_SR & UART_SR_TXRDY) != UART_SR_TXRDY) |
+      !_tx_buffer->isFlushed())
+  {
+    // If busy we buffer
+    bool rv = _tx_buffer->store_char( uc_data );
+
+	if (rv) {
+      // Make sure TX interrupt is enabled
+      _pUart->UART_IER = UART_IER_TXRDY;
+	}
+	
+	return rv;
+  }
+  else 
+  {
+     // Bypass buffering and send character directly
+     _pUart->UART_THR = uc_data;
+  }
+  return true;
+}
+
 void UARTClass::IrqHandler( void )
 {
   uint32_t status = _pUart->UART_SR;
@@ -199,7 +204,8 @@ void UARTClass::IrqHandler( void )
   // Did we receive data?
   if ((status & UART_SR_RXRDY) == UART_SR_RXRDY)
   {
-    if (! _rx_buffer->store_char(_pUart->UART_RHR))
+    // Note: do not use the interrupt disabling/enabling 'atomic' methods but use the non-atomic core methods instead.
+    if (! _rx_buffer->na__store_char(_pUart->UART_RHR))
     {
       setOverflowed();
     }
@@ -208,9 +214,9 @@ void UARTClass::IrqHandler( void )
   // Do we need to keep sending data?
   if ((status & UART_SR_TXRDY) == UART_SR_TXRDY) 
   {
-    if (_tx_buffer->_iTail != _tx_buffer->_iHead) {
-      _pUart->UART_THR = _tx_buffer->buffer()[_tx_buffer->_iTail];
-      _tx_buffer->_iTail = _tx_buffer->wrapIndex(_tx_buffer->_iTail + 1);
+	int c = _tx_buffer->na__read_char();
+    if (c >= 0 /* valid char, -1 means buffer was empty */) {
+      _pUart->UART_THR = c;
     }
     else
     {

@@ -19,6 +19,8 @@
 #include "RingBuffer.h"
 #include <string.h>			// memset, ...
 
+#if 0
+
 RingBuffer::RingBuffer()
 {
 #if 0
@@ -27,6 +29,8 @@ RingBuffer::RingBuffer()
     _iHead = 0;
     _iTail = 0;
 }
+
+#endif
 
 #if 0
 

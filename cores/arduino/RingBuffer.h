@@ -21,6 +21,7 @@
 
 #include <stdint.h>
 #include <string.h>			// memset, ...
+#include <sam3.h>           // __disable_irq() et al for Cortex M3 (SAM3 series)
 
 // Define constants and variables for buffering incoming serial data.  We're
 // using a ring buffer, in which head is the index of the location
@@ -32,8 +33,8 @@
 class RingBuffer
 {
   protected:
-    volatile int16_t _iHead;
-    volatile int16_t _iTail;
+    volatile int16_t _iHead{0};
+    volatile int16_t _iTail{0};
 	
   public:
     virtual uint16_t size() const = 0;
@@ -44,10 +45,13 @@ class RingBuffer
 	virtual volatile uint8_t *buffer() = 0;
 
   public:
-	RingBuffer();
+	RingBuffer() {}
 
-  protected:
-	inline bool i__store_char( uint8_t c ) {
+  // protected:
+  public:			
+    // the non-atomic methods will be useful for compound atomic operations and in interrupt handlers where the atomicity is implied.
+	
+	bool na__store_char( uint8_t c ) {
 	  auto i = (_iHead + 1) % size();
 
 	  // if we should be storing the received character into the location
@@ -62,19 +66,20 @@ class RingBuffer
 	  return false;
 	}
 
-	inline int i__available( void ) {
+	int na__available( void ) {
 	  return wrapIndex(size() + _iHead - _iTail);
 	}
 
-	inline int i__peek_char( void )
+	int na__peek_char( void )
 	{
+	  // if the head isn't ahead of the tail, we don't have any characters
 	  if ( _iHead == _iTail )
 	    return -1;
 
-	  return buffer()[_iTail];
+	  return uint32_t(buffer()[_iTail]);
 	}
 
-	inline int i__read_char( void )
+	int na__read_char( void )
 	{
 	  // if the head isn't ahead of the tail, we don't have any characters
 	  if ( _iHead == _iTail )
@@ -82,23 +87,18 @@ class RingBuffer
 
 	  uint8_t uc = buffer()[_iTail];
 	  _iTail = wrapIndex(_iTail + 1);
-	  return uc;
+	  return uint32_t(uc);
 	}
 
-	inline void i__flush( void )
-	{
-	  while (_iHead != _iTail)
-	    ; // Spin locks: wait for transmit data to be sent
-	}
-
-	inline void i__drop( void )
+	void na__drop( void )
 	{
 	  // clear the buffer i.e. drop all buffered output!
 	  _iTail = _iHead;
 	}
 
-	inline bool i__isFlushed( void )
+	bool na__isFlushed( void )
 	{
+	  // if the head isn't ahead of the tail, we don't have any characters
 	  return _iTail == _iHead;
 	}
 	
@@ -106,7 +106,7 @@ class RingBuffer
 	bool store_char( uint8_t c ) {
 	  // make it an atomic (non-interruptable) operation:
       __disable_irq();
-      auto rv = i__store_char(c);
+      auto rv = na__store_char(c);
       __enable_irq();
 	  return rv;
 	}
@@ -114,7 +114,7 @@ class RingBuffer
 	int available( void ) {
 	  // make it an atomic (non-interruptable) operation:
       __disable_irq();
-      auto rv = i__available();
+      auto rv = na__available();
       __enable_irq();
 	  return rv;
 	}
@@ -122,7 +122,7 @@ class RingBuffer
 	int peek_char( void ) {
 	  // make it an atomic (non-interruptable) operation:
       __disable_irq();
-      auto rv = i__peek_char();
+      auto rv = na__peek_char();
       __enable_irq();
 	  return rv;
 	}
@@ -130,29 +130,32 @@ class RingBuffer
 	int read_char( void ) {
 	  // make it an atomic (non-interruptable) operation:
       __disable_irq();
-      auto rv = i__read_char();
+      auto rv = na__read_char();
       __enable_irq();
 	  return rv;
 	}
 
 	void flush( void ) {
-	  // make it an atomic (non-interruptable) operation:
-      __disable_irq();
-      i__flush();
-      __enable_irq();
+	  while (_iHead != _iTail)
+	    ; // Spin locks: wait for transmit data to be sent
 	}
 
 	void drop( void ) {
 	  // make it an atomic (non-interruptable) operation:
       __disable_irq();
-      i__drop();
+      na__drop();
       __enable_irq();
+	}
+
+	void reset( void )
+	{
+	  _iTail = _iHead = 0;
 	}
 
 	bool isFlushed( void ) {
 	  // make it an atomic (non-interruptable) operation:
       __disable_irq();
-      auto rv = i__isFlushed();
+      auto rv = na__isFlushed();
       __enable_irq();
 	  return rv;
 	}

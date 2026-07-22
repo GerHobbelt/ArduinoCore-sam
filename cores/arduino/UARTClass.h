@@ -44,17 +44,18 @@ class UARTClass : public HardwareSerial
     };
     UARTClass(Uart* pUart, IRQn_Type dwIrq, uint32_t dwId, RingBuffer* pRx_buffer, RingBuffer* pTx_buffer);
 
-    void begin(const uint32_t dwBaudRate);
+    void begin(const uint32_t dwBaudRate) override;
     void begin(const uint32_t dwBaudRate, const UARTModes config);
-    void end(void);
-    int available(void);
+    void end(void) override;
+    int available(void) override;
     int availableForWrite(void);
-    int peek(void);
-    int read(void);
-    void flush(void);
-    void drop(void);
-    bool isFlushed(void);
-    size_t write(const uint8_t c);
+    int peek(void) override;
+    int read(void) override;
+    void flush(void) override;
+    void drop(void) override;
+    bool isFlushed(void) override;
+    size_t write(const uint8_t c) override;  // spin locks until c has been sent.
+    bool write_if_possible(const uint8_t uc_data) override;    // return true if sent.
 
     using Print::write; // pull in write(str) and write(buf, size) from Print
 

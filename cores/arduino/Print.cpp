@@ -58,7 +58,7 @@ size_t Print::print(const char str[])
 
 size_t Print::print(char c)
 {
-  return write(c);
+  return write(c);			// this one blocks until the char has been sent.
 }
 
 size_t Print::print(unsigned char b, int base)
