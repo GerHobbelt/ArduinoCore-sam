@@ -71,8 +71,8 @@ extern void TimeTick_Increment( void ) ;
 
 extern uint32_t GetTickCount( void ) ;
 
-extern void Wait( volatile uint32_t dwMs ) ;
+extern void Wait( uint32_t dwMs ) ;
 
-extern void Sleep( volatile uint32_t dwMs ) ;
+extern void Sleep( uint32_t dwMs ) ;
 
 #endif /* _TIMETICK_ */

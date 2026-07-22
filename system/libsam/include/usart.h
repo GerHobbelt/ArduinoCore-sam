@@ -107,11 +107,11 @@ extern void USART_SetTransmitterEnabled( Usart *usart, uint8_t enabled ) ;
 
 extern void USART_SetReceiverEnabled( Usart *usart, uint8_t enabled ) ;
 
-extern void USART_Write( Usart *usart, uint16_t data, volatile uint32_t timeOut ) ;
+extern void USART_Write( Usart *usart, uint16_t data, uint32_t timeOut ) ;
 
 extern uint8_t USART_WriteBuffer( Usart *usart, void *buffer, uint32_t size ) ;
 
-extern uint16_t USART_Read( Usart *usart, volatile uint32_t timeOut ) ;
+extern uint16_t USART_Read( Usart *usart, uint32_t timeOut ) ;
 
 extern uint8_t USART_ReadBuffer( Usart *usart, void *buffer, uint32_t size ) ;
 
