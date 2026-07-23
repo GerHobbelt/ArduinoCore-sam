@@ -24,6 +24,7 @@
 // Constructors ////////////////////////////////////////////////////////////////
 
 UARTClass::UARTClass( Uart *pUart, IRQn_Type dwIrq, uint32_t dwId, RingBuffer *pRx_buffer, RingBuffer *pTx_buffer )
+: error_state(0), initialized(0)
 {
   _rx_buffer = pRx_buffer;
   _tx_buffer = pTx_buffer;
@@ -48,6 +49,8 @@ void UARTClass::begin(const uint32_t dwBaudRate, const UARTModes config)
 
 void UARTClass::init(const uint32_t dwBaudRate, const uint32_t modeReg)
 {
+  initialized = 0;
+  
   // Configure PMC
   pmc_enable_periph_clk( _dwId );
 
@@ -85,6 +88,8 @@ void UARTClass::init(const uint32_t dwBaudRate, const uint32_t modeReg)
   
   // nuke all previous errors, which may have occurred before we (re)initialized the UART:
   (void)getAndClearAllErrors();
+  
+  initialized = 1;
 
   // Enable receiver and transmitter
   _pUart->UART_CR = UART_CR_RXEN | UART_CR_TXEN;
@@ -98,6 +103,8 @@ void UARTClass::end( void )
   // Wait for any outstanding data to be sent
   flush();
 
+  initialized = 0;
+  
   // Disable UART interrupt in NVIC
   NVIC_DisableIRQ( _dwIrq );
 
@@ -136,6 +143,10 @@ int UARTClass::read( void )
 
 void UARTClass::flush( void )
 {
+  if (!initialized) {
+    return drop();
+  }
+	
   _tx_buffer->flush();
 	
   // Wait for transmission to complete
@@ -150,11 +161,15 @@ void UARTClass::drop( void )
 
 bool UARTClass::isFlushed( void )
 {
-  return ((_pUart->UART_SR & UART_SR_TXRDY) == UART_SR_TXRDY) && _tx_buffer->isFlushed();
+  return (!initialized || ((_pUart->UART_SR & UART_SR_TXRDY) == UART_SR_TXRDY)) && _tx_buffer->isFlushed();
 }
 
 size_t UARTClass::write( const uint8_t uc_data )
 {
+  if (!initialized) {
+    return 0;
+  }
+  
   // Is the hardware currently busy?
   if (((_pUart->UART_SR & UART_SR_TXRDY) != UART_SR_TXRDY) |
       !_tx_buffer->isFlushed())
@@ -178,6 +193,10 @@ size_t UARTClass::write( const uint8_t uc_data )
 
 bool UARTClass::write_if_possible( const uint8_t uc_data )
 {
+  if (!initialized) {
+    return false;
+  }
+  
   // Is the hardware currently busy?
   if (((_pUart->UART_SR & UART_SR_TXRDY) != UART_SR_TXRDY) |
       !_tx_buffer->isFlushed())

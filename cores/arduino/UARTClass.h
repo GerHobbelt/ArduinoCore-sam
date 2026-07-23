@@ -65,7 +65,8 @@ class UARTClass : public HardwareSerial
     void IrqHandler(void);
 
   protected:
-    volatile uint8_t error_state;  // bits: 0: RX overflow; 
+    volatile uint8_t error_state;  // bits: 2: RX buffer overflow; rest cf. SAM3X datasheet section 34.6.6 UART Status Register, bits 7..0
+	uint8_t initialized;
 
   public:
     bool getOverflowed() {
