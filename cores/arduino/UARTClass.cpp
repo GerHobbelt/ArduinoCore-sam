@@ -48,18 +48,14 @@ void UARTClass::begin(const uint32_t dwBaudRate, const UARTModes config)
 
 void UARTClass::init(const uint32_t dwBaudRate, const uint32_t modeReg)
 {
-  // Make sure both ring buffers are initialized back to empty.
-  _rx_buffer->reset();
-  _tx_buffer->reset();
-  
   // Configure PMC
   pmc_enable_periph_clk( _dwId );
 
   // Disable PDC channel
   _pUart->UART_PTCR = UART_PTCR_RXTDIS | UART_PTCR_TXTDIS;
 
-  // Reset and disable receiver and transmitter
-  _pUart->UART_CR = UART_CR_RSTRX | UART_CR_RSTTX | UART_CR_RXDIS | UART_CR_TXDIS;
+  // Reset and disable receiver and transmitter; also reset any previous error flags, if any.
+  _pUart->UART_CR = UART_CR_RSTRX | UART_CR_RSTTX | UART_CR_RXDIS | UART_CR_TXDIS | UART_CR_RSTSTA;
 
   // Configure mode
   _pUart->UART_MR = modeReg;
@@ -82,6 +78,13 @@ void UARTClass::init(const uint32_t dwBaudRate, const uint32_t modeReg)
 
   // Enable UART interrupt in NVIC
   NVIC_EnableIRQ(_dwIrq);
+  
+  // Make sure both ring buffers are initialized back to empty.
+  _rx_buffer->reset();
+  _tx_buffer->reset();
+  
+  // nuke all previous errors, which may have occurred before we (re)initialized the UART:
+  (void)getAndClearAllErrors();
 
   // Enable receiver and transmitter
   _pUart->UART_CR = UART_CR_RXEN | UART_CR_TXEN;
