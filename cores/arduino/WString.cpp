@@ -697,11 +697,21 @@ void String::remove(unsigned int index) {
 void String::remove(unsigned int index, unsigned int count) {
 	if (index >= len) { return; }
 	if (count <= 0) { return; }
-	if (count > len - index) { count = len - index; }
-	char *writeTo = buffer + index;
-	len = len - count;
-	strncpy(writeTo, buffer + index + count, len - index);
-	buffer[len] = 0;
+	if (count >= len - index) { 
+	  // remove the entire tail, so there's no remaining tail chunk to copy anyway:
+	  // just clip it off.
+	  len = index;
+	  buffer[len] = 0;
+	}
+	else {
+	  // calculate how many bytes remain at the tail end and move those forward.
+	  // Also do note that this is, potentially, an *overlapping* move, so we
+	  // MUST use memmove(): https://cplusplus.com/reference/cstring/memmove/?kw=memmove
+	  char *writeTo = buffer + index;
+	  len = len - count;
+	  memmove(writeTo, buffer + index + count, len - index);
+	  buffer[len] = 0;
+	}
 }
 
 void String::toLowerCase(void)
