@@ -171,7 +171,7 @@ size_t UARTClass::write( const uint8_t uc_data )
   }
   
   // Is the hardware currently busy?
-  if (((_pUart->UART_SR & UART_SR_TXRDY) != UART_SR_TXRDY) |
+  if (((_pUart->UART_SR & UART_SR_TXRDY) != UART_SR_TXRDY) ||
       !_tx_buffer->isFlushed())
   {
     // If busy we buffer
