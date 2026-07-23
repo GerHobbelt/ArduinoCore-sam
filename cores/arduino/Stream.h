@@ -28,9 +28,9 @@
 // compatability macros for testing
 /*
 #define   getInt()            parseInt()
-#define   getInt(ignore)    parseInt(ignore)
+#define   getInt(ignore)      parseInt(ignore)
 #define   getFloat()          parseFloat()
-#define   getFloat(ignore)  parseFloat(ignore)
+#define   getFloat(ignore)    parseFloat(ignore)
 #define   getString( pre_string, post_string, buffer, length)
 readBytesBetween( pre_string, terminator, buffer, length)
 */
