@@ -70,6 +70,10 @@ class RingBuffer
 	  return wrapIndex(size() + _iHead - _iTail);
 	}
 
+	int na__availableForStore( void ) {
+	  return wrapIndex(size() + _iTail - _iHead - 1);
+	}
+
 	int na__peek_char( void )
 	{
 	  // if the head isn't ahead of the tail, we don't have any characters
@@ -115,6 +119,14 @@ class RingBuffer
 	  // make it an atomic (non-interruptable) operation:
       __disable_irq();
       auto rv = na__available();
+      __enable_irq();
+	  return rv;
+	}
+
+	int availableForStore( void ) {
+	  // make it an atomic (non-interruptable) operation:
+      __disable_irq();
+      auto rv = na__availableForStore();
       __enable_irq();
 	  return rv;
 	}
