@@ -302,8 +302,8 @@ uint8_t g_pinStatus[PINS_COUNT] = {0};
 /*
  * UART objects
  */
-TinyRingBuffer rx_buffer1;
-TinyRingBuffer tx_buffer1;
+SmallRingBuffer rx_buffer1;
+TinyRingBuffer  tx_buffer1;
 
 UARTClass Serial(UART, UART_IRQn, ID_UART, &rx_buffer1, &tx_buffer1);
 
@@ -321,13 +321,13 @@ void UART_Handler(void)
 /*
  * USART objects
  */
-TinyRingBuffer rx_buffer2;
+SmallRingBuffer rx_buffer2;
 TinyRingBuffer rx_buffer3;
-TinyRingBuffer rx_buffer4;
+SmallRingBuffer rx_buffer4;
 TinyRingBuffer rx_buffer5;
-TinyRingBuffer tx_buffer2;
+SmallRingBuffer tx_buffer2;
 TinyRingBuffer tx_buffer3;
-TinyRingBuffer tx_buffer4;
+SmallRingBuffer tx_buffer4;
 TinyRingBuffer tx_buffer5;
 
 USARTClass Serial1(USART0, USART0_IRQn, ID_USART0, &rx_buffer2, &tx_buffer2);
