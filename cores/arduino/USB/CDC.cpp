@@ -20,6 +20,8 @@
 #include "Reset.h"
 #include "Print.h"
 
+#include <sync.h>           // synchronized macro, ...
+
 #ifdef CDC_ENABLED
 
 /* For information purpose only since RTS is not always handled by the terminal application */
@@ -350,21 +352,15 @@ Serial_::operator bool()
 }
 
 int32_t Serial_::readBreak() {
-	uint8_t enableInterrupts = ((__get_PRIMASK() & 0x1) == 0 && (__get_FAULTMASK() & 0x1) == 0);
-
+	int32_t ret = -1;
+	
 	// disable interrupts,
 	// to avoid clearing a breakValue that might occur 
 	// while processing the current break value
-	__disable_irq();
+    synchronized {
+		ret = breakValue;
 
-	int ret = breakValue;
-
-	breakValue = -1;
-
-	if (enableInterrupts)
-	{
-		// re-enable the interrupts
-		__enable_irq();
+		breakValue = -1;
 	}
 
 	return ret;

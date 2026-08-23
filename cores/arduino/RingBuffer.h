@@ -21,7 +21,7 @@
 
 #include <stdint.h>
 #include <string.h>			// memset, ...
-#include <sam3.h>           // __disable_irq() et al for Cortex M3 (SAM3 series)
+#include <sync.h>           // synchronized macro, ...
 
 // Define constants and variables for buffering incoming serial data.  We're
 // using a ring buffer, in which head is the index of the location
@@ -109,42 +109,67 @@ class RingBuffer
   public:
 	bool store_char( uint8_t c ) {
 	  // make it an atomic (non-interruptable) operation:
-      __disable_irq();
-      auto rv = na__store_char(c);
-      __enable_irq();
-	  return rv;
+      synchronized {
+		return na__store_char(c);
+      }
+
+	  // We should never reached this line because the synchronized {} block gets
+	  // executed at least once. However the compiler gets confused and prints a
+	  // warning about control reaching the end of a non-void function. This
+	  // silences that warning.
+	  return false;
 	}
 
 	int available( void ) {
 	  // make it an atomic (non-interruptable) operation:
-      __disable_irq();
-      auto rv = na__available();
-      __enable_irq();
-	  return rv;
+      synchronized {
+		return na__available();
+      }
+
+	  // We should never reached this line because the synchronized {} block gets
+	  // executed at least once. However the compiler gets confused and prints a
+	  // warning about control reaching the end of a non-void function. This
+	  // silences that warning.
+	  return 0;
 	}
 
 	int availableForStore( void ) {
 	  // make it an atomic (non-interruptable) operation:
-      __disable_irq();
-      auto rv = na__availableForStore();
-      __enable_irq();
-	  return rv;
+      synchronized {
+		return na__availableForStore();
+      }
+
+	  // We should never reached this line because the synchronized {} block gets
+	  // executed at least once. However the compiler gets confused and prints a
+	  // warning about control reaching the end of a non-void function. This
+	  // silences that warning.
+	  return 0;
 	}
 
 	int peek_char( void ) {
 	  // make it an atomic (non-interruptable) operation:
-      __disable_irq();
-      auto rv = na__peek_char();
-      __enable_irq();
-	  return rv;
+      synchronized {
+		return na__peek_char();
+      }
+
+	  // We should never reached this line because the synchronized {} block gets
+	  // executed at least once. However the compiler gets confused and prints a
+	  // warning about control reaching the end of a non-void function. This
+	  // silences that warning.
+	  return -1;
 	}
 
 	int read_char( void ) {
 	  // make it an atomic (non-interruptable) operation:
-      __disable_irq();
-      auto rv = na__read_char();
-      __enable_irq();
-	  return rv;
+      synchronized {
+		return na__read_char();
+      }
+
+	  // We should never reached this line because the synchronized {} block gets
+	  // executed at least once. However the compiler gets confused and prints a
+	  // warning about control reaching the end of a non-void function. This
+	  // silences that warning.
+	  return -1;
 	}
 
 	void flush( void ) {
@@ -154,9 +179,9 @@ class RingBuffer
 
 	void drop( void ) {
 	  // make it an atomic (non-interruptable) operation:
-      __disable_irq();
-      na__drop();
-      __enable_irq();
+      synchronized {
+		na__drop();
+	  }
 	}
 
 	void reset( void )
@@ -167,10 +192,15 @@ class RingBuffer
 
 	bool isFlushed( void ) {
 	  // make it an atomic (non-interruptable) operation:
-      __disable_irq();
-      auto rv = na__isFlushed();
-      __enable_irq();
-	  return rv;
+      synchronized {
+		return na__isFlushed();
+	  }
+
+	  // We should never reached this line because the synchronized {} block gets
+	  // executed at least once. However the compiler gets confused and prints a
+	  // warning about control reaching the end of a non-void function. This
+	  // silences that warning.
+	  return false;
 	}
 };
 

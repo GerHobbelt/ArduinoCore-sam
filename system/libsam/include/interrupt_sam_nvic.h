@@ -101,21 +101,24 @@
 
 //@}
 
-#  define cpu_irq_enable()                             \
-	do {                                           \
-		g_interrupt_enabled = 1;            \
-		__DMB();                               \
-		__enable_irq();                        \
-	} while (0)
-#  define cpu_irq_disable()                            \
-	do {                                           \
-		__disable_irq();                       \
-		__DMB();                               \
-		g_interrupt_enabled = 0;           \
-	} while (0)
-
 typedef uint32_t irqflags_t;
-extern int g_interrupt_enabled;
+extern volatile int g_interrupt_enabled;
+
+static inline void cpu_irq_enable(void)
+{
+	g_interrupt_enabled = 1;            
+	__DMB();                               
+	// http://infocenter.arm.com/help/topic/com.arm.doc.dai0321a/BIHBFEIB.html
+	__ISB();
+	__enable_irq();                        
+}
+
+static inline void cpu_irq_disable(void)
+{
+	__disable_irq();                       
+	__DMB();                               
+	g_interrupt_enabled = 0;           
+}
 
 static inline irqflags_t cpu_irq_save(void)
 {
