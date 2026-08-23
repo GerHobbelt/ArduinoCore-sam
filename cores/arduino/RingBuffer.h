@@ -113,7 +113,7 @@ class RingBuffer
 		return na__store_char(c);
       }
 
-	  // We should never reached this line because the synchronized {} block gets
+	  // We should never reach this line because the synchronized {} block gets
 	  // executed at least once. However the compiler gets confused and prints a
 	  // warning about control reaching the end of a non-void function. This
 	  // silences that warning.
@@ -126,7 +126,7 @@ class RingBuffer
 		return na__available();
       }
 
-	  // We should never reached this line because the synchronized {} block gets
+	  // We should never reach this line because the synchronized {} block gets
 	  // executed at least once. However the compiler gets confused and prints a
 	  // warning about control reaching the end of a non-void function. This
 	  // silences that warning.
@@ -139,7 +139,7 @@ class RingBuffer
 		return na__availableForStore();
       }
 
-	  // We should never reached this line because the synchronized {} block gets
+	  // We should never reach this line because the synchronized {} block gets
 	  // executed at least once. However the compiler gets confused and prints a
 	  // warning about control reaching the end of a non-void function. This
 	  // silences that warning.
@@ -152,7 +152,7 @@ class RingBuffer
 		return na__peek_char();
       }
 
-	  // We should never reached this line because the synchronized {} block gets
+	  // We should never reach this line because the synchronized {} block gets
 	  // executed at least once. However the compiler gets confused and prints a
 	  // warning about control reaching the end of a non-void function. This
 	  // silences that warning.
@@ -165,7 +165,7 @@ class RingBuffer
 		return na__read_char();
       }
 
-	  // We should never reached this line because the synchronized {} block gets
+	  // We should never reach this line because the synchronized {} block gets
 	  // executed at least once. However the compiler gets confused and prints a
 	  // warning about control reaching the end of a non-void function. This
 	  // silences that warning.
@@ -196,7 +196,7 @@ class RingBuffer
 		return na__isFlushed();
 	  }
 
-	  // We should never reached this line because the synchronized {} block gets
+	  // We should never reach this line because the synchronized {} block gets
 	  // executed at least once. However the compiler gets confused and prints a
 	  // warning about control reaching the end of a non-void function. This
 	  // silences that warning.
