@@ -43,9 +43,9 @@ uint32_t micros( void )
     count2  = GetTickCount();
 
     do {
-        ticks=ticks2;
-        pend=pend2;
-        count=count2;
+        ticks = ticks2;
+        pend = pend2;
+        count = count2;
         ticks2  = SysTick->VAL;
         pend2   = !!((SCB->ICSR & SCB_ICSR_PENDSTSET_Msk)||((SCB->SHCSR & SCB_SHCSR_SYSTICKACT_Msk)))  ;
         count2  = GetTickCount();

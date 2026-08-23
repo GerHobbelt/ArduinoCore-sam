@@ -65,7 +65,7 @@ extern void delay( uint32_t ms ) ;
  * \param usec    the number of microseconds to pause (unsigned long)
  */
 static inline void delayMicroseconds(uint32_t) __attribute__((always_inline, unused));
-static inline void delayMicroseconds(uint32_t usec){
+static inline void delayMicroseconds(uint32_t usec) {
     /*
      * Based on Paul Stoffregen's implementation
      * for Teensy 3.0 (http://www.pjrc.com/)
