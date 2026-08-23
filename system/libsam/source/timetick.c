@@ -43,7 +43,7 @@
  *----------------------------------------------------------------------------*/
 
 /** Tick Counter united by ms */
-static volatile uint32_t _dwTickCount=0 ;
+static volatile uint32_t _dwTickCount = 0;
 
 /*----------------------------------------------------------------------------
  *         Exported Functions
@@ -59,7 +59,7 @@ extern void TimeTick_Increment( void )
 
 /**
  *  \brief Configures the SAM3 SysTick & reset tickCount.
- *  Systick interrupt handler will generates 1ms interrupt and increase a
+ *  Systick interrupt handler will generate an interrupt every 1 ms and increase a
  *  tickCount.
  *  \param dwNew_MCK  Current master clock.
  */
@@ -67,7 +67,7 @@ extern uint32_t TimeTick_Configure( uint32_t dwNew_MCK )
 {
     _dwTickCount = 0 ;
 
-    return SysTick_Config( dwNew_MCK/1000 ) ;
+    return SysTick_Config( dwNew_MCK / 1000 ) ;
 }
 
 /**
@@ -107,7 +107,7 @@ extern void Sleep( volatile uint32_t dwMs )
     {
         dwCurrent = _dwTickCount ;
 
-        if ( dwCurrent - dwStart > dwMs )
+        if ( dwCurrent - dwStart >= dwMs )
         {
             break ;
         }
