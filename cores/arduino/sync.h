@@ -4,7 +4,7 @@
 
 #include <stdint.h>
 
-#include <sam3.h>           // __disable_irq() et al for Cortex M3 (SAM3 series)
+#include "chip.h"           // __disable_irq() et al for Cortex M3 (SAM3 series)
 
 /*
  * Synchronization primitives.
@@ -13,23 +13,18 @@
 class __Guard {
 public:
 	__Guard() : 
-		enableInterrupts((__get_PRIMASK() & 0x1) == 0 && (__get_FAULTMASK() & 0x1) == 0), 
+		flags(cpu_irq_save()), 
 		loops(1) 
 	{
 		__disable_irq();
 		__DMB();
 	}
 	~__Guard() {
-		if (enableInterrupts) {
-			__DMB();
-			// http://infocenter.arm.com/help/topic/com.arm.doc.dai0321a/BIHBFEIB.html
-			__ISB();
-			__enable_irq();
-		}
+		cpu_irq_restore(flags);
 	}
 	uint32_t enter() { return loops--; }
 private:
-	bool enableInterrupts;
+	irqflags_t flags;
 	uint16_t loops;
 };
 
