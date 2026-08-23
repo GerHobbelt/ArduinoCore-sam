@@ -81,7 +81,7 @@ extern uint32_t GetTickCount( void )
 /**
  *  \brief Sync Wait for several ms
  */
-extern void Wait( volatile uint32_t dwMs )
+extern void Wait( uint32_t dwMs )
 {
     uint32_t dwStart ;
     uint32_t dwCurrent ;
@@ -96,7 +96,7 @@ extern void Wait( volatile uint32_t dwMs )
 /**
  *  \brief Sync Sleep for several ms
  */
-extern void Sleep( volatile uint32_t dwMs )
+extern void Sleep( uint32_t dwMs )
 {
     uint32_t dwStart ;
     uint32_t dwCurrent ;
