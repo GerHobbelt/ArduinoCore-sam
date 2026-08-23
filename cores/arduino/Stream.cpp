@@ -31,7 +31,7 @@
 int Stream::timedRead()
 {
   int c;
-  _startMillis = millis();
+  const uint32_t _startMillis = millis();
   do {
     c = read();
     if (c >= 0) return c;
@@ -44,7 +44,7 @@ int Stream::timedRead()
 int Stream::timedPeek()
 {
   int c;
-  _startMillis = millis();
+  const uint32_t _startMillis = millis();
   do {
     c = peek();
     if (c >= 0) return c;
@@ -86,7 +86,7 @@ int Stream::peekNextDigit(LookaheadMode lookahead, bool detectDecimal)
 // Public Methods
 //////////////////////////////////////////////////////////////
 
-void Stream::setTimeout(unsigned long timeout)  // sets the maximum number of milliseconds to wait
+void Stream::setTimeout(uint32_t timeout)  // sets the maximum number of milliseconds to wait
 {
   _timeout = timeout;
 }

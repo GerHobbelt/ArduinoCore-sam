@@ -49,8 +49,8 @@ enum LookaheadMode{
 class Stream : public Print
 {
   protected:
-    unsigned long _timeout;      // number of milliseconds to wait for the next char before aborting timed read
-    unsigned long _startMillis;  // used for timeout measurement
+    uint32_t _timeout;  // number of milliseconds to wait for the next char before aborting timed read
+
     int timedRead();    // read stream with timeout
     int timedPeek();    // peek stream with timeout
     int peekNextDigit(LookaheadMode lookahead, bool detectDecimal); // returns the next numeric digit in the stream or -1 if timeout
@@ -61,12 +61,12 @@ class Stream : public Print
     virtual int peek() = 0;
     virtual void flush() = 0;
 
-    Stream() {_timeout=1000;}
+    Stream() : _timeout(1000) {}
 
 // parsing methods
 
-  void setTimeout(unsigned long timeout);  // sets maximum milliseconds to wait for stream data, default is 1 second
-  unsigned long getTimeout(void) { return _timeout; }
+  void setTimeout(uint32_t timeout);  // sets maximum milliseconds to wait for stream data, default is 1 second
+  uint32_t getTimeout(void) { return _timeout; }
 
   bool find(char *target);   // reads data from the stream until the target string is found
   bool find(uint8_t *target) { return find ((char *)target); }
