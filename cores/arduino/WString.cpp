@@ -742,6 +742,11 @@ void String::trim(void)
 	buffer[len] = 0;
 }
 
+void String::reset(void)
+{
+	invalidate();
+}
+
 /*********************************************/
 /*  Parsing / Conversion                     */
 /*********************************************/
