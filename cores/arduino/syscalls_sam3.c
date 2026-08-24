@@ -61,7 +61,7 @@ extern void _exit( int status ) ;
 extern void _kill( int pid, int sig ) ;
 extern int _getpid ( void ) ;
 
-extern caddr_t _sbrk ( int incr )
+__attribute((weak)) extern caddr_t _sbrk ( int incr )
 {
     static unsigned char *heap = NULL ;
     unsigned char *prev_heap ;
