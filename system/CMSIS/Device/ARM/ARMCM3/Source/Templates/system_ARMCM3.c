@@ -30,13 +30,13 @@
 #define __HSI             ( 8000000UL)
 #define __XTAL            (12000000UL)    /* Oscillator frequency             */
 
-#define __SYSTEM_CLOCK    (4*__XTAL)
+#define __SYSTEM_CLOCK    (4 * __XTAL)
 
 
 /*----------------------------------------------------------------------------
   Clock Variable definitions
  *----------------------------------------------------------------------------*/
-uint32_t SystemCoreClock = __SYSTEM_CLOCK;/*!< System Clock Frequency (Core Clock)*/
+uint32_t SystemCoreClock = __SYSTEM_CLOCK; /*!< System Clock Frequency (Core Clock) */
 
 
 /*----------------------------------------------------------------------------
