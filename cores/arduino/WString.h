@@ -122,6 +122,7 @@ public:
 	String & operator += (double num)		{concat(num); return (*this);}
 	String & operator += (const __FlashStringHelper *str){concat(str); return (*this);}
 
+#if 0	// dangerous APIs as `lhs` is edited/concatenated to!
 	friend StringSumHelper & operator + (const StringSumHelper &lhs, const String &rhs);
 	friend StringSumHelper & operator + (const StringSumHelper &lhs, const char *cstr);
 	friend StringSumHelper & operator + (const StringSumHelper &lhs, char c);
@@ -133,6 +134,7 @@ public:
 	friend StringSumHelper & operator + (const StringSumHelper &lhs, float num);
 	friend StringSumHelper & operator + (const StringSumHelper &lhs, double num);
 	friend StringSumHelper & operator + (const StringSumHelper &lhs, const __FlashStringHelper *rhs);
+#endif
 
 	// comparison (only works w/ Strings and "strings")
 	operator StringIfHelperType() const { 

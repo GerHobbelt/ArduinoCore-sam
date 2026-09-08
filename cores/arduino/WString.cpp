@@ -376,6 +376,8 @@ unsigned char String::concat(const __FlashStringHelper * str)
 /*  Concatenate                              */
 /*********************************************/
 
+#if 0	// dangerous APIs as `lhs` is edited/concatenated to!
+
 StringSumHelper & operator + (const StringSumHelper &lhs, const String &rhs)
 {
 	StringSumHelper &a = const_cast<StringSumHelper&>(lhs);
@@ -463,6 +465,8 @@ StringSumHelper & operator + (const StringSumHelper &lhs, const __FlashStringHel
 		a.invalidate();
 	return a;
 }
+
+#endif
 
 /*********************************************/
 /*  Comparison                               */
