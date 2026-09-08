@@ -8,7 +8,7 @@
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
   See the GNU Lesser General Public License for more details.
 
   You should have received a copy of the GNU Lesser General Public
@@ -17,39 +17,18 @@
 */
 
 #include "RingBuffer.h"
-#include <string.h>			// memset, ...
+#include <string.h>         // memset, ...
 
 #if 0
 
 RingBuffer::RingBuffer()
 {
 #if 0
-    memset( (void *)_aucBuffer, 0, size() );
+  memset( (void *)_aucBuffer, 0, size() );
 #endif
-    _iHead = 0;
-    _iTail = 0;
+  _iHead = 0;
+  _iTail = 0;
 }
 
 #endif
 
-#if 0
-
-inline bool RingBuffer::store_char( uint8_t c )
-{
-  int i = (uint32_t)(_iHead + 1) % size();
-
-  // if we should be storing the received character into the location
-  // just before the tail (meaning that the head would advance to the
-  // current location of the tail), we're about to overflow the buffer
-  // and so we don't write the character or advance the head.
-  if ( i != _iTail )
-  {
-    buffer()[_iHead] = c;
-    _iHead = i;
-    return true;
-  }
-
-  return false;
-}
-
-#endif
