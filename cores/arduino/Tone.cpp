@@ -79,7 +79,7 @@ void tone(uint32_t outputPin, uint32_t frequency, uint32_t duration) {
     port_pio_registers = g_APinDescription[outputPin].pPort;
     port_bitmask = g_APinDescription[outputPin].ulPin;
 
-    // Set register A to got high at 50% period, register C to go low at 100% period
+    // Set register A to go high at 50% period, register C to go low at 100% period
     uint32_t cutoff = VARIANT_MCK / 32 / frequency;
     cutoff &= ~0x00000001U; // Ensure low and high periods are equal by enforcing even cutoff
     TC_SetRA(TONE_TC, TONE_TC_CHANNEL, cutoff / 2);

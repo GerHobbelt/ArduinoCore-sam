@@ -133,7 +133,7 @@ public:
     }
 };
 
-//    Number of bytes, assumes a rx endpoint
+//    Number of bytes, assumes an rx endpoint
 uint32_t USBD_Available(uint32_t ep)
 {
     LockEP lock(ep);
@@ -200,8 +200,10 @@ uint32_t USBD_Send(uint32_t ep, const void* d, uint32_t len)
 
     while (len)
     {
-        if(ep==0) n = EP0_SIZE;
-        else n =  EPX_SIZE;
+        if (ep == 0) 
+            n = EP0_SIZE;
+        else 
+            n =  EPX_SIZE;
         if (n > len)
             n = len;
         len -= n;
@@ -268,7 +270,8 @@ static bool USB_SendStringDescriptor(const uint8_t *string, int wLength) {
     uint8_t i;
     for (i = 2; i < wLength && *string; i++) {
         buffer[i++] = *string++;
-        if (i == wLength) break;
+        if (i == wLength) 
+            break;
         buffer[i] = 0;
     }
 
@@ -361,7 +364,7 @@ _Pragma("pack()")
 
     //    Now send them
     USBD_InitControl(maxlen);
-    USBD_SendControl(0,&config,sizeof(ConfigDescriptor));
+    USBD_SendControl(0, &config,sizeof(ConfigDescriptor));
     USBD_SendInterfaces();
     return true;
 }
@@ -384,7 +387,7 @@ _Pragma("pack()")
 
     //    Now send them
     USBD_InitControl(maxlen);
-    USBD_SendControl(0,&config,sizeof(ConfigDescriptor));
+    USBD_SendControl(0, &config,sizeof(ConfigDescriptor));
     USBD_SendOtherInterfaces();
     return true;
 }
@@ -486,9 +489,9 @@ static bool USBD_SendDescriptor(USBSetup& setup)
 
 static void USB_SendZlp( void )
 {
-    while( UOTGHS_DEVEPTISR_TXINI != (UOTGHS->UOTGHS_DEVEPTISR[0] & UOTGHS_DEVEPTISR_TXINI ) )
+    while (UOTGHS_DEVEPTISR_TXINI != (UOTGHS->UOTGHS_DEVEPTISR[0] & UOTGHS_DEVEPTISR_TXINI))
     {
-        if((UOTGHS->UOTGHS_DEVISR & UOTGHS_DEVISR_SUSP) == UOTGHS_DEVISR_SUSP)
+        if ((UOTGHS->UOTGHS_DEVISR & UOTGHS_DEVISR_SUSP) == UOTGHS_DEVISR_SUSP)
         {
             return;
         }
@@ -502,7 +505,7 @@ static void Test_Mode_Support( uint8_t wIndex )
     uint8_t i;
     uint8_t *ptr_dest = (uint8_t *) &udd_get_endpoint_fifo_access8(2);
 
-    switch( wIndex )
+    switch (wIndex)
     {
         case 4:
             //Test mode Test_Packet:
@@ -533,9 +536,9 @@ static void Test_Mode_Support( uint8_t wIndex )
             while((UOTGHS->UOTGHS_DEVEPTISR[2]&UOTGHS_DEVEPTISR_CFGOK)==0) {}
             UOTGHS->UOTGHS_DEVEPT |= UOTGHS_DEVEPT_EPEN2;
             // Write FIFO
-            for( i=0; i<sizeof(test_packet_buffer); i++)
+            for(i = 0; i < sizeof(test_packet_buffer); i++)
             {
-                ptr_dest[i] = test_packet_buffer[i];;
+                ptr_dest[i] = test_packet_buffer[i];
             }
             // Tst PACKET
             UOTGHS->UOTGHS_DEVCTRL |= UOTGHS_DEVCTRL_TSTPCKT;
@@ -631,10 +634,10 @@ static void USB_ISR(void)
     }
 
 #ifdef CDC_ENABLED
-        // Seems safer than previous and less specific Is_udd_endpoint_interrupt.
+    // Seems safer than previous and less specific Is_udd_endpoint_interrupt.
   	if (Is_udd_out_received(CDC_RX))
 	{
-	        //Handle received bytes
+        // Handle received bytes
 		SerialUSB.accept();		
 	}
 
@@ -646,7 +649,7 @@ static void USB_ISR(void)
 #endif
 
     // EP 0 Interrupt
-    if (Is_udd_endpoint_interrupt(0) )
+    if (Is_udd_endpoint_interrupt(0))
     {
         if (!UDD_ReceivedSetupInt())
         {
@@ -676,10 +679,10 @@ static void USB_ISR(void)
             uint8_t r = setup.bRequest;
             if (GET_STATUS == r)
             {
-                if( setup.bmRequestType == 0 )  // device
+                if (setup.bmRequestType == 0)  // device
                 {
                     // Send the device status
-                     TRACE_CORE(puts(">>> EP0 Int: GET_STATUS\r\n");)
+                    TRACE_CORE(puts(">>> EP0 Int: GET_STATUS\r\n");)
                     // Check current configuration for power mode (if device is configured)
                     // TODO
                     // Check if remote wake-up is enabled
@@ -692,7 +695,7 @@ static void USB_ISR(void)
                 {
                     // Send the endpoint status
                     // Check if the endpoint if currently halted
-                    if( isEndpointHalt == 1 )
+                    if (isEndpointHalt == 1)
                     {
                         UDD_Send8(EP0, 1); // TODO
                     }
@@ -706,10 +709,10 @@ static void USB_ISR(void)
             else if (CLEAR_FEATURE == r)
             {
                // Check which is the selected feature
-                if( setup.wValueL == 1) // DEVICEREMOTEWAKEUP
+                if (setup.wValueL == 1) // DEVICEREMOTEWAKEUP
                 {
                     // Enable remote wake-up and send a ZLP
-                    if( isRemoteWakeUpEnabled == 1 )
+                    if (isRemoteWakeUpEnabled == 1)
                     {
                         UDD_Send8(EP0, 1);
                     }
@@ -730,24 +733,24 @@ static void USB_ISR(void)
             else if (SET_FEATURE == r)
             {
                 // Check which is the selected feature
-                if( setup.wValueL == 1) // DEVICEREMOTEWAKEUP
+                if (setup.wValueL == 1) // DEVICEREMOTEWAKEUP
                 {
                     // Enable remote wake-up and send a ZLP
                     isRemoteWakeUpEnabled = 1;
                     UDD_Send8(EP0, 0);
                 }
-                if( setup.wValueL == 0) // ENDPOINTHALT
+                if (setup.wValueL == 0) // ENDPOINTHALT
                 {
                     // Halt endpoint
                     isEndpointHalt = 1;
                     //USBD_Halt(USBGenericRequest_GetEndpointNumber(pRequest));
                     UDD_Send8(EP0, 0);
                 }
-                if( setup.wValueL == 2) // TEST_MODE
+                if (setup.wValueL == 2) // TEST_MODE
                 {
                     // 7.1.20 Test Mode Support, 9.4.9 SetFeature
-                    if( (setup.bmRequestType == 0 /*USBGenericRequest_DEVICE*/) &&
-                        ((setup.wIndex & 0x000F) == 0) )
+                    if ((setup.bmRequestType == 0 /*USBGenericRequest_DEVICE*/ ) &&
+                        ((setup.wIndex & 0x000F) == 0))
                     {
                         // the lower byte of wIndex must be zero
                         // the most significant byte of wIndex is used to specify the specific test mode
@@ -755,7 +758,7 @@ static void USB_ISR(void)
                         UOTGHS->UOTGHS_DEVIDR &= ~UOTGHS_DEVIDR_SUSPEC;
                         UOTGHS->UOTGHS_DEVCTRL |= UOTGHS_DEVCTRL_SPDCONF_HIGH_SPEED; // remove suspend ?
 
-                        Test_Mode_Support( (setup.wIndex & 0xFF00)>>8 );
+                        Test_Mode_Support( (setup.wIndex & 0xFF00) >> 8 );
                     }
                 }
             }
@@ -869,7 +872,7 @@ USBDevice_::USBDevice_()
 
     if (UDD_Init() == 0UL)
     {
-        _usbInitialized=1UL;
+        _usbInitialized = 1UL;
     }
 }
 

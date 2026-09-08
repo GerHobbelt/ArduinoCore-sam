@@ -115,7 +115,7 @@ public:
     // request, but will return it at most once, returning -1 when
     // readBreak() is called again (until another break request is
     // received, which is again returned once).
-    // This also mean that if two break requests are received
+    // This also means that if two break requests are received
     // without readBreak() being called in between, the value of the
     // first request is lost.
     // Note that the value returned is a long, so it can return
@@ -167,7 +167,7 @@ typedef struct
 int     MSC_GetInterface(uint8_t* interfaceNum);
 int     MSC_GetDescriptor(int i);
 bool    MSC_Setup(USBSetup& setup);
-bool    MSC_Data(uint8_t rx,uint8_t tx);
+bool    MSC_Data(uint8_t rx, uint8_t tx);
 
 //================================================================================
 //================================================================================
