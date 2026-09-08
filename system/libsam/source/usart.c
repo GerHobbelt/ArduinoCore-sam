@@ -100,7 +100,7 @@ void USART_Configure(Usart *usart,
                             uint32_t baudrate,
                             uint32_t masterClock)
 {
-    /* Reset and disable receiver & transmitter*/
+    /* Reset and disable receiver & transmitter */
     usart->US_CR = US_CR_RSTRX | US_CR_RSTTX
                    | US_CR_RXDIS | US_CR_TXDIS;
 
@@ -108,7 +108,7 @@ void USART_Configure(Usart *usart,
     usart->US_MR = mode;
 
     /* Configure baudrate*/
-    /* Asynchronous, no oversampling*/
+    /* Asynchronous, no oversampling */
     if ( ((mode & US_MR_SYNC) == 0) && ((mode & US_MR_OVER) == 0) )
     {
         usart->US_BRGR = (masterClock / baudrate) / 16;
@@ -222,7 +222,7 @@ uint8_t USART_WriteBuffer(
     void *buffer,
     uint32_t size)
 {
-    /* Check if the first PDC bank is free*/
+    /* Check if the first PDC bank is free */
     if ((usart->US_TCR == 0) && (usart->US_TNCR == 0)) {
 
         usart->US_TPR = (uint32_t) buffer;
@@ -231,7 +231,7 @@ uint8_t USART_WriteBuffer(
 
         return 1;
     }
-    /* Check if the second PDC bank is free*/
+    /* Check if the second PDC bank is free */
     else if (usart->US_TNCR == 0) {
 
         usart->US_TNPR = (uint32_t) buffer;
@@ -291,7 +291,7 @@ uint8_t USART_ReadBuffer(Usart *usart,
                                       void *buffer,
                                       uint32_t size)
 {
-    /* Check if the first PDC bank is free*/
+    /* Check if the first PDC bank is free */
     if ((usart->US_RCR == 0) && (usart->US_RNCR == 0)) {
 
         usart->US_RPR = (uint32_t) buffer;
@@ -300,7 +300,7 @@ uint8_t USART_ReadBuffer(Usart *usart,
 
         return 1;
     }
-    /* Check if the second PDC bank is free*/
+    /* Check if the second PDC bank is free */
     else if (usart->US_RNCR == 0) {
 
         usart->US_RNPR = (uint32_t) buffer;
@@ -357,13 +357,13 @@ void USART_PutChar(
     Usart *usart,
     uint8_t c)
 {
-    /* Wait for the transmitter to be ready*/
+    /* Wait for the transmitter to be ready */
     while ((usart->US_CSR & US_CSR_TXEMPTY) == 0);
 
     /* Send character*/
     usart->US_THR = c;
 
-    /* Wait for the transfer to complete*/
+    /* Wait for the transfer to complete */
     while ((usart->US_CSR & US_CSR_TXEMPTY) == 0);
 }
 
