@@ -67,10 +67,10 @@ extern void _exit( int status ) ;
 extern void _kill( int pid, int sig ) ;
 extern int _getpid ( void ) ;
 
-const uint8_t *sbrk_heap_end = NULL;
-
 __attribute((weak)) extern caddr_t _sbrk(int incr)
 {
+  static const uint8_t *sbrk_heap_end = NULL;
+
   const uint8_t *prev_heap_end;
 
   if (sbrk_heap_end == NULL) {
@@ -112,7 +112,7 @@ __attribute((weak)) extern int _close( UNUSED(int file) )
 #else
     Serial.flush();
 #endif
-    
+
     return 0;
 }
 
@@ -135,9 +135,9 @@ __attribute((weak)) extern int _lseek( UNUSED(int file), UNUSED(int ptr), UNUSED
 
 __attribute((weak)) extern int _read(UNUSED(int file), char *ptr, int len )
 {
-	// TODO: check `file` handle so we only do this for STDIN?
-	
-    return Serial.read(ptr, len);
+    // TODO: check `file` handle so we only do this for STDIN?
+
+    return Serial.readBytes(ptr, len);
 }
 
 __attribute((weak)) extern int _write( UNUSED(int file), char *ptr, int len )
@@ -150,20 +150,20 @@ __attribute((weak)) extern int _write( UNUSED(int file), char *ptr, int len )
     {
 //        UART_PutChar( *ptr ) ;
 
-		// Check if the transmitter is ready
-		  while ((UART->UART_SR & UART_SR_TXRDY) != UART_SR_TXRDY)
-			;
+        // Check if the transmitter is ready
+          while ((UART->UART_SR & UART_SR_TXRDY) != UART_SR_TXRDY)
+            ;
 
-		  // Send character
-		  UART->UART_THR = *ptr;
+          // Send character
+          UART->UART_THR = *ptr;
     }
 
     return iIndex ;
 #else
-	// TODO: check `file` handle so we only do this for STDOUT/STDERR?
-	
+    // TODO: check `file` handle so we only do this for STDOUT/STDERR?
+
     return Serial.write(ptr, len);
-#endif    
+#endif
 }
 
 extern void _exit( int status )
@@ -172,12 +172,12 @@ extern void _exit( int status )
     // printf is probably not set up by Arduino, and shouldn't be used.
     printf( "Exiting with status %d.\n", status ) ;
 #else
-	// To get rid of compiler warning 
-	( void ) status; 
+    // To get rid of compiler warning
+    ( void ) status;
 #endif
-	
+
     initiateReset(5000);
-    
+
     for ( ; ; ) ;
 }
 
@@ -191,4 +191,4 @@ __attribute((weak)) extern int _getpid ( void )
     return -1 ;
 }
 
-} // extern "C" 
+} // extern "C"
