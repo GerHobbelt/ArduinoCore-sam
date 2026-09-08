@@ -32,7 +32,11 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+#include <errno.h>
+
 #include "sam.h"
+#include "Reset.h"
+
 #if defined (  __GNUC__  ) /* GCC CS3 */
   #include <sys/types.h>
   #include <sys/stat.h>
@@ -52,7 +56,6 @@
 
 #undef errno
 extern int errno ;
-extern int  _end ;
 
 /*----------------------------------------------------------------------------
  *        Exported functions
@@ -61,20 +64,37 @@ extern void _exit( int status ) ;
 extern void _kill( int pid, int sig ) ;
 extern int _getpid ( void ) ;
 
-__attribute((weak)) extern caddr_t _sbrk ( int incr )
+const uint8_t *sbrk_heap_end = NULL;
+
+__attribute((weak)) extern caddr_t _sbrk(int incr)
 {
-    static unsigned char *heap = NULL ;
-    unsigned char *prev_heap ;
+  const uint8_t *prev_heap_end;
 
-    if ( heap == NULL )
-    {
-        heap = (unsigned char *)&_end ;
-    }
-    prev_heap = heap;
+  if (sbrk_heap_end == NULL) {
+      sbrk_heap_end = (const uint8_t *)&_end;
+  }
+  prev_heap_end = sbrk_heap_end;
 
-    heap += incr ;
+  sbrk_heap_end += incr;
 
-    return (caddr_t) prev_heap ;
+  //
+  // rudimentary protection against running the heap expansion into the stack at the end of the RAM space...
+  // ...of course this DOES NOT protect against memory corruption due to the stack growing down more than
+  // was anticipated at build time, so it MAY be useful to replace this sbrk() with a memory-scanning/monitoring
+  // replacement which is better able to protect against that particular scenario by monitoring the actually-used
+  // (worst case!) stack space at the time of its invocation.
+  //
+  const uint8_t * const stack_start = (const uint8_t *)&_sstack;
+  if (sbrk_heap_end >= stack_start) {
+#if 0
+    __set_errno(ENOMEM);
+#else
+    errno = ENOMEM;
+#endif
+    return (caddr_t) -1;
+  }
+
+  return (caddr_t)prev_heap_end;
 }
 
 __attribute((weak)) extern int link( UNUSED(const char *cOld), UNUSED(const char *cNew) )
@@ -84,7 +104,13 @@ __attribute((weak)) extern int link( UNUSED(const char *cOld), UNUSED(const char
 
 __attribute((weak)) extern int _close( UNUSED(int file) )
 {
-    return -1 ;
+#if 0               // too aggressive: we haven't checked `file` so we better keep the `Serial` active/open after this `close()`!
+    Serial.end();
+#else
+    Serial.flush();
+#endif
+    
+    return 0;
 }
 
 __attribute((weak)) extern int _fstat( UNUSED(int file), struct stat *st )
@@ -104,18 +130,20 @@ __attribute((weak)) extern int _lseek( UNUSED(int file), UNUSED(int ptr), UNUSED
     return 0 ;
 }
 
-__attribute((weak)) extern int _read(UNUSED(int file), UNUSED(char *ptr), UNUSED(int len) )
+__attribute((weak)) extern int _read(UNUSED(int file), char *ptr, int len )
 {
-    return 0 ;
+	// TODO: check `file` handle so we only do this for STDIN?
+	
+    return Serial.read(ptr, len);
 }
 
 __attribute((weak)) extern int _write( UNUSED(int file), char *ptr, int len )
 {
+#if 0
     int iIndex ;
 
-
 //    for ( ; *ptr != 0 ; ptr++ )
-    for ( iIndex=0 ; iIndex < len ; iIndex++, ptr++ )
+    for ( iIndex = 0 ; iIndex < len ; iIndex++, ptr++ )
     {
 //        UART_PutChar( *ptr ) ;
 
@@ -128,16 +156,25 @@ __attribute((weak)) extern int _write( UNUSED(int file), char *ptr, int len )
     }
 
     return iIndex ;
+#else
+	// TODO: check `file` handle so we only do this for STDOUT/STDERR?
+	
+    return Serial.write(ptr, len);
+#endif    
 }
 
 extern void _exit( int status )
 {
-//  printf is probably not set up by Arduino, and shouldn't be used.
-//    printf( "Exiting with status %d.\n", status ) ;
-
+#if 0
+    // printf is probably not set up by Arduino, and shouldn't be used.
+    printf( "Exiting with status %d.\n", status ) ;
+#else
 	// To get rid of compiler warning 
 	( void ) status; 
+#endif
 	
+    initiateReset(5000);
+    
     for ( ; ; ) ;
 }
 

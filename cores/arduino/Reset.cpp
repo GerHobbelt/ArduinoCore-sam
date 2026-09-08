@@ -28,7 +28,7 @@ __attribute__ ((long_call, section (".ramfunc")))
 #else
 __attribute__ ((section (".ramfunc")))
 #endif
-void banzai() {
+void banzai(void) {
 	// Disable all interrupts
 	__disable_irq();
 
@@ -54,21 +54,21 @@ void banzai() {
 	while (true);
 }
 
-static int ticks = -1;
+static short int ticks_until_reset = -1;
 
-void initiateReset(int _ticks) {
-	ticks = _ticks;
+void initiateReset(short int _ticks) {
+	ticks_until_reset = _ticks;
 }
 
 void cancelReset() {
-	ticks = -1;
+	ticks_until_reset = -1;
 }
 
 void tickReset() {
-	if (ticks == -1)
+	if (ticks_until_reset == -1)
 		return;
-	ticks--;
-	if (ticks == 0)
+	ticks_until_reset--;
+	if (ticks_until_reset == 0)
 		banzai();
 }
 
