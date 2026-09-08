@@ -39,6 +39,7 @@ void initVariant() { }
 /*
  * \brief Main entry point of Arduino application
  */
+int main(void) __attribute__((weak));
 int main( void )
 {
 	// Initialize watchdog
@@ -59,7 +60,8 @@ int main( void )
 	for (;;)
 	{
 		loop();
-		if (serialEventRun) serialEventRun();
+		if (serialEventRun) 
+			serialEventRun();
 	}
 
 	return 0;

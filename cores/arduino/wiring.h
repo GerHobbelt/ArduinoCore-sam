@@ -27,8 +27,8 @@ extern "C" {
 /**
  *
  */
-extern void initVariant( void ) ;
-extern void init( void ) ;
+extern void initVariant( void ) __attribute__((weak));
+extern void init( void ) __attribute__((weak));
 
 /**
  * \brief Returns the number of milliseconds since the Arduino board began running the current program.
@@ -70,7 +70,8 @@ static inline void delayMicroseconds(uint32_t usec) {
      * Based on Paul Stoffregen's implementation
      * for Teensy 3.0 (http://www.pjrc.com/)
      */
-    if (usec == 0) return;
+    if (usec == 0) 
+        return;
     uint32_t n = usec * (VARIANT_MCK / 3000000);
     asm volatile(
         "L_%=_delayMicroseconds:"       "\n\t"

@@ -366,7 +366,7 @@ __attribute__((weak)) void USART2_Handler(void)
 
 // ----------------------------------------------------------------------------
 
-void serialEventRun(void)
+__attribute__((weak)) void serialEventRun(void)
 {
   if (Serial.available()) serialEvent();
   if (Serial1.available()) serialEvent1();
@@ -383,7 +383,7 @@ extern "C" {
 
 void __libc_init_array(void);
 
-void init( void )
+__attribute__((weak)) void init( void )
 {
   SystemInit();
 
