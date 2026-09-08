@@ -27,7 +27,7 @@ uint32_t shiftIn( uint32_t ulDataPin, uint32_t ulClockPin, uint32_t ulBitOrder )
 	uint8_t value = 0 ;
 	uint8_t i ;
 
-	for ( i=0 ; i < 8 ; ++i )
+	for ( i = 0 ; i < 8 ; ++i )
     {
 		digitalWrite( ulClockPin, HIGH ) ;
 
@@ -50,7 +50,7 @@ void shiftOut( uint32_t ulDataPin, uint32_t ulClockPin, uint32_t ulBitOrder, uin
 {
 	uint8_t i ;
 
-	for ( i=0 ; i < 8 ; i++ )
+	for ( i = 0 ; i < 8 ; i++ )
     {
 		if ( ulBitOrder == LSBFIRST )
         {

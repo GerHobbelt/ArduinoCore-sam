@@ -36,19 +36,19 @@ void watchdogEnable (uint32_t timeout)
 
 void watchdogDisable(void)
 {
-	WDT_Disable (WDT);
+	WDT_Disable(WDT);
 }
 
 void watchdogReset(void)
 {
-	WDT_Restart (WDT);
+	WDT_Restart(WDT);
 }
 
 
 extern "C"
 void _watchdogDefaultSetup (void)
 {
-	WDT_Disable (WDT);
+	WDT_Disable(WDT);
 }
 void watchdogSetup (void) __attribute__ ((weak, alias("_watchdogDefaultSetup")));
 

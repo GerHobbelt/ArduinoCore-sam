@@ -20,6 +20,7 @@
 #ifndef Arduino_h
 #define Arduino_h
 
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -31,6 +32,8 @@
 #include <avr/pgmspace.h>
 #include <avr/interrupt.h>
 
+#include "wiring_constants.h"
+
 #include "binary.h"
 #include "itoa.h"
 
@@ -40,8 +43,6 @@ extern "C"{
 
 // Includes Atmel CMSIS
 #include <chip.h>
-
-#include "wiring_constants.h"
 
 #define clockCyclesPerMicrosecond() ( SystemCoreClock / 1000000L )
 #define clockCyclesToMicroseconds(a) ( ((a) * 1000L) / (SystemCoreClock / 1000L) )

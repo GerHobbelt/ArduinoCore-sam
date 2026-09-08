@@ -135,7 +135,7 @@ SECTIONS
        values to stack symbols later */
     .stack_dummy :
     {
-        *(.stack*)
+        KEEP(*(.stack .stack.* .stack*))
     } > ram
 
     /* Set stack top to end of ram, and stack limit move down by

@@ -101,32 +101,35 @@
 
 //@}
 
-#  define cpu_irq_enable()                             \
-	do {                                           \
-		g_interrupt_enabled = 1;            \
-		__DMB();                               \
-		__enable_irq();                        \
-	} while (0)
-#  define cpu_irq_disable()                            \
-	do {                                           \
-		__disable_irq();                       \
-		__DMB();                               \
-		g_interrupt_enabled = 0;           \
-	} while (0)
+typedef bool irqflags_t;
+extern volatile bool g_interrupt_enabled;
 
-typedef uint32_t irqflags_t;
-extern int g_interrupt_enabled;
+static inline void cpu_irq_enable(void)
+{
+	g_interrupt_enabled = true;            
+	__DMB();                               
+	// http://infocenter.arm.com/help/topic/com.arm.doc.dai0321a/BIHBFEIB.html
+	__ISB();
+	__enable_irq();                        
+}
+
+static inline void cpu_irq_disable(void)
+{
+	__disable_irq();                       
+	__DMB();                               
+	g_interrupt_enabled = false;           
+}
 
 static inline irqflags_t cpu_irq_save(void)
 {
-	irqflags_t flags = g_interrupt_enabled;
+	irqflags_t flags = g_interrupt_enabled && ((__get_PRIMASK() & 0x1) == 0 && (__get_FAULTMASK() & 0x1) == 0);
 	cpu_irq_disable();
 	return flags;
 }
 
 static inline int cpu_irq_is_enabled_flags(irqflags_t flags)
 {
-	return (flags);
+	return (flags != 0);
 }
 
 static inline void cpu_irq_restore(irqflags_t flags)

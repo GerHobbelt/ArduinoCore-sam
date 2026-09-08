@@ -1,6 +1,7 @@
 // g++ -O3 -o bidi bidi.cpp
 // Useful resource! https://en.wikibooks.org/wiki/Serial_Programming/termios
 // Also used example code here: https://www.tldp.org/HOWTO/text/Serial-Programming-HOWTO
+
 #include <iostream>
 #include <string>
 #include <sys/time.h>

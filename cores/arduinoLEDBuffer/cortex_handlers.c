@@ -29,10 +29,6 @@ static void __halt() {
 		;
 }
 
-extern void svcHook(void);
-extern void pendSVHook(void);
-extern int sysTickHook(void);
-
 /* Cortex-M3 core handlers */
 void NMI_Handler       (void) __attribute__ ((weak, alias("__halt")));
 void HardFault_Handler (void) __attribute__ ((weak, alias("__halt")));

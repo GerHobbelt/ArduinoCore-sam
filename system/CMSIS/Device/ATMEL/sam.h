@@ -30,7 +30,11 @@
 #ifndef _SAM_INCLUDED_
 #define _SAM_INCLUDED_
 
-#define part_is_defined(part) (defined(__ ## part ## __))
+// unsupported way of writing these, since GCC 3/4: 
+//
+// #define part_is_defined(part) (defined(__ ## part ## __))
+//
+// --> warning: this use of "defined" may not be portable [-Wexpansion-to-defined]
 
 /*
  * ----------------------------------------------------------------------------
@@ -39,105 +43,181 @@
  */
 
 /* SAM3N series */
-#define SAM3N00 ( \
-    part_is_defined( SAM3N00A ) || \
-    part_is_defined( SAM3N00B ) )
+#if ( \
+    defined( __SAM3N00A__ ) || \
+    defined( __SAM3N00B__ ) )
+#define SAM3N00 1
+#else
+#define SAM3N00 0
+#endif
 
-#define SAM3N0 ( \
-    part_is_defined( SAM3N0A ) || \
-    part_is_defined( SAM3N0B ) || \
-    part_is_defined( SAM3N0C ) )
+#if ( \
+    defined( __SAM3N0A__ ) || \
+    defined( __SAM3N0B__ ) || \
+    defined( __SAM3N0C__ ) )
+#define SAM3N0 1
+#else
+#define SAM3N0 0
+#endif
 
-#define SAM3N1 ( \
-    part_is_defined( SAM3N1A ) || \
-    part_is_defined( SAM3N1B ) || \
-    part_is_defined( SAM3N1C ) )
+#if ( \
+    defined( __SAM3N1A__ ) || \
+    defined( __SAM3N1B__ ) || \
+    defined( __SAM3N1C__ ) )
+#define SAM3N1 1
+#else
+#define SAM3N1 0
+#endif
 
-#define SAM3N2 ( \
-    part_is_defined( SAM3N2A ) || \
-    part_is_defined( SAM3N2B ) || \
-    part_is_defined( SAM3N2C ) )
+#if ( \
+    defined( __SAM3N2A__ ) || \
+    defined( __SAM3N2B__ ) || \
+    defined( __SAM3N2C__ ) )
+#define SAM3N2 1
+#else
+#define SAM3N2 0
+#endif
 
-#define SAM3N4 ( \
-    part_is_defined( SAM3N4A ) || \
-    part_is_defined( SAM3N4B ) || \
-    part_is_defined( SAM3N4C ) )
+#if ( \
+    defined( __SAM3N4A__ ) || \
+    defined( __SAM3N4B__ ) || \
+    defined( __SAM3N4C__ ) )
+#define SAM3N4 1
+#else
+#define SAM3N4 0
+#endif
 
 /* Entire SAM3N series */
 #define SAM3N_SERIES (SAM3N00 || SAM3N0 || SAM3N1 || SAM3N2 || SAM3N4)
 
 
 /* SAM3S series */
-#define SAM3S00 ( \
-    part_is_defined( SAM3S00A ) || \
-    part_is_defined( SAM3S00B ) )
+#if ( \
+    defined( __SAM3S00A__ ) || \
+    defined( __SAM3S00B__ ) )
+#define SAM3S00 1
+#else
+#define SAM3S00 0
+#endif
 
-#define SAM3S0 ( \
-    part_is_defined( SAM3S0A ) || \
-    part_is_defined( SAM3S0B ) || \
-    part_is_defined( SAM3S0C ) )
+#if ( \
+    defined( __SAM3S0A__ ) || \
+    defined( __SAM3S0B__ ) || \
+    defined( __SAM3S0C__ ) )
+#define SAM3S0 1
+#else
+#define SAM3S0 0
+#endif
 
-#define SAM3S1 ( \
-    part_is_defined( SAM3S1A ) || \
-    part_is_defined( SAM3S1B ) || \
-    part_is_defined( SAM3S1C ) )
+#if ( \
+    defined( __SAM3S1A__ ) || \
+    defined( __SAM3S1B__ ) || \
+    defined( __SAM3S1C__ ) )
+#define SAM3S1 1
+#else
+#define SAM3S1 0
+#endif
 
-#define SAM3S2 ( \
-    part_is_defined( SAM3S2A ) || \
-    part_is_defined( SAM3S2B ) || \
-    part_is_defined( SAM3S2C ) )
+#if ( \
+    defined( __SAM3S2A__ ) || \
+    defined( __SAM3S2B__ ) || \
+    defined( __SAM3S2C__ ) )
+#define SAM3S2 1
+#else
+#define SAM3S2 0
+#endif
 
-#define SAM3S4 ( \
-    part_is_defined( SAM3S4A ) || \
-    part_is_defined( SAM3S4B ) || \
-    part_is_defined( SAM3S4C ) )
+#if ( \
+    defined( __SAM3S4A__ ) || \
+    defined( __SAM3S4B__ ) || \
+    defined( __SAM3S4C__ ) )
+#define SAM3S4 1
+#else
+#define SAM3S4 0
+#endif
 
 /* Entire SAM3S series */
 #define SAM3S_SERIES (SAM3S00 || SAM3S0 ||SAM3S1 || SAM3S2 || SAM3S4)
 
 /* SAM3SD8 series */
-#define SAM3S8 ( \
-    part_is_defined( SAM3S8B ) || \
-    part_is_defined( SAM3S8C ) )
+#if ( \
+    defined( __SAM3S8B__ ) || \
+    defined( __SAM3S8C__ ) )
+#define SAM3S8 1
+#else
+#define SAM3S8 0
+#endif
 
-#define SAM3SD8 ( \
-    part_is_defined( SAM3SD8B ) || \
-    part_is_defined( SAM3SD8C ) )
+#if ( \
+    defined( __SAM3SD8B__ ) || \
+    defined( __SAM3SD8C__ ) )
+#define SAM3SD8 1
+#else
+#define SAM3SD8 0
+#endif
 
 /* Entire SAM3SD8 series */
 #define SAM3SD8_SERIES (SAM3S8 || SAM3SD8)
 
 /* SAM3U series */
-#define SAM3U1 ( \
-    part_is_defined( SAM3U1C ) || \
-    part_is_defined( SAM3U1E ) )
+#if ( \
+    defined( __SAM3U1C__ ) || \
+    defined( __SAM3U1E__ ) )
+#define SAM3U1 1
+#else
+#define SAM3U1 0
+#endif
 
-#define SAM3U2 ( \
-    part_is_defined( SAM3U2C ) || \
-    part_is_defined( SAM3U2E ) )
+#if ( \
+    defined( __SAM3U2C__ ) || \
+    defined( __SAM3U2E__ ) )
+#define SAM3U2 1
+#else
+#define SAM3U2 0
+#endif
 
-#define SAM3U4 ( \
-    part_is_defined( SAM3U4C ) || \
-    part_is_defined( SAM3U4E ) )
+#if ( \
+    defined( __SAM3U4C__ ) || \
+    defined( __SAM3U4E__ ) )
+#define SAM3U4 1
+#else
+#define SAM3U4 0
+#endif
 
 /* Entire SAM3U series */
 #define SAM3U_SERIES (SAM3U1 || SAM3U2 || SAM3U4)
 
 /* SAM3XA series */
-#define SAM3X4 ( \
-    part_is_defined( SAM3X4C ) || \
-    part_is_defined( SAM3X4E ) )
+#if ( \
+    defined( __SAM3X4C__ ) || \
+    defined( __SAM3X4E__ ) )
+#define SAM3X4 1
+#else
+#define SAM3X4 0
+#endif
 
-#define SAM3X8 ( \
-    part_is_defined( SAM3X8C ) || \
-    part_is_defined( SAM3X8E ) || \
-    part_is_defined( SAM3X8H ) )
+#if ( \
+    defined( __SAM3X8C__ ) || \
+    defined( __SAM3X8E__ ) || \
+    defined( __SAM3X8H__ ) )
+#define SAM3X8 1
+#else
+#define SAM3X8 0
+#endif
 
-#define SAM3A4 ( \
-    part_is_defined( SAM3A4C ) )
+#if ( \
+    defined( __SAM3A4C__ ) )
+#define SAM3A4 1
+#else
+#define SAM3A4 0
+#endif
 
-#define SAM3A8 ( \
-    part_is_defined( SAM3A8C ) )
+#if ( \
+    defined( __SAM3A8C__ ) )
+#define SAM3A8 1
+#else
+#define SAM3A8 0
+#endif
 
 /* Entire SAM3XA series */
 #define SAM3XA_SERIES ( SAM3X4 || SAM3X8 || SAM3A4 || SAM3A8)
@@ -153,13 +233,21 @@
 #define SAM3_SERIES ( SAM3N_SERIES || SAM3S_SERIES || SAM3SD8_SERIES || SAM3U_SERIES || SAM3XA_SERIES )
 
 /* SAM4S series */
-#define SAM4S8 ( \
-    part_is_defined( SAM4S8B ) || \
-    part_is_defined( SAM4S8C ) )
+#if ( \
+    defined( __SAM4S8B__ ) || \
+    defined( __SAM4S8C__ ) )
+#define SAM4S8 1
+#else
+#define SAM4S8 0
+#endif
 
-#define SAM4S16 ( \
-    part_is_defined( SAM4S16B ) || \
-    part_is_defined( SAM4S16C ) )
+#if ( \
+    defined( __SAM4S16B__ ) || \
+    defined( __SAM4S16C__ ) )
+#define SAM4S16 1
+#else
+#define SAM4S16 0
+#endif
 
 /* Entire SAM4S series */
 #define SAM4S_SERIES ( SAM4S8 || SAM4S16)

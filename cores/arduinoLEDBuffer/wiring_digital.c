@@ -31,7 +31,8 @@ extern void pinMode( uint32_t ulPin, uint32_t ulMode )
 
   if ((g_pinStatus[ulPin] & 0xF) == PIN_STATUS_ANALOG)
     {
-      adc_disable_channel( ADC, g_APinDescription[ulPin].ulADCChannelNumber);
+	  // fix warning: implicit conversion from 'EAnalogChannel' {aka 'enum _EAnalogChannel'} to 'const enum adc_channel_num_t' [-Wenum-conversion]
+      adc_disable_channel( ADC, (enum adc_channel_num_t)(g_APinDescription[ulPin].ulADCChannelNumber));
     }
 
   if ((g_pinStatus[ulPin] & 0xF) < PIN_STATUS_DIGITAL_OUTPUT && g_pinStatus[ulPin] != 0)

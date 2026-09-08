@@ -34,14 +34,20 @@ void operator delete[](void * ptr) {
   free(ptr);
 }
 
+// https://stackoverflow.com/questions/2324658/how-to-determine-the-version-of-the-c-standard-used-by-the-compiler
+#if __cplusplus > 201103L
+
 /*
 Fix for C++>14
 https://forum.arduino.cc/t/undefined-reference-to-operator-delete-void-unsigned-int/620428
 */
 void operator delete(void* ptr, std::size_t) _GLIBCXX_USE_NOEXCEPT {
-    delete ptr;
+  free(ptr);
 }
 
 void operator delete[](void* ptr, std::size_t) _GLIBCXX_USE_NOEXCEPT {
-    delete[] ptr;
+  free(ptr);
 }
+
+#endif
+

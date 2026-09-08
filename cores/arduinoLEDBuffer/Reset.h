@@ -23,9 +23,31 @@
 extern "C" {
 #endif
 
-void initiateReset(int ms);
+void initiateReset(short int ms);
 void tickReset();
 void cancelReset();
+
+void banzai(void);
+
+void svcHook(void);
+void pendSVHook(void);
+int sysTickHook(void);
+
+/* Initialize segments */
+extern uint32_t _sfixed;
+extern uint32_t _efixed;
+extern uint32_t _etext;
+extern uint32_t _srelocate;
+extern uint32_t _erelocate;
+extern uint32_t _szero;
+extern uint32_t _ezero;
+extern uint32_t _sstack;
+extern uint32_t _estack;
+
+extern const uint32_t _sbss;
+extern const uint32_t _ebss;
+
+extern const uint32_t _end;
 
 #ifdef __cplusplus
 }

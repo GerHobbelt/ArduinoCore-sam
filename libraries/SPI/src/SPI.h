@@ -13,7 +13,8 @@
 #define _SPI_H_INCLUDED
 
 #include "variant.h"
-#include <stdio.h>
+
+#include <stdint.h>
 
 // SPI_HAS_TRANSACTION means SPI has
 //   - beginTransaction()
@@ -52,7 +53,9 @@ public:
 			init_MightInline(clock, bitOrder, dataMode);
 		}
 	}
-	SPISettings() { init_AlwaysInline(4000000, MSBFIRST, SPI_MODE0); }
+	SPISettings() { 
+		init_AlwaysInline(4000000, MSBFIRST, SPI_MODE0); 
+	}
 private:
 	void init_MightInline(uint32_t clock, BitOrder bitOrder, uint8_t dataMode) {
 		init_AlwaysInline(clock, bitOrder, dataMode);
@@ -85,13 +88,21 @@ class SPIClass {
 	uint16_t transfer16(byte _pin, uint16_t _data, SPITransferMode _mode = SPI_LAST);
 	void transfer(byte _pin, void *_buf, size_t _count, SPITransferMode _mode = SPI_LAST);
 	// Transfer functions on default pin BOARD_SPI_DEFAULT_SS
-	byte transfer(uint8_t _data, SPITransferMode _mode = SPI_LAST) { return transfer(BOARD_SPI_DEFAULT_SS, _data, _mode); }
-	uint16_t transfer16(uint16_t _data, SPITransferMode _mode = SPI_LAST) { return transfer16(BOARD_SPI_DEFAULT_SS, _data, _mode); }
-	void transfer(void *_buf, size_t _count, SPITransferMode _mode = SPI_LAST) { transfer(BOARD_SPI_DEFAULT_SS, _buf, _count, _mode); }
+	byte transfer(uint8_t _data, SPITransferMode _mode = SPI_LAST) { 
+		return transfer(BOARD_SPI_DEFAULT_SS, _data, _mode); 
+	}
+	uint16_t transfer16(uint16_t _data, SPITransferMode _mode = SPI_LAST) { 
+		return transfer16(BOARD_SPI_DEFAULT_SS, _data, _mode); 
+	}
+	void transfer(void *_buf, size_t _count, SPITransferMode _mode = SPI_LAST) { 
+		transfer(BOARD_SPI_DEFAULT_SS, _buf, _count, _mode); 
+	}
 
 	// Transaction Functions
 	void usingInterrupt(uint8_t interruptNumber);
-	void beginTransaction(SPISettings settings) { beginTransaction(BOARD_SPI_DEFAULT_SS, settings); }
+	void beginTransaction(SPISettings settings) { 
+		beginTransaction(BOARD_SPI_DEFAULT_SS, settings); 
+	}
 	void beginTransaction(uint8_t pin, SPISettings settings);
 	void endTransaction(void);
 
@@ -113,9 +124,15 @@ class SPIClass {
     void setDataWidth(uint8_t _pin, uint8_t _dataWidth);
 
 	// These methods sets the same parameters but on default pin BOARD_SPI_DEFAULT_SS
-	void setBitOrder(BitOrder _order) { setBitOrder(BOARD_SPI_DEFAULT_SS, _order); };
-	void setDataMode(uint8_t _mode) { setDataMode(BOARD_SPI_DEFAULT_SS, _mode); };
-	void setClockDivider(uint8_t _div) { setClockDivider(BOARD_SPI_DEFAULT_SS, _div); };
+	void setBitOrder(BitOrder _order) { 
+		setBitOrder(BOARD_SPI_DEFAULT_SS, _order); 
+	}
+	void setDataMode(uint8_t _mode) { 
+		setDataMode(BOARD_SPI_DEFAULT_SS, _mode); 
+	}
+	void setClockDivider(uint8_t _div) { 
+		setClockDivider(BOARD_SPI_DEFAULT_SS, _div); 
+	}
 
   private:
 	void init();

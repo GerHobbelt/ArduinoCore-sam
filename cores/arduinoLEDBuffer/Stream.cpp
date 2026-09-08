@@ -31,11 +31,13 @@
 int Stream::timedRead()
 {
   int c;
-  _startMillis = millis();
+  const uint32_t _startMillis = millis();
   do {
     c = read();
-    if (c >= 0) return c;
-  } while(millis() - _startMillis < _timeout);
+    if (c >= 0)
+      return c;
+    yield();
+  } while (millis() - _startMillis < _timeout);
   return -1;     // -1 indicates timeout
 }
 
@@ -43,17 +45,19 @@ int Stream::timedRead()
 int Stream::timedPeek()
 {
   int c;
-  _startMillis = millis();
+  const uint32_t _startMillis = millis();
   do {
     c = peek();
-    if (c >= 0) return c;
-  } while(millis() - _startMillis < _timeout);
+    if (c >= 0)
+      return c;
+    yield();
+  } while (millis() - _startMillis < _timeout);
   return -1;     // -1 indicates timeout
 }
 
-// returns peek of the next digit in the stream or -1 if timeout
-// discards non-numeric characters
-int Stream::peekNextDigit(LookaheadMode lookahead, bool detectDecimal )
+// returns peek of the next digit in the stream or -1 if timeout.
+// discards non-numeric characters.
+int Stream::peekNextDigit(LookaheadMode lookahead, bool detectDecimal)
 {
   int c;
   while (1) {
@@ -62,20 +66,24 @@ int Stream::peekNextDigit(LookaheadMode lookahead, bool detectDecimal )
     if( c < 0 ||
         c == '-' ||
         (c >= '0' && c <= '9') ||
-        (detectDecimal && c == '.')) return c;
+        (detectDecimal && c == '.'))
+      return c;
 
-    switch( lookahead ){
-        case SKIP_NONE: return -1; // Fail code.
-        case SKIP_WHITESPACE:
-            switch( c ){
-                case ' ':
-                case '\t':
-                case '\r':
-                case '\n': break;
-                default: return -1; // Fail code.
-            }
-        case SKIP_ALL:
-            break;
+    switch (lookahead) {
+    case SKIP_NONE:
+      return -1; // Fail code.
+    case SKIP_WHITESPACE:
+      switch (c) {
+      case ' ':
+      case '\t':
+      case '\r':
+      case '\n':
+        break;
+      default:
+        return -1; // Fail code.
+      }
+    case SKIP_ALL:
+      break;
     }
     read();  // discard non-numeric
   }
@@ -84,13 +92,13 @@ int Stream::peekNextDigit(LookaheadMode lookahead, bool detectDecimal )
 // Public Methods
 //////////////////////////////////////////////////////////////
 
-void Stream::setTimeout(unsigned long timeout)  // sets the maximum number of milliseconds to wait
+void Stream::setTimeout(uint32_t timeout)  // sets the maximum number of milliseconds to wait
 {
   _timeout = timeout;
 }
 
  // find returns true if the target string is found
-bool  Stream::find(char *target)
+bool Stream::find(char *target)
 {
   return findUntil(target, strlen(target), NULL, 0);
 }
@@ -103,7 +111,7 @@ bool Stream::find(char *target, size_t length)
 }
 
 // as find but search ends if the terminator string is found
-bool  Stream::findUntil(char *target, char *terminator)
+bool Stream::findUntil(char *target, char *terminator)
 {
   return findUntil(target, strlen(target), terminator, strlen(terminator));
 }
@@ -135,22 +143,22 @@ long Stream::parseInt(LookaheadMode lookahead, char ignore)
 
   c = peekNextDigit(lookahead, false);
   // ignore non numeric leading characters
-  if(c < 0)
+  if (c < 0)
     return 0; // zero returned if timeout
 
-  do{
-    if(c == ignore)
+  do {
+    if (c == ignore)
       ; // ignore this character
-    else if(c == '-')
+    else if (c == '-')
       isNegative = true;
-    else if(c >= '0' && c <= '9')        // is c a digit?
+    else if (c >= '0' && c <= '9')        // is c a digit?
       value = value * 10 + c - '0';
     read();  // consume the character we got with peek
     c = timedPeek();
   }
-  while( (c >= '0' && c <= '9') || c == ignore );
+  while ((c >= '0' && c <= '9') || c == ignore);
 
-  if(isNegative)
+  if (isNegative)
     value = -value;
   return value;
 }
@@ -166,29 +174,29 @@ float Stream::parseFloat(LookaheadMode lookahead, char ignore)
 
   c = peekNextDigit(lookahead, true);
     // ignore non numeric leading characters
-  if(c < 0)
+  if (c < 0)
     return 0; // zero returned if timeout
 
-  do{
-    if(c == ignore)
+  do {
+    if (c == ignore)
       ; // ignore
-    else if(c == '-')
+    else if (c == '-')
       isNegative = true;
     else if (c == '.')
       isFraction = true;
-    else if(c >= '0' && c <= '9')  {      // is c a digit?
+    else if (c >= '0' && c <= '9') {      // is c a digit?
       value = value * 10 + c - '0';
-      if(isFraction)
-         fraction *= 0.1f;
+      if (isFraction)
+        fraction *= 0.1f;
     }
     read();  // consume the character we got with peek
     c = timedPeek();
   }
-  while( (c >= '0' && c <= '9')  || (c == '.' && !isFraction) || c == ignore );
+  while ((c >= '0' && c <= '9') || (c == '.' && !isFraction) || c == ignore);
 
-  if(isNegative)
+  if (isNegative)
     value = -value;
-  if(isFraction)
+  if (isFraction)
     return value * fraction;
   else
     return value;
@@ -201,10 +209,14 @@ float Stream::parseFloat(LookaheadMode lookahead, char ignore)
 //
 size_t Stream::readBytes(char *buffer, size_t length)
 {
+  if (!buffer || !length)
+    return 0;
+
   size_t count = 0;
   while (count < length) {
     int c = timedRead();
-    if (c < 0) break;
+    if (c < 0)
+      break;
     *buffer++ = (char)c;
     count++;
   }
@@ -218,11 +230,14 @@ size_t Stream::readBytes(char *buffer, size_t length)
 
 size_t Stream::readBytesUntil(char terminator, char *buffer, size_t length)
 {
-  if (length < 1) return 0;
+  if (!buffer || !length)
+    return 0;
+
   size_t index = 0;
   while (index < length) {
     int c = timedRead();
-    if (c < 0 || c == terminator) break;
+    if (c < 0 || c == terminator)
+      break;
     *buffer++ = (char)c;
     index++;
   }
@@ -232,11 +247,11 @@ size_t Stream::readBytesUntil(char terminator, char *buffer, size_t length)
 String Stream::readString()
 {
   String ret;
-  int c = timedRead();
-  while (c >= 0)
-  {
+  for (;;) {
+    int c = timedRead();
+    if (c <= 0)         // end when we either hit a timeout or a NUL input byte as that one will end the string anyhow!
+      break;
     ret += (char)c;
-    c = timedRead();
   }
   return ret;
 }
@@ -244,11 +259,11 @@ String Stream::readString()
 String Stream::readStringUntil(char terminator)
 {
   String ret;
-  int c = timedRead();
-  while (c >= 0 && c != terminator)
-  {
+  for (;;) {
+    int c = timedRead();
+    if (c <= 0 || c == terminator)         // end when we either hit a timeout or a terminator or a NUL input byte as the latter one will end the string anyhow!
+      break;
     ret += (char)c;
-    c = timedRead();
   }
   return ret;
 }

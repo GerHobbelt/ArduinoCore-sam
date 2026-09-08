@@ -19,6 +19,8 @@
 #ifndef _WIRING_PULSE_
 #define _WIRING_PULSE_
 
+#include <stdint.h>
+
 #ifdef __cplusplus
  extern "C" {
 #endif
