@@ -36,6 +36,7 @@
 
 #include "sam.h"
 #include "Reset.h"
+#include "variant.h"        // `Serial` instance declaration
 
 #if defined (  __GNUC__  ) /* GCC CS3 */
   #include <sys/types.h>
@@ -49,6 +50,8 @@
 #else
 #  define UNUSED(x) x ## _UNUSED
 #endif
+
+extern "C" {
 
 /*----------------------------------------------------------------------------
  *        Exported variables
@@ -187,3 +190,5 @@ __attribute((weak)) extern int _getpid ( void )
 {
     return -1 ;
 }
+
+} // extern "C" 
