@@ -128,7 +128,7 @@ bool WEAK CDC_Setup(USBSetup& setup)
             if (1200 == _usbLineInfo.dwDTERate)
             {
                 // We check DTR state to determine if host port is open (bit 0 of lineState).
-                if ((_usbLineInfo.lineState & 0x01) == 0)
+                if ((_usbLineInfo.lineState & CDC_LINESTATE_DTR) == 0)
                     initiateReset(250);
                 else
                     cancelReset();
@@ -172,22 +172,24 @@ void Serial_::accept(void)
     // This rearms interrupt, but FIFO must be released before it
     // can retrigger. Moved here from the interrupt service
     // routine because we may come to this function directly.
-    if (Is_udd_out_received(CDC_RX)) udd_ack_out_received(CDC_RX);
+    if (Is_udd_out_received(CDC_RX)) 
+        udd_ack_out_received(CDC_RX);
     ring_buffer *buffer = &cdc_rx_buffer;
     uint32_t b = CDC_SERIAL_BUFFER_SIZE;
     uint32_t u = UDD_FifoByteCount(CDC_RX);
     uint32_t s = b - (uint32_t)(buffer->head - buffer->tail);
     uint32_t r = min(s, u);
-    while(r) {
+    while (r) {
         // May only be able to fill to the end of the buffer in first call.
-        uint32_t h = (buffer->head)%b;
-        uint32_t g = min(r, b-h);
+        uint32_t h = (buffer->head) % b;
+        uint32_t g = min(r, b - h);
         UDD_Recv(CDC_RX, &(buffer->buffer[h]), g);
         r -= g;
         buffer->head += g;
     }
     // Don't release FIFO if not all data was transferred.
-    if (!UDD_FifoByteCount(CDC_RX)) UDD_ReleaseRX(CDC_RX);
+    if (!UDD_FifoByteCount(CDC_RX)) 
+        UDD_ReleaseRX(CDC_RX);
 }
 
 void Serial_::enableInterrupts()
@@ -204,7 +206,8 @@ void Serial_::disableInterrupts()
 
 int Serial_::available(void)
 {
-    if (!Is_otg_enabled()) return 0;
+    if (!Is_otg_enabled()) 
+        return 0;
 
     ring_buffer *buffer = &cdc_rx_buffer;
     return (unsigned int)(buffer->head - buffer->tail);
@@ -219,7 +222,8 @@ int Serial_::availableForWrite(void)
 
 int Serial_::peek(void)
 {
-    if (!Is_otg_enabled()) return -1;
+    if (!Is_otg_enabled()) 
+        return -1;
 
     ring_buffer *buffer = &cdc_rx_buffer;
 
@@ -230,13 +234,14 @@ int Serial_::peek(void)
     else
     {
         uint32_t b = CDC_SERIAL_BUFFER_SIZE;
-        return buffer->buffer[(buffer->tail)%b];
+        return buffer->buffer[(buffer->tail) % b];
     }
 }
 
 int Serial_::read(void)
 {
-    if (!Is_otg_enabled()) return -1;
+    if (!Is_otg_enabled()) 
+        return -1;
 
     ring_buffer *buffer = &cdc_rx_buffer;
 
@@ -253,7 +258,7 @@ int Serial_::read(void)
     else
     {
         uint32_t b = CDC_SERIAL_BUFFER_SIZE;
-        unsigned char c = buffer->buffer[(buffer->tail)%b];
+        unsigned char c = buffer->buffer[(buffer->tail) % b];
         buffer->tail += 1;
         return c;
     }
@@ -281,7 +286,8 @@ int Serial_::read(uint8_t *d, size_t s)
     // Give "accept" a chance to catch up if data is ready.
     // Interrupt shouldn't be able to fire in this condition.
     //        if (Is_udd_fifocon(CDC_RX)) {
-      if ((a-k) < b) accept();
+      if ((a-k) < b) 
+          accept();
       //}
     return k;
 }
@@ -289,14 +295,16 @@ int Serial_::read(uint8_t *d, size_t s)
 
 void Serial_::flush(void)
 {
-    if (!Is_otg_enabled()) return;
+    if (!Is_otg_enabled()) 
+        return;
 
     USBD_Flush(CDC_TX);
 }
 
 size_t Serial_::write(const uint8_t *buffer, size_t size)
 {
-    if (!Is_otg_enabled()) return 0;
+    if (!Is_otg_enabled()) 
+        return 0;
 
     /* only try to send bytes if the high-level CDC connection itself
      is open (not just the pipe) - the OS should set lineState when the port
@@ -307,7 +315,7 @@ size_t Serial_::write(const uint8_t *buffer, size_t size)
     // TODO - ZE - check behavior on different OSes and test what happens if an
     // open connection isn't broken cleanly (cable is yanked out, host dies
     // or locks up, or host virtual serial port hangs)
-    if (_usbLineInfo.lineState & 0x01)
+    if (_usbLineInfo.lineState & CDC_LINESTATE_DTR)
     {
         int r = USBD_Send(CDC_TX, buffer, size);
 
@@ -343,7 +351,7 @@ Serial_::operator bool()
 
     bool result = false;
 
-    if (_usbLineInfo.lineState & 0x01)
+    if (_usbLineInfo.lineState & CDC_LINESTATE_DTR)
     {
         result = true;
     }
@@ -383,11 +391,11 @@ uint8_t Serial_::numbits() {
 }
 
 bool Serial_::dtr() {
-    return _usbLineInfo.lineState & 0x1;
+    return _usbLineInfo.lineState & CDC_LINESTATE_DTR;
 }
 
 bool Serial_::rts() {
-    return _usbLineInfo.lineState & 0x2;
+    return _usbLineInfo.lineState & CDC_LINESTATE_RTS;
 }
 
 Serial_ SerialUSB;
