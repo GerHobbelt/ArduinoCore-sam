@@ -19,6 +19,8 @@
 #ifndef _WIRING_SHIFT_
 #define _WIRING_SHIFT_
 
+#include <stdint.h>
+
 #ifdef __cplusplus
  extern "C" {
 #endif

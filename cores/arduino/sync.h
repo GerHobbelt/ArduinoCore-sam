@@ -22,7 +22,9 @@ public:
 	~__Guard() {
 		cpu_irq_restore(flags);
 	}
-	uint32_t enter() { return loops--; }
+	uint32_t enter() { 
+		return loops--; 
+	}
 private:
 	irqflags_t flags;
 	uint16_t loops;

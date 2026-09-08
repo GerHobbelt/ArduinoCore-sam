@@ -19,6 +19,8 @@
 #ifndef _WIRING_DIGITAL_
 #define _WIRING_DIGITAL_
 
+#include <stdint.h>
+
 #ifdef __cplusplus
  extern "C" {
 #endif

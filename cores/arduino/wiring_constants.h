@@ -33,12 +33,12 @@ typedef uint16_t word;
 #define OUTPUT          (0x1)
 #define INPUT_PULLUP    (0x2)
 
-#define PI 3.1415926535897932384626433832795
-#define HALF_PI 1.5707963267948966192313216916398
-#define TWO_PI 6.283185307179586476925286766559
-#define DEG_TO_RAD 0.017453292519943295769236907684886
-#define RAD_TO_DEG 57.295779513082320876798154814105
-#define EULER 2.718281828459045235360287471352
+#define PI              3.1415926535897932384626433832795
+#define HALF_PI         1.5707963267948966192313216916398
+#define TWO_PI          6.283185307179586476925286766559
+#define DEG_TO_RAD      0.017453292519943295769236907684886
+#define RAD_TO_DEG      57.295779513082320876798154814105
+#define EULER           2.718281828459045235360287471352
 
 #define SERIAL  0x0
 #define DISPLAY 0x1
@@ -48,8 +48,8 @@ extern "C"{
 #endif // __cplusplus
 
 enum BitOrder {
-	LSBFIRST = 0,
-	MSBFIRST = 1
+    LSBFIRST = 0,
+    MSBFIRST = 1
 };
 
 #ifdef __cplusplus
@@ -71,13 +71,13 @@ enum BitOrder {
 #endif // abs
 
 #ifdef __cplusplus
-  template<class T, class L> 
+  template<class T, class L>
   auto min(const T& a, const L& b) -> decltype((b < a) ? b : a)
   {
     return (b < a) ? b : a;
   }
 
-  template<class T, class L> 
+  template<class T, class L>
   auto max(const T& a, const L& b) -> decltype((b < a) ? b : a)
   {
     return (a < b) ? b : a;
@@ -97,12 +97,12 @@ enum BitOrder {
 #endif
 #endif
 
-#define abs(x) ((x)>0?(x):-(x))
-#define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
-#define round(x)     ((x)>=0?(long)((x)+0.5f):(long)((x)-0.5f))
-#define radians(deg) ((deg)*DEG_TO_RAD)
-#define degrees(rad) ((rad)*RAD_TO_DEG)
-#define sq(x) ((x)*(x))
+#define abs(x) ((x) > 0 ? (x) : -(x))
+#define constrain(amt,low,high) ((amt) < (low) ? (low) : ((amt) > (high) ? (high) : (amt)))
+#define round(x)     ((x) >= 0 ? (long)((x) + 0.5f) : (long)((x) - 0.5f))
+#define radians(deg) ((deg) * DEG_TO_RAD)
+#define degrees(rad) ((rad) * RAD_TO_DEG)
+#define sq(x) ((x) * (x))
 
 #define interrupts() __enable_irq()
 #define noInterrupts() __disable_irq()
