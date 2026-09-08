@@ -16,9 +16,9 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+#include <stdint.h>
+
+#include "Arduino.h"
 #include "UARTClass.h"
 
 // Constructors ////////////////////////////////////////////////////////////////
@@ -97,16 +97,16 @@ void UARTClass::init(const uint32_t dwBaudRate, const uint32_t modeReg)
 
 void UARTClass::end( void )
 {
-  // Clear any received data
-  _rx_buffer->drop();
-
   // Wait for any outstanding data to be sent
   flush();
-
-  initialized = 0;
   
   // Disable UART interrupt in NVIC
   NVIC_DisableIRQ( _dwIrq );
+
+  // Clear any received data
+  drop();
+
+  initialized = 0;
 
   pmc_disable_periph_clk( _dwId );
 }
@@ -156,6 +156,7 @@ void UARTClass::flush( void )
 
 void UARTClass::drop( void )
 {
+  _rx_buffer->drop();
   _tx_buffer->drop();
 }
 
@@ -170,24 +171,15 @@ size_t UARTClass::write( const uint8_t uc_data )
     return 0;
   }
   
-  // Is the hardware currently busy?
-  if (((_pUart->UART_SR & UART_SR_TXRDY) != UART_SR_TXRDY) ||
-      !_tx_buffer->isFlushed())
-  {
-    // If busy we buffer
-    bool rv;
-	do {
-	  rv = _tx_buffer->store_char( uc_data );
-	} while (!rv);  // Spin locks if we're about to overwrite the buffer. This continues once the data is sent
+  for(;;) {
+    if (write_if_possible(uc_data))
+      break;
+  
+    yield();
+    
+    // Spin locks if we're about to overflow the buffer. This continues once the data is sent and space in the buffer has become available.
+  }
 
-    // Make sure TX interrupt is enabled
-    _pUart->UART_IER = UART_IER_TXRDY;
-  }
-  else 
-  {
-     // Bypass buffering and send character directly
-     _pUart->UART_THR = uc_data;
-  }
   return 1;
 }
 
@@ -198,7 +190,7 @@ bool UARTClass::write_if_possible( const uint8_t uc_data )
   }
   
   // Is the hardware currently busy?
-  if (((_pUart->UART_SR & UART_SR_TXRDY) != UART_SR_TXRDY) |
+  if (((_pUart->UART_SR & UART_SR_TXRDY) != UART_SR_TXRDY) ||
       !_tx_buffer->isFlushed())
   {
     // If busy we buffer

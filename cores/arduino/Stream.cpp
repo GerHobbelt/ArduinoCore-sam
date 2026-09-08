@@ -209,6 +209,9 @@ float Stream::parseFloat(LookaheadMode lookahead, char ignore)
 //
 size_t Stream::readBytes(char *buffer, size_t length)
 {
+  if (!buffer || !length)
+    return 0;
+
   size_t count = 0;
   while (count < length) {
     int c = timedRead();
@@ -227,8 +230,9 @@ size_t Stream::readBytes(char *buffer, size_t length)
 
 size_t Stream::readBytesUntil(char terminator, char *buffer, size_t length)
 {
-  if (length < 1)
+  if (!buffer || !length)
     return 0;
+
   size_t index = 0;
   while (index < length) {
     int c = timedRead();
@@ -243,11 +247,11 @@ size_t Stream::readBytesUntil(char terminator, char *buffer, size_t length)
 String Stream::readString()
 {
   String ret;
-  int c = timedRead();
-  while (c >= 0)
-  {
+  for (;;) {
+    int c = timedRead();
+    if (c <= 0)         // end when we either hit a timeout or a NUL input byte as that one will end the string anyhow!
+      break;
     ret += (char)c;
-    c = timedRead();
   }
   return ret;
 }
@@ -255,11 +259,11 @@ String Stream::readString()
 String Stream::readStringUntil(char terminator)
 {
   String ret;
-  int c = timedRead();
-  while (c >= 0 && c != terminator)
-  {
+  for (;;) {
+    int c = timedRead();
+    if (c <= 0 || c == terminator)         // end when we either hit a timeout or a terminator or a NUL input byte as the latter one will end the string anyhow!
+      break;
     ret += (char)c;
-    c = timedRead();
   }
   return ret;
 }
