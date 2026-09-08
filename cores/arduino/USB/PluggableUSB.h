@@ -34,7 +34,10 @@ protected:
   virtual bool setup(USBSetup& setup) = 0;
   virtual int getInterface(uint8_t* interfaceCount) = 0;
   virtual int getDescriptor(USBSetup& setup) = 0;
-  virtual uint8_t getShortName(char *name) { name[0] = 'A'+pluggedInterface; return 1; }
+  virtual uint8_t getShortName(char *name) { 
+    name[0] = 'A' + pluggedInterface; 
+    return 1; 
+  }
 
   uint8_t pluggedInterface;
   uint8_t pluggedEndpoint;

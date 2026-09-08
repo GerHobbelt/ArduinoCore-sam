@@ -35,8 +35,10 @@ size_t Print::write(const uint8_t *buffer, size_t size)
 {
   size_t n = 0;
   while (size--) {
-    if (write(*buffer++)) n++;
-    else break;
+    if (write(*buffer++)) 
+        n++;
+    else 
+        break;
   }
   return n;
 }
@@ -94,8 +96,10 @@ size_t Print::print(long n, int base)
 
 size_t Print::print(unsigned long n, int base)
 {
-  if (base == 0) return write(n);
-  else return printNumber(n, base);
+  if (base == 0) 
+      return write(n);
+  else 
+      return printNumber(n, base);
 }
 
 size_t Print::print(long long n, int base)
@@ -116,8 +120,10 @@ size_t Print::print(long long n, int base)
 
 size_t Print::print(unsigned long long n, int base)
 {
-  if (base == 0) return write(n);
-  else return printULLNumber(n, base);
+  if (base == 0) 
+      return write(n);
+  else 
+      return printULLNumber(n, base);
 }
 
 size_t Print::print(double n, int digits)
@@ -246,7 +252,8 @@ size_t Print::printNumber(unsigned long n, uint8_t base)
   *str = '\0';
 
   // prevent crash if called with base == 1
-  if (base < 2) base = 10;
+  if (base < 2) 
+      base = 10;
 
   do {
     char c = n % base;
@@ -289,7 +296,8 @@ size_t Print::printULLNumber(unsigned long long n64, uint8_t base)
   uint8_t innerLoops = 0;
 
   // prevent crash if called with base == 1
-  if (base < 2) base = 10;
+  if (base < 2) 
+      base = 10;
 
   // process chunks that fit in "16 bit math".
   uint16_t top = 0xFFFF / base;
@@ -308,10 +316,10 @@ size_t Print::printULLNumber(unsigned long long n64, uint8_t base)
     n64 = q;
 
     // 16 bit math loop to do remainder. (note buffer is filled reverse)
-    for (uint8_t j=0; j < innerLoops; j++)
+    for (uint8_t j = 0; j < innerLoops; j++)
     {
-      uint16_t qq = r/base;
-      buf[i++] = r - qq*base;
+      uint16_t qq = r / base;
+      buf[i++] = r - qq * base;
       r = qq;
     }
   }
@@ -319,16 +327,17 @@ size_t Print::printULLNumber(unsigned long long n64, uint8_t base)
   uint16_t n16 = n64;
   while (n16 > 0)
   {
-    uint16_t qq = n16/base;
-    buf[i++] = n16 - qq*base;
+    uint16_t qq = n16 / base;
+    buf[i++] = n16 - qq * base;
     n16 = qq;
   }
 
   size_t bytes = i;
-  for (; i > 0; i--)
+  for (; i > 0; i--) {
     write((char) (buf[i - 1] < 10 ?
-    '0' + buf[i - 1] :
-    'A' + buf[i - 1] - 10));
+      '0' + buf[i - 1] :
+      'A' + buf[i - 1] - 10));
+  }
 
   return bytes;
 }
@@ -337,10 +346,14 @@ size_t Print::printFloat(double number, uint8_t digits)
 {
   size_t n = 0;
 
-  if (isnan(number)) return print("nan");
-  if (isinf(number)) return print("inf");
-  if (number > 4294967040.0) return print ("ovf");  // constant determined empirically
-  if (number <-4294967040.0) return print ("ovf");  // constant determined empirically
+  if (isnan(number)) 
+      return print("nan");
+  if (isinf(number)) 
+      return print("inf");
+  if (number > 4294967040.0) 
+      return print ("ovf");  // constant determined empirically
+  if (number < -4294967040.0) 
+      return print ("ovf");  // constant determined empirically
 
   // Handle negative numbers
   if (number < 0.0)
@@ -351,7 +364,7 @@ size_t Print::printFloat(double number, uint8_t digits)
 
   // Round correctly so that print(1.999, 2) prints as "2.00"
   double rounding = 0.5;
-  for (uint8_t i=0; i<digits; ++i)
+  for (uint8_t i = 0; i < digits; ++i)
     rounding /= 10.0;
 
   number += rounding;

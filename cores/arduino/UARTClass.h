@@ -54,8 +54,8 @@ class UARTClass : public HardwareSerial
     virtual void flush(void) override;
     virtual void drop(void) override;
     virtual bool isFlushed(void) override;
-    virtual size_t write(const uint8_t c) override;  // spin locks until c has been sent.
-    virtual bool write_if_possible(const uint8_t uc_data) override;    // return true if sent.
+    virtual size_t write(const uint8_t c) override;  					// spin locks until c has been sent.
+    virtual bool write_if_possible(const uint8_t uc_data) override;    	// return true if sent.
 
     using Print::write; // pull in write(str) and write(buf, size) from Print
 

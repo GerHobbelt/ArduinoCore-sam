@@ -22,6 +22,7 @@
 #include <inttypes.h>
 #include <stdio.h> // for size_t
 #include <stdarg.h> // for printf
+
 #define PRINTF_BUF 80
 
 #include "WString.h"
@@ -40,16 +41,23 @@ class Print
     size_t printULLNumber(unsigned long long, uint8_t);
     size_t printFloat(double, uint8_t);
   protected:
-    void setWriteError(int err = 1) { write_error = err; }
+    void setWriteError(int err = 1) { 
+        write_error = err; 
+    }
   public:
     Print() : write_error(0) {}
 
-    int getWriteError() { return write_error; }
-    void clearWriteError() { setWriteError(0); }
+    int getWriteError() { 
+        return write_error; 
+    }
+    void clearWriteError() { 
+        setWriteError(0); 
+    }
 
     virtual size_t write(uint8_t) = 0;
     size_t write(const char *str) {
-      if (str == NULL) return 0;
+      if (str == NULL) 
+          return 0;
       return write((const uint8_t *)str, strlen(str));
     }
     virtual size_t write(const uint8_t *buffer, size_t size);
