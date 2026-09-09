@@ -20,6 +20,7 @@
 #define Print_h
 
 #include <inttypes.h>
+#include <stdint.h>
 #include <stdio.h> // for size_t
 #include <stdarg.h> // for printf
 
@@ -35,23 +36,25 @@
 
 class Print
 {
+  protected:
+    volatile uint16_t error_state{0};
+    volatile bool initialized{false};
   private:
-    int write_error;
     size_t printNumber(unsigned long, uint8_t);
     size_t printULLNumber(unsigned long long, uint8_t);
     size_t printFloat(double, uint8_t);
   protected:
-    void setWriteError(int err = 1) { 
-        write_error = err; 
+    void setErrorState(uint16_t err = 1) { 
+        error_state = err; 
     }
   public:
-    Print() : write_error(0) {}
+    Print() {}
 
-    int getWriteError() { 
-        return write_error; 
+    uint16_t getErrorState() { 
+        return error_state; 
     }
-    void clearWriteError() { 
-        setWriteError(0); 
+    void clearErrorState() { 
+        setErrorState(0); 
     }
 
     virtual size_t write(uint8_t) = 0;

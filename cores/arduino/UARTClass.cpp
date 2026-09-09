@@ -24,7 +24,6 @@
 // Constructors ////////////////////////////////////////////////////////////////
 
 UARTClass::UARTClass( Uart *pUart, IRQn_Type dwIrq, uint32_t dwId, RingBuffer *pRx_buffer, RingBuffer *pTx_buffer )
-: error_state(0), initialized(0)
 {
   _rx_buffer = pRx_buffer;
   _tx_buffer = pTx_buffer;
@@ -103,10 +102,10 @@ void UARTClass::end( void )
   // Disable UART interrupt in NVIC
   NVIC_DisableIRQ( _dwIrq );
 
+  initialized = 0;
+
   // Clear any received data
   drop();
-
-  initialized = 0;
 
   pmc_disable_periph_clk( _dwId );
 }
@@ -156,6 +155,8 @@ void UARTClass::flush( void )
 
 void UARTClass::drop( void )
 {
+  initialized = 0;
+
   _rx_buffer->drop();
   _tx_buffer->drop();
 }

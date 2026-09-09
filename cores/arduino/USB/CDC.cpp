@@ -324,11 +324,11 @@ size_t Serial_::write(const uint8_t *buffer, size_t size)
             return r;
         } else
         {
-            setWriteError();
+            setErrorState();
             return 0;
         }
     }
-    setWriteError();
+    setErrorState();
     return 0;
 }
 
