@@ -27,7 +27,11 @@
  * ----------------------------------------------------------------------------
  */
 
-#include "sam3xa.h"
+#include "../../include/sam3xa.h"
+
+#ifdef __cplusplus
+ extern "C" {
+#endif
 
 /* Initialize segments */
 extern uint32_t _sfixed;
@@ -290,4 +294,8 @@ void Dummy_Handler(void)
 	while (1) {
 	}
 }
+
+#ifdef __cplusplus
+ }
+#endif
 

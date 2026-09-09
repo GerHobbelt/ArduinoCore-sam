@@ -27,7 +27,11 @@
  * ----------------------------------------------------------------------------
  */
 
-#include "sam3xa.h"
+#include "../../include/sam3xa.h"
+
+#ifdef __cplusplus
+ extern "C" {
+#endif
 
 /* Initialize segments */
 extern uint32_t _sfixed;
@@ -48,6 +52,16 @@ void __libc_init_array(void);
 
 /* Default empty handler */
 void Dummy_Handler(void);
+
+/**
+ * \brief Default interrupt handler for unused IRQs.
+ */
+void Dummy_Handler(void)
+{
+	while (1) {
+	}
+}
+
 
 /* Cortex-M3 core handlers */
 void NMI_Handler        ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
@@ -282,12 +296,7 @@ void Reset_Handler(void)
 	while (1);
 }
 
-/**
- * \brief Default interrupt handler for unused IRQs.
- */
-void Dummy_Handler(void)
-{
-	while (1) {
-	}
-}
+#ifdef __cplusplus
+ }
+#endif
 
