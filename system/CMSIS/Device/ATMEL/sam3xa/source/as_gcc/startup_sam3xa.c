@@ -41,6 +41,7 @@
 // Arduino: handlers weak symbols moved into main
 
 /* Exception Table */
+__attribute__ ((section(".vectors")))
 const DeviceVectors exception_table = {
 
 	/* Configure Initial Stack Pointer, using linker-generated symbols */
