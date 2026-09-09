@@ -39,12 +39,13 @@
 */
 /*@{*/
 
+#include <stdint.h>
+
 #ifdef __cplusplus
  extern "C" {
 #endif
 
 #if !(defined(__ASSEMBLY__) || defined(__IAR_SYSTEMS_ASM__))
-#include <stdint.h>
 #ifndef __cplusplus
 typedef volatile const uint32_t RoReg; /**< Read only 32-bit register (volatile const unsigned int) */
 #else
