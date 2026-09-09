@@ -68,6 +68,13 @@ public:
     return requestFrom(static_cast<uint8_t>(address),
         static_cast<uint8_t>(quantity), static_cast<uint8_t>(sendStop));
   }
+
+	uint8_t requestFromFast(uint8_t, uint8_t);
+    uint8_t requestFromFast(uint8_t, uint8_t, uint8_t);
+	uint8_t requestFromFast(uint8_t, uint8_t, uint32_t, uint8_t, uint8_t);
+	uint8_t requestFromFast(int, int);
+    uint8_t requestFromFast(int, int, int);
+
 	size_t write(uint8_t) override;
 	size_t write(const uint8_t *, size_t) override;
 	int available(void) override;

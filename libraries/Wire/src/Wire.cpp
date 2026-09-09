@@ -176,6 +176,48 @@ uint8_t TwoWire::requestFrom(uint8_t address, uint8_t quantity, uint32_t iaddres
 	return readed;
 }
 
+uint8_t TwoWire::requestFromFast(uint8_t address, uint8_t quantity, uint32_t iaddress, uint8_t isize, uint8_t sendStop) {
+	if (quantity > BUFFER_LENGTH)
+		quantity = BUFFER_LENGTH;
+
+	// perform blocking read into buffer
+	int readed = 0;
+	TWI_StartRead(twi, address, iaddress, isize);
+	do {
+		// Stop condition must be set during the reception of last byte
+		if (readed + 1 == quantity)
+			TWI_SendSTOPCondition( twi);
+
+		if (TWI_WaitByteReceived(twi, 1000)) // only wait for 1mS
+			rxBuffer[readed++] = TWI_ReadByte(twi);
+		else
+			break;
+	} while (readed < quantity);
+	TWI_WaitTransferComplete(twi, 1000);  // only wait for 1mS
+
+	// set rx buffer iterator vars
+	rxBufferIndex = 0;
+	rxBufferLength = readed;
+
+	return readed;
+}
+
+uint8_t TwoWire::requestFromFast(uint8_t address, uint8_t quantity, uint8_t sendStop) {
+	return requestFromFast((uint8_t) address, (uint8_t) quantity, (uint32_t) 0, (uint8_t) 0, (uint8_t) sendStop);
+}
+
+uint8_t TwoWire::requestFromFast(uint8_t address, uint8_t quantity) {
+	return requestFromFast((uint8_t) address, (uint8_t) quantity, (uint8_t) true);
+}
+
+uint8_t TwoWire::requestFromFast(int address, int quantity) {
+	return requestFromFast((uint8_t) address, (uint8_t) quantity, (uint8_t) true);
+}
+
+uint8_t TwoWire::requestFromFast(int address, int quantity, int sendStop) {
+	return requestFromFast((uint8_t) address, (uint8_t) quantity, (uint8_t) sendStop);
+}
+
 void TwoWire::beginTransmission(uint8_t address) {
 	status = MASTER_SEND;
 
