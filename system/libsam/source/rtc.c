@@ -348,10 +348,10 @@ extern void RTC_DisableIt( Rtc* pRtc, uint32_t dwSources )
  */
 extern int RTC_SetTime( Rtc* pRtc, uint8_t ucHour, uint8_t ucMinute, uint8_t ucSecond )
 {
-    const uint32_t dwTime=calculate_dwTime( pRtc, ucHour, ucMinute, ucSecond ) ;
-    if( dwTime == 0xFFFFFFFF )
+    const uint32_t dwTime = calculate_dwTime(pRtc, ucHour, ucMinute, ucSecond);
+    if (dwTime == 0xFFFFFFFF)
     {
-      return 1 ;
+      return 1;
     }
 
     pRtc->RTC_CR |= RTC_CR_UPDTIM ;
