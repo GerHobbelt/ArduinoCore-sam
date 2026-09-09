@@ -42,27 +42,28 @@ void initVariant() { }
 int main(void) __attribute__((weak));
 int main( void )
 {
-	// Initialize watchdog
-	watchdogSetup();
+    // Initialize watchdog
+    watchdogSetup();
 
-	init();
+    init();
 
-	initVariant();
+    initVariant();
 
-	delay(1);
+    delay(1);
 
 #if defined(USBCON)
-	USBDevice.attach();
+    USBDevice.attach();
 #endif
 
-	setup();
+    setup();
 
-	for (;;)
-	{
-		loop();
-		if (serialEventRun) 
-			serialEventRun();
-	}
+    for (;;)
+    {
+        loop();
 
-	return 0;
+        if (serialEventRun)
+            serialEventRun();
+    }
+
+    return 0;
 }
