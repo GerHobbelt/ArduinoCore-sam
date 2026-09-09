@@ -41,7 +41,6 @@
 // Arduino: handlers weak symbols moved into main
 
 /* Exception Table */
-__attribute__ ((used, section(".vectors"), no_icf, retain, externally_visible))
 const DeviceVectors exception_table = {
 
 	/* Configure Initial Stack Pointer, using linker-generated symbols */
@@ -157,7 +156,6 @@ const DeviceVectors exception_table = {
  * \brief This is the code that gets called on processor reset.
  * To initialize the device, and call the main() routine.
  */
-__attribute__((used, noipa, retain, noinline, externally_visible)) 
 void Reset_Handler(void)
 {
 	uint32_t *pSrc, *pDest;

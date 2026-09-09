@@ -22,7 +22,6 @@
 extern "C" {
 #endif
 
-__attribute__((noipa, interrupt)) 
 static void __halt() 
 {
 	// Halts
@@ -38,18 +37,16 @@ void BusFault_Handler  (void) __attribute__ ((weak, alias("__halt")));
 void UsageFault_Handler(void) __attribute__ ((weak, alias("__halt")));
 void DebugMon_Handler  (void) __attribute__ ((weak, alias("__halt")));
 
-__attribute__((noipa, interrupt)) 
-void SVC_Handler       (void)
+void SVC_Handler(void)
 { 
 	svcHook(); 
 }
-__attribute__((noipa, interrupt)) 
-void PendSV_Handler    (void)
+
+void PendSV_Handler(void)
 {	
 	pendSVHook(); 
 }
 
-__attribute__((noipa, interrupt)) 
 void SysTick_Handler(void)
 {
 	if (sysTickHook())
