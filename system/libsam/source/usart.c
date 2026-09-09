@@ -185,7 +185,7 @@ void USART_SetReceiverEnabled(Usart *usart,
 void USART_Write(
     Usart *usart,
     uint16_t data,
-    volatile uint32_t timeOut)
+    uint32_t timeOut)
 {
     if (timeOut == 0) {
 
@@ -256,7 +256,7 @@ uint8_t USART_WriteBuffer(
  */
 uint16_t USART_Read(
     Usart *usart,
-    volatile uint32_t timeOut)
+    uint32_t timeOut)
 {
     if (timeOut == 0) {
 

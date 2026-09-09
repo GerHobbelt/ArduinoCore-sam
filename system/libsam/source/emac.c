@@ -157,7 +157,7 @@ static void circ_inc(uint16_t *headortail, uint32_t size)
  */
 static uint8_t emac_wait_phy(Emac* p_emac, const uint32_t ul_retry)
 {
-	volatile uint32_t ul_retry_count = 0;
+	uint32_t ul_retry_count = 0;
 
 	while (!emac_is_phy_idle(p_emac)) {
 		if (ul_retry == 0) {

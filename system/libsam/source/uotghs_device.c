@@ -211,7 +211,7 @@ void UDD_ClearSetupInt(void)
 
 uint32_t UDD_Send(uint32_t ep, const void* data, uint32_t len)
 {
-	const uint8_t *ptr_src = data;
+	const uint8_t *ptr_src = (const uint8_t *)data;
 	uint8_t *ptr_dest = (uint8_t *) &udd_get_endpoint_fifo_access8(ep);
 	uint32_t i;
 

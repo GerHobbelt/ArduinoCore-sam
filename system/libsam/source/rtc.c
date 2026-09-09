@@ -197,7 +197,7 @@ static uint32_t calculate_dwDate( Rtc* pRtc, uint16_t wYear, uint8_t ucMonth, ui
  * \param pucMinute  If not null, current minute is stored in this variable.
  * \param pucSecond  If not null, current second is stored in this variable.
  */
-static void dwTime2time(Rtc* pRtc,  uint32_t dwTime, uint8_t *pucHour, uint8_t *pucMinute, uint8_t *pucSecond )
+static void dwTime2time(Rtc* pRtc, uint32_t dwTime, uint8_t *pucHour, uint8_t *pucMinute, uint8_t *pucSecond )
 {
     /* Hour */
     if ( pucHour )
@@ -381,7 +381,7 @@ extern void RTC_GetTime( Rtc* pRtc, uint8_t *pucHour, uint8_t *pucMinute, uint8_
     {
         dwTime = pRtc->RTC_TIMR ;
     }
-    dwTime2time( dwTime, pucHour, pucMinute, pucSecond ) ;
+    dwTime2time( pRtc, dwTime, pucHour, pucMinute, pucSecond ) ;
 }
 
 /**
@@ -445,7 +445,7 @@ extern void RTC_GetDate( Rtc* pRtc, uint16_t *pwYear, uint8_t *pucMonth, uint8_t
     }
     while ( dwDate != pRtc->RTC_CALR ) ;
 
-    dwDate2date( dwDate, pwYear, *pucMonth, *pucDay, *pucWeek ) ;
+    dwDate2date( dwDate, pwYear, pucMonth, pucDay, pucWeek ) ;
 }
 
 /**
@@ -577,7 +577,7 @@ extern void RTC_GetTimeAndDate( Rtc* pRtc,
     }
     while( dwTime != pRtc->RTC_TIMR );
 
-    dwTime2time( dwTime, pucHour, pucMinute, pucSecond ) ;
+    dwTime2time( pRtc, dwTime, pucHour, pucMinute, pucSecond ) ;
     dwDate2date( dwDate, pwYear, pucMonth, pucDay, pucWeek ) ;
 }
 

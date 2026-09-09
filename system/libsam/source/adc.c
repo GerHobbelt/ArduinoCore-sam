@@ -516,7 +516,7 @@ void adc_disable_tag(Adc *p_adc)
  */
 enum adc_channel_num_t adc_get_tag(const Adc *p_adc)
 {
-	return (p_adc->ADC_LCDR & ADC_LCDR_CHNB_Msk) >> ADC_LCDR_CHNB_Pos;
+	return (enum adc_channel_num_t)((p_adc->ADC_LCDR & ADC_LCDR_CHNB_Msk) >> ADC_LCDR_CHNB_Pos);
 }
 #endif
 
