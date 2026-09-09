@@ -16,16 +16,41 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef RESET_H
-#define RESET_H
+#ifndef BIN_SYSTEM_LAYOUT_H
+#define BIN_SYSTEM_LAYOUT_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void initiateReset(short int ms);
-void tickReset();
-void cancelReset();
+void banzai(void);
+
+void svcHook(void);
+void pendSVHook(void);
+int sysTickHook(void);
+
+/* Initialize segments */
+extern uint32_t _sfixed;
+extern uint32_t _efixed;
+extern uint32_t _etext;
+extern uint32_t _srelocate;
+extern uint32_t _erelocate;
+extern uint32_t _szero;
+extern uint32_t _ezero;
+extern uint32_t _sstack;
+extern uint32_t _estack;
+
+extern const uint32_t _sbss;
+extern const uint32_t _ebss;
+
+extern const uint32_t _end;
+
+/** \cond DOXYGEN_SHOULD_SKIP_THIS */
+extern int main(void);
+
+// Arduino: we must setup hardware before doing this
+extern void __libc_init_array(void);
+/** \endcond */
 
 #ifdef __cplusplus
 }

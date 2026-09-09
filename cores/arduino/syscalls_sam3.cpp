@@ -36,6 +36,7 @@
 
 #include "sam.h"
 #include "Reset.h"
+#include "system_layout.h"
 #include "variant.h"        // `Serial` instance declaration
 
 #if defined (  __GNUC__  ) /* GCC CS3 */
