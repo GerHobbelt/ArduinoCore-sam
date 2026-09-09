@@ -311,7 +311,7 @@ void serialEvent() __attribute__((weak));
 void serialEvent() { }
 
 // IT handlers
-void UART_Handler(void)  __attribute__((weak));
+__attribute__((weak, noipa, interrupt))
 void UART_Handler(void)
 {
   Serial.IrqHandler();
@@ -344,22 +344,26 @@ void serialEvent4() __attribute__((weak));
 void serialEvent4() { }
 
 // IT handlers
-__attribute__((weak)) void USART0_Handler(void)
+__attribute__((weak, noipa, interrupt)) 
+void USART0_Handler(void)
 {
   Serial1.IrqHandler();
 }
 
-__attribute__((weak)) void USART1_Handler(void)
+__attribute__((weak, noipa, interrupt)) 
+void USART1_Handler(void)
 {
   Serial2.IrqHandler();
 }
 
-__attribute__((weak)) void USART3_Handler(void)
+__attribute__((weak, noipa, interrupt)) 
+void USART3_Handler(void)
 {
   Serial3.IrqHandler();
 }
 
-__attribute__((weak)) void USART2_Handler(void)
+__attribute__((weak, noipa, interrupt)) 
+void USART2_Handler(void)
 {
   Serial4.IrqHandler();
 }
@@ -380,8 +384,6 @@ __attribute__((weak)) void serialEventRun(void)
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-void __libc_init_array(void);
 
 __attribute__((weak)) void init( void )
 {

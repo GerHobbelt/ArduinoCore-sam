@@ -29,33 +29,19 @@
 
 #include "../../include/sam3xa.h"
 
+#include "system_layout.h"
+
+// shut up warning: 'retain' attribute ignored [-Wattributes]
+#pragma GCC diagnostic ignored "-Wattributes"
+
 #ifdef __cplusplus
  extern "C" {
 #endif
 
-/* Initialize segments */
-extern uint32_t _sfixed;
-extern uint32_t _efixed;
-extern uint32_t _etext;
-extern uint32_t _srelocate;
-extern uint32_t _erelocate;
-extern uint32_t _szero;
-extern uint32_t _ezero;
-extern uint32_t _sstack;
-extern uint32_t _estack;
-
-/** \cond DOXYGEN_SHOULD_SKIP_THIS */
-int main(void);
-/** \endcond */
-
-// Arduino: we must setup hardware before doing this
-// void __libc_init_array(void);
-
 // Arduino: handlers weak symbols moved into main
 
 /* Exception Table */
-__attribute__ ((used))
-__attribute__ ((section(".vectors")))
+__attribute__ ((used, section(".vectors"), no_icf, retain, externally_visible))
 const DeviceVectors exception_table = {
 
 	/* Configure Initial Stack Pointer, using linker-generated symbols */
@@ -171,6 +157,7 @@ const DeviceVectors exception_table = {
  * \brief This is the code that gets called on processor reset.
  * To initialize the device, and call the main() routine.
  */
+__attribute__((used, noipa, retain, noinline, externally_visible)) 
 void Reset_Handler(void)
 {
 	uint32_t *pSrc, *pDest;
@@ -191,7 +178,7 @@ void Reset_Handler(void)
 	}
 
 	/* Set the vector table base address */
-	pSrc = (uint32_t *) & _sfixed;
+	pSrc = (uint32_t *) & exception_table;
 	SCB->VTOR = ((uint32_t) pSrc & SCB_VTOR_TBLOFF_Msk);
 
 	if (((uint32_t) pSrc >= IRAM0_ADDR) && ((uint32_t) pSrc < NFC_RAM_ADDR)) {
@@ -213,3 +200,4 @@ void Reset_Handler(void)
 #ifdef __cplusplus
  }
 #endif
+

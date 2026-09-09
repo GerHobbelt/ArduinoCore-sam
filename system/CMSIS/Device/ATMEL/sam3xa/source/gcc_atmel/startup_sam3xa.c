@@ -29,111 +29,19 @@
 
 #include "../../include/sam3xa.h"
 
+#include "system_layout.h"
+
+// shut up warning: 'retain' attribute ignored [-Wattributes]
+#pragma GCC diagnostic ignored "-Wattributes"
+
 #ifdef __cplusplus
  extern "C" {
 #endif
 
-/* Initialize segments */
-extern uint32_t _sfixed;
-extern uint32_t _efixed;
-extern uint32_t _etext;
-extern uint32_t _srelocate;
-extern uint32_t _erelocate;
-extern uint32_t _szero;
-extern uint32_t _ezero;
-extern uint32_t _sstack;
-extern uint32_t _estack;
-
-/** \cond DOXYGEN_SHOULD_SKIP_THIS */
-int main(void);
-/** \endcond */
-
-void __libc_init_array(void);
-
-/* Default empty handler */
-void Dummy_Handler(void);
-
-/* Cortex-M3 core handlers */
-void NMI_Handler        ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void HardFault_Handler  ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void MemManage_Handler  ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void BusFault_Handler   ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void UsageFault_Handler ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void SVC_Handler        ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void DebugMon_Handler   ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void PendSV_Handler     ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void SysTick_Handler    ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-
-/* Peripherals handlers */
-void SUPC_Handler       ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void RSTC_Handler       ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void RTC_Handler        ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void RTT_Handler        ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void WDT_Handler        ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void PMC_Handler        ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void EFC0_Handler       ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void EFC1_Handler       ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void UART_Handler       ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-#ifdef _SAM3XA_SMC_INSTANCE_
-void SMC_Handler        ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-#endif /* _SAM3XA_SMC_INSTANCE_ */
-#ifdef _SAM3XA_SDRAMC_INSTANCE_
-void SDRAMC_Handler     ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-#endif /* _SAM3XA_SDRAMC_INSTANCE_ */
-void PIOA_Handler       ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void PIOB_Handler       ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-#ifdef _SAM3XA_PIOC_INSTANCE_
-void PIOC_Handler       ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-#endif /* _SAM3XA_PIOC_INSTANCE_ */
-#ifdef _SAM3XA_PIOD_INSTANCE_
-void PIOD_Handler       ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-#endif /* _SAM3XA_PIOD_INSTANCE_ */
-#ifdef _SAM3XA_PIOE_INSTANCE_
-void PIOE_Handler       ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-#endif /* _SAM3XA_PIOE_INSTANCE_ */
-#ifdef _SAM3XA_PIOF_INSTANCE_
-void PIOF_Handler       ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-#endif /* _SAM3XA_PIOF_INSTANCE_ */
-void USART0_Handler     ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void USART1_Handler     ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void USART2_Handler     ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-#ifdef _SAM3XA_USART3_INSTANCE_
-void USART3_Handler     ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-#endif /* _SAM3XA_USART3_INSTANCE_ */
-void HSMCI_Handler      ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void TWI0_Handler       ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void TWI1_Handler       ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void SPI0_Handler       ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-#ifdef _SAM3XA_SPI1_INSTANCE_
-void SPI1_Handler       ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-#endif /* _SAM3XA_SPI1_INSTANCE_ */
-void SSC_Handler        ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void TC0_Handler        ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void TC1_Handler        ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void TC2_Handler        ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void TC3_Handler        ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void TC4_Handler        ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void TC5_Handler        ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-#ifdef _SAM3XA_TC2_INSTANCE_
-void TC6_Handler        ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void TC7_Handler        ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void TC8_Handler        ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-#endif /* _SAM3XA_TC2_INSTANCE_ */
-void PWM_Handler        ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void ADC_Handler        ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void DACC_Handler       ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void DMAC_Handler       ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void UOTGHS_Handler     ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void TRNG_Handler       ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-#ifdef _SAM3XA_EMAC_INSTANCE_
-void EMAC_Handler       ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-#endif /* _SAM3XA_EMAC_INSTANCE_ */
-void CAN0_Handler       ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void CAN1_Handler       ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
+// Arduino: handlers weak symbols moved into main
 
 /* Exception Table */
-__attribute__ ((used))
-__attribute__ ((section(".vectors")))
+__attribute__ ((used, section(".vectors"), no_icf, retain, externally_visible))
 const DeviceVectors exception_table = {
 
 	/* Configure Initial Stack Pointer, using linker-generated symbols */
@@ -249,6 +157,7 @@ const DeviceVectors exception_table = {
  * \brief This is the code that gets called on processor reset.
  * To initialize the device, and call the main() routine.
  */
+__attribute__((used, noipa, retain, noinline, externally_visible)) 
 void Reset_Handler(void)
 {
 	uint32_t *pSrc, *pDest;
@@ -269,7 +178,7 @@ void Reset_Handler(void)
 	}
 
 	/* Set the vector table base address */
-	pSrc = (uint32_t *) & _sfixed;
+	pSrc = (uint32_t *) & exception_table;
 	SCB->VTOR = ((uint32_t) pSrc & SCB_VTOR_TBLOFF_Msk);
 
 	if (((uint32_t) pSrc >= IRAM0_ADDR) && ((uint32_t) pSrc < NFC_RAM_ADDR)) {
@@ -277,22 +186,15 @@ void Reset_Handler(void)
 	}
 
 	/* Initialize the C library */
-	__libc_init_array();
+
+	// Arduino: we must setup hardware before doing this
+	//__libc_init_array();
 
 	/* Branch to main function */
 	main();
 
 	/* Infinite loop */
 	while (1);
-}
-
-/**
- * \brief Default interrupt handler for unused IRQs.
- */
-void Dummy_Handler(void)
-{
-	while (1) {
-	}
 }
 
 #ifdef __cplusplus

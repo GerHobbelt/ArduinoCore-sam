@@ -17,13 +17,14 @@
 */
 
 #include "Arduino.h"
-#include "Reset.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-static void __halt() {
+__attribute__((noipa, interrupt)) 
+static void __halt() 
+{
 	// Halts
 	while (1)
 		;
@@ -36,9 +37,19 @@ void MemManage_Handler (void) __attribute__ ((weak, alias("__halt")));
 void BusFault_Handler  (void) __attribute__ ((weak, alias("__halt")));
 void UsageFault_Handler(void) __attribute__ ((weak, alias("__halt")));
 void DebugMon_Handler  (void) __attribute__ ((weak, alias("__halt")));
-void SVC_Handler       (void) { svcHook(); }
-void PendSV_Handler    (void) {	pendSVHook(); }
 
+__attribute__((noipa, interrupt)) 
+void SVC_Handler       (void)
+{ 
+	svcHook(); 
+}
+__attribute__((noipa, interrupt)) 
+void PendSV_Handler    (void)
+{	
+	pendSVHook(); 
+}
+
+__attribute__((noipa, interrupt)) 
 void SysTick_Handler(void)
 {
 	if (sysTickHook())
