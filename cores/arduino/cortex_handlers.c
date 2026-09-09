@@ -46,7 +46,7 @@ void SysTick_Handler(void)
 
 	tickReset();
 
-	// Increment tick count each ms
+	// Increment tick count each tick ~ every (1000 / SYSTICK_FREQUENCY) ms
 	TimeTick_Increment();
 }
 

@@ -387,8 +387,8 @@ __attribute__((weak)) void init( void )
 {
   SystemInit();
 
-  // Set Systick to 1ms interval, common to all SAM3 variants
-  if (SysTick_Config(SystemCoreClock / 1000))
+  // Set Systick to (1000 / SYSTICK_FREQUENCY) ms interval, common to all SAM3 variants
+  if (TimeTick_Configure(SystemCoreClock))
   {
     // Capture error
     while (true);
