@@ -32,6 +32,14 @@
 
 #include "../chip.h"
 
+/** @cond 0 */
+/**INDENT-OFF**/
+#ifdef __cplusplus
+extern "C" {
+#endif
+/**INDENT-ON**/
+/** @endcond */
+
 /**
  * \weakgroup interrupt_group
  *
@@ -152,5 +160,13 @@ static inline void cpu_irq_restore(irqflags_t flags)
 //@}
 
 //@}
+
+/** @cond 0 */
+/**INDENT-OFF**/
+#ifdef __cplusplus
+}
+#endif
+/**INDENT-ON**/
+/** @endcond */
 
 #endif /* UTILS_INTERRUPT_INTERRUPT_H */

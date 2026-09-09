@@ -32,6 +32,14 @@
 
 #include <stdint.h>
 
+/** @cond 0 */
+/**INDENT-OFF**/
+#ifdef __cplusplus
+extern "C" {
+#endif
+/**INDENT-ON**/
+/** @endcond */
+
 extern void UDD_WaitIN(void);
 extern void UDD_WaitOUT(void);
 extern void UDD_ClearIN(void);
@@ -377,5 +385,13 @@ typedef uint32_t                iram_size_t;
 // abs() is already defined by stdlib.h
 
 //! @}
+
+/** @cond 0 */
+/**INDENT-OFF**/
+#ifdef __cplusplus
+}
+#endif
+/**INDENT-ON**/
+/** @endcond */
 
 #endif /* USB_DEVICE_H_INCLUDED */
