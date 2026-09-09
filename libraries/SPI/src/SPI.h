@@ -63,12 +63,12 @@ private:
 	void init_AlwaysInline(uint32_t clock, BitOrder bitOrder, uint8_t dataMode) __attribute__((__always_inline__)) {
 		border = bitOrder;
 		uint8_t div;
-		if (clock < (F_CPU / 255)) {
+		if (clock < (SystemCoreClock / 255)) {
 			div = 255;
-		} else if (clock >= (F_CPU / 2)) {
+		} else if (clock >= (SystemCoreClock / 2)) {
 			div = 2;
 		} else {
-			div = (F_CPU / (clock + 1)) + 1;
+			div = (SystemCoreClock / (clock + 1)) + 1;
 		}
 		config = (dataMode & 3) | SPI_CSR_CSAAT | SPI_CSR_SCBR(div) | SPI_CSR_DLYBCT(1);
 	}
