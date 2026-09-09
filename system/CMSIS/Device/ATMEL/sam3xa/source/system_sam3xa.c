@@ -54,14 +54,14 @@ void SystemInit(void)
 	/* Initialize main oscillator */
 	if (!(PMC->CKGR_MOR & CKGR_MOR_MOSCSEL)) {
 		PMC->CKGR_MOR = SYS_CKGR_MOR_KEY_VALUE | SYS_BOARD_OSCOUNT | 
-			                     CKGR_MOR_MOSCRCEN | CKGR_MOR_MOSCXTEN;
+			                     CKGR_MOR_MOSCRCEN | CKGR_MOR_MOSCXTEN | CKGR_MOR_MOSCXTBY;
 		while (!(PMC->PMC_SR & PMC_SR_MOSCXTS)) {
 		}
 	}
 
 	/* Switch to 3-20MHz Xtal oscillator */
 	PMC->CKGR_MOR = SYS_CKGR_MOR_KEY_VALUE | SYS_BOARD_OSCOUNT | 
-	                           CKGR_MOR_MOSCRCEN | CKGR_MOR_MOSCXTEN | CKGR_MOR_MOSCSEL;
+	                           CKGR_MOR_MOSCRCEN | CKGR_MOR_MOSCXTEN | CKGR_MOR_MOSCSEL | CKGR_MOR_MOSCXTBY;
 
 	while (!(PMC->PMC_SR & PMC_SR_MOSCSELS)) {
 	}
