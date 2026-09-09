@@ -1042,7 +1042,6 @@ static __INLINE void NVIC_SetPriority(IRQn_Type IRQn, uint32_t priority)
  */
 static __INLINE uint32_t NVIC_GetPriority(IRQn_Type IRQn)
 {
-
   if(IRQn < 0) {
     return((uint32_t)(SCB->SHP[((uint32_t)(IRQn) & 0xF)-4] >> (8 - __NVIC_PRIO_BITS)));  } /* get priority for Cortex-M  system interrupts */
   else {
@@ -1146,11 +1145,20 @@ static __INLINE void NVIC_SystemReset(void)
  */
 static __INLINE uint32_t SysTick_Config(uint32_t ticks)
 {
-  if (ticks > SysTick_LOAD_RELOAD_Msk)  return (1);            /* Reload value impossible */
+  // from the datasheet, page 193: 
+  // To generate a multi-shot timer with a period of N processor clock cycles, use a RELOAD value of N-1.
+  // For example, if the SysTick interrupt is required every 100 clock pulses, set RELOAD to 99.
+  //
+  // A start value of 0 is possible, but has no effect because the SysTick exception request and COUNTFLAG 
+  // are activated when counting from 1 to 0.
+  ticks--;
+  
+  if (ticks == 0 || ticks > SysTick_LOAD_RELOAD_Msk)
+    return (1);                                                /* Reload value impossible */
 
-  SysTick->LOAD  = (ticks & SysTick_LOAD_RELOAD_Msk) - 1;      /* set reload register */
+  SysTick->LOAD  = ticks;                                      /* set reload register */
   NVIC_SetPriority (SysTick_IRQn, (1<<__NVIC_PRIO_BITS) - 1);  /* set Priority for Cortex-M0 System Interrupts */
-  SysTick->VAL   = 0;                                          /* Load the SysTick Counter Value */
+  SysTick->VAL   = 0;                                          /* Clear & Load the SysTick Counter Value */
   SysTick->CTRL  = SysTick_CTRL_CLKSOURCE_Msk |
                    SysTick_CTRL_TICKINT_Msk   |
                    SysTick_CTRL_ENABLE_Msk;                    /* Enable SysTick IRQ and SysTick Timer */
