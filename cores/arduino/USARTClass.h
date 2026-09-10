@@ -108,11 +108,26 @@ class USARTClass : public UARTClass
     USARTClass(Usart* pUsart, IRQn_Type dwIrq, uint32_t dwId, RingBuffer* pRx_buffer, RingBuffer* pTx_buffer);
 
     void begin(const uint32_t dwBaudRate);
-    void begin(const uint32_t dwBaudRate, const USARTModes config);
-    void begin(const uint32_t dwBaudRate, const UARTModes config);
+
+	void begin(const uint32_t dwBaudRate, const UARTModes config)
+	{
+	  uint32_t modeReg = static_cast<uint32_t>(config);
+	  modeReg |= US_MR_USART_MODE_NORMAL | US_MR_USCLKS_MCK | US_MR_CHMODE_NORMAL;
+	  init(dwBaudRate, modeReg);
+	}
+
+	void begin(const uint32_t dwBaudRate, const USARTModes config)
+	{
+	  uint32_t modeReg = static_cast<uint32_t>(config);
+	  modeReg |= US_MR_USART_MODE_NORMAL | US_MR_USCLKS_MCK | US_MR_CHMODE_NORMAL;
+	  init(dwBaudRate, modeReg);
+	}
 
   protected:
-    Usart* _pUsart;
+    // In case anyone needs USART specific functionality in the future
+    Usart* pUsart() {
+      return reinterpret_cast<Usart *>(_pUart);
+	}
 };
 
 #endif // _USART_CLASS_
