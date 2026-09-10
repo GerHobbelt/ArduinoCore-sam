@@ -224,12 +224,12 @@ static const uint8_t CAN1TX = 89;
  */
 #define PWM_INTERFACE		PWM
 #define PWM_INTERFACE_ID	ID_PWM
-#define PWM_FREQUENCY		1000 * SystemCorePWMFreqMultiplier
+#define PWM_FREQUENCY		(1000 * SystemCorePWMFreqMultiplier)
 #define PWM_MAX_DUTY_CYCLE	255
 #define PWM_MIN_DUTY_CYCLE	0
 #define PWM_RESOLUTION		8
 
-extern const uint8_t SystemCorePWMFreqMultiplier; // = 1 (or higher); an application setting which will only be set once, so can be stored in ROM
+extern WEAK const uint8_t SystemCorePWMFreqMultiplier; // = 1 (or higher); an application setting which will only be set once, so can be stored in ROM
 
 /*
  * TC
@@ -244,11 +244,13 @@ extern const uint8_t SystemCorePWMFreqMultiplier; // = 1 (or higher); an applica
 /*
  * SysTick
  */
-#define SYSTICK_FREQUENCY	1000 * SystemCoreTickFreqMultiplier
+#define SYSTICK_FREQUENCY	(1000 * SystemCoreTickFreqMultiplier)
 
-#define SYSTICK_MS_TO_TICKS(ms)   ((ms) * (SYSTICK_FREQUENCY / 1000))
+#define SYSTICK_MS_TO_TICKS(ms)      ((ms) * /* (SYSTICK_FREQUENCY / 1000) ==> */ SystemCoreTickFreqMultiplier)
+#define SYSTICK_USECS_PER_TICK       /* (1000000 / SYSTICK_FREQUENCY) ==> 1000000 / (1000 * SystemCoreTickFreqMultiplier) ==> */ (1000 / SystemCoreTickFreqMultiplier)
+#define SYSTICK_USECS_TO_TICKS(us)   ((us) * /* (SYSTICK_FREQUENCY / 1000000) ==> */ SystemCoreTickFreqMultiplier / 1000)
 
-extern const uint8_t SystemCoreTickFreqMultiplier; // = 1 (or higher); an application setting which will only be set once, so can be stored in ROM
+extern WEAK const uint8_t SystemCoreTickFreqMultiplier; // = 1 (or higher); an application setting which will only be set once, so can be stored in ROM
 
 #ifdef __cplusplus
 }
