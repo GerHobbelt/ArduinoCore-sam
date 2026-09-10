@@ -33,7 +33,7 @@ class USBDevice_
 {
 public:
     USBDevice_();
-    bool configured();
+    bool configured() const;
 
     bool attach();
     bool detach();  // Serial port goes down too...
@@ -103,7 +103,7 @@ public:
     virtual size_t write(uint8_t);
     virtual size_t write(const uint8_t *buffer, size_t size);
     using Print::write; // pull in write(str) from Print
-    operator bool();
+    operator bool() const override;
 
     // This method allows processing "SEND_BREAK" requests sent by
     // the USB host. Those requests indicate that the host wants to
@@ -198,6 +198,7 @@ uint32_t USBD_Recv(uint32_t ep, void* data, uint32_t len);      // non-blocking
 uint32_t USBD_Recv(uint32_t ep);                            // non-blocking
 void USBD_Flush(uint32_t ep);
 uint32_t USBD_Connected(void);
+bool USBD_Configured(void);
 
 #endif
 #endif

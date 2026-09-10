@@ -107,7 +107,7 @@ bool WEAK CDC_Setup(USBSetup& setup)
     {
         if (CDC_GET_LINE_CODING == r)
         {
-            USBD_SendControl(0,(void*)&_usbLineInfo,7);
+            USBD_SendControl(0,(void*)&_usbLineInfo, 7);
             return true;
         }
     }
@@ -116,7 +116,7 @@ bool WEAK CDC_Setup(USBSetup& setup)
     {
         if (CDC_SET_LINE_CODING == r)
         {
-            USBD_RecvControl((void*)&_usbLineInfo,7);
+            USBD_RecvControl((void*)&_usbLineInfo, 7);
             return true;
         }
 
@@ -146,6 +146,7 @@ bool WEAK CDC_Setup(USBSetup& setup)
 }
 
 int _serialPeek = -1;
+
 void Serial_::begin(uint32_t baud_count)
 {
     // suppress "unused parameter" warning
@@ -165,10 +166,12 @@ void Serial_::end(void)
 
 void Serial_::accept(void)
 {
-    if (!Is_otg_enabled()) return;
+    if (!Is_otg_enabled()) 
+		return;
 
     // Use fifocon to synchronise. Leave if there is no data.
-    if (!Is_udd_fifocon(CDC_RX)) return;
+    if (!Is_udd_fifocon(CDC_RX)) 
+		return;
     // This rearms interrupt, but FIFO must be released before it
     // can retrigger. Moved here from the interrupt service
     // routine because we may come to this function directly.
@@ -286,9 +289,9 @@ int Serial_::read(uint8_t *d, size_t s)
     // Give "accept" a chance to catch up if data is ready.
     // Interrupt shouldn't be able to fire in this condition.
     //        if (Is_udd_fifocon(CDC_RX)) {
-      if ((a-k) < b) 
+      if ((a - k) < b) 
           accept();
-      //}
+    //}
     return k;
 }
 
@@ -343,12 +346,15 @@ size_t Serial_::write(uint8_t c) {
 // actually ready to receive and display the data.
 // We add a short delay before returning to fix a bug observed by Federico
 // where the port is configured (lineState != 0) but not quite opened.
-Serial_::operator bool()
+Serial_::operator bool() const
 {
     // this is here to avoid spurious opening after upload
     if (millis() < 500)
         return false;
 
+    if (!USBD_Configured())
+		return false;
+	
     bool result = false;
 
     if (_usbLineInfo.lineState & CDC_LINESTATE_DTR)
