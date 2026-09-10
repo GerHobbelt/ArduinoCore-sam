@@ -63,7 +63,7 @@ class Stream : public Print
 
     Stream() : _timeout(1000) {}
 
-// parsing methods
+  // parsing methods
 
   void setTimeout(uint32_t timeout);  // sets maximum milliseconds to wait for stream data, default is 1 second
   uint32_t getTimeout(void) {
