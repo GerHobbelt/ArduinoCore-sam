@@ -20,17 +20,6 @@
 #define ARDUINO_MAIN
 #include "Arduino.h"
 
-/*
- * Cortex-M3 Systick IT handler
- */
-/*
-extern void SysTick_Handler( void )
-{
-  // Increment tick count each ms
-  TimeTick_Increment() ;
-}
-*/
-
 // Weak empty variant initialization function.
 // May be redefined by variant files.
 void initVariant() __attribute__((weak));
@@ -49,7 +38,9 @@ int main( void )
 
     initVariant();
 
-    delay(1);
+    delay(2);   
+	// ^^^^^^ the side effect of this call is that it happens to validate/check whether the SysTick interrupt is running properly.
+	// If it isn't, this one will hang forever...
 
 #if defined(USBCON)
     USBDevice.attach();
@@ -61,8 +52,9 @@ int main( void )
     {
         loop();
 
-        if (serialEventRun)
-            serialEventRun();
+		yield();
+		
+        serialEventRun();
     }
 
     return 0;
