@@ -54,6 +54,7 @@ uint32_t EndPoints[] =
 #define TX_RX_LED_PULSE_MS 100
 volatile uint8_t TxLEDPulse; /**< Milliseconds remaining for data Tx LED pulse */
 volatile uint8_t RxLEDPulse; /**< Milliseconds remaining for data Rx LED pulse */
+
 static char isRemoteWakeUpEnabled = 0;
 static char isEndpointHalt = 0;
 
