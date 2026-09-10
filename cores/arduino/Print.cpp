@@ -145,7 +145,7 @@ size_t Print::print(const Printable& x)
 
 size_t Print::println(void)
 {
-  return write("\r\n");
+  return write("\r\n", 2);
 }
 
 size_t Print::println(const String &s)
@@ -315,7 +315,7 @@ size_t Print::printULLNumber(unsigned long long n64, uint8_t base)
     uint16_t r = n64 - q*th16;
     n64 = q;
 
-    // 16 bit math loop to do remainder. (note buffer is filled reverse)
+    // 16 bit math loop to do remainder. (note buffer is filled in reverse)
     for (uint8_t j = 0; j < innerLoops; j++)
     {
       uint16_t qq = r / base;
