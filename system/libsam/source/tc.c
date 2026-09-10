@@ -40,7 +40,12 @@
 
 #include "chip.h"
 
+#include "variant.h"
+
 #include <assert.h>
+
+// hacky fix for https://web.archive.org/web/20260108152405/https://gcc.gnu.org/bugzilla/show_bug.cgi?id=83271: extern
+extern WEAK const uint8_t SystemCorePWMFreqMultiplier = 1; // = 1 (or higher); an application setting which will only be set once, so can be stored in ROM
 
 /*------------------------------------------------------------------------------
  *         Global functions

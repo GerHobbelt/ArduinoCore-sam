@@ -40,6 +40,9 @@
 
 #include "variant.h"
 
+// hacky fix for https://web.archive.org/web/20260108152405/https://gcc.gnu.org/bugzilla/show_bug.cgi?id=83271: extern
+extern WEAK const uint8_t SystemCoreTickFreqMultiplier = 1; // = 1 (or higher); an application setting which will only be set once, so can be stored in ROM
+
 /*----------------------------------------------------------------------------
  *         Local variables
  *----------------------------------------------------------------------------*/
@@ -113,6 +116,8 @@ extern void Wait( uint32_t dwMs )
     dwStart = GetTickCount();
     do
     {
+		yield();
+		
         dwCurrent = GetTickCount();
     } while ( dwCurrent - dwStart < dwMs );
 }
@@ -129,8 +134,10 @@ extern void Sleep( uint32_t dwMs )
 	
     dwStart = GetTickCount();
 
-    do
+    for(;;)
     {
+		yield();
+		
         dwCurrent = GetTickCount();
 
         if ( dwCurrent - dwStart >= dwMs )
@@ -139,6 +146,6 @@ extern void Sleep( uint32_t dwMs )
         }
 
         __WFI();
-    } while( 1 );
+    }
 }
 
