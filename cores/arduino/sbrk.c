@@ -34,6 +34,6 @@ void *_sbrk(int incr)
     return (void*) -1;
   }
 
-  brkval += incr ;
+  brkval += incr;
   return (void*) prev_brkval;
 }

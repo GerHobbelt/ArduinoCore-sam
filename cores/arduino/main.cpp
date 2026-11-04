@@ -73,4 +73,5 @@ int main( void )
 // newlib, and the dummy from libgloss/nosys will be used instead).
 // This variable will be optimized away later.
 extern "C" void *_sbrk(int);
-void * force_reference_to_sbrk = (void*)&_sbrk;
+
+const void * force_reference_to_sbrk = (void*)&_sbrk;
