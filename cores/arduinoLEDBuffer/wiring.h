@@ -27,6 +27,7 @@ extern "C" {
 /**
  *
  */
+extern void initUSB( void ) __attribute__((weak));
 extern void initVariant( void ) __attribute__((weak));
 extern void init( void ) __attribute__((weak));
 

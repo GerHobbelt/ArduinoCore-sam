@@ -208,6 +208,8 @@ extern const PinDescription g_APinDescription[] ;
 #include "WInterrupts.h"
 
 #include "watchdog.h"
+#include "system_layout.h"
+#include "Reset.h"
 
 // USB Device
 #ifndef USB_VID

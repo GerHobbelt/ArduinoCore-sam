@@ -28,6 +28,7 @@
  */
 
 #include "chip.h"
+
 #include <stdio.h>
 
 #if SAM3XA_SERIES
@@ -457,6 +458,7 @@ uint32_t UHD_Pipe_Is_Transfer_Complete(uint32_t ul_pipe, uint32_t ul_token_type)
 				uhd_ack_setup_ready(ul_pipe);
 				return 1;
 			}
+			break;
 
 		case UOTGHS_HSTPIPCFG_PTOKEN_IN:
 			if (Is_uhd_in_received(ul_pipe))
@@ -472,6 +474,7 @@ uint32_t UHD_Pipe_Is_Transfer_Complete(uint32_t ul_pipe, uint32_t ul_token_type)
 
 				return 1;
 			}
+			break;
 
 		case UOTGHS_HSTPIPCFG_PTOKEN_OUT:
 			if (Is_uhd_out_ready(ul_pipe))
@@ -482,6 +485,7 @@ uint32_t UHD_Pipe_Is_Transfer_Complete(uint32_t ul_pipe, uint32_t ul_token_type)
 
 				return 1;
 			}
+			break;
 	}
 
 	return 0;

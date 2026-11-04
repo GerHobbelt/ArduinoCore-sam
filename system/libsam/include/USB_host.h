@@ -32,6 +32,14 @@
 
 #include <stdint.h>
 
+/** @cond 0 */
+/**INDENT-OFF**/
+#ifdef __cplusplus
+extern "C" {
+#endif
+/**INDENT-ON**/
+/** @endcond */
+
 #define tokSETUP		UOTGHS_HSTPIPCFG_PTOKEN_SETUP
 #define tokIN			UOTGHS_HSTPIPCFG_PTOKEN_IN
 #define tokOUT			UOTGHS_HSTPIPCFG_PTOKEN_OUT
@@ -66,5 +74,13 @@ extern uint32_t UHD_Pipe_Read(uint32_t ul_pipe, uint32_t ul_size, uint8_t* data)
 extern void UHD_Pipe_Write(uint32_t ul_pipe, uint32_t ul_size, uint8_t* data);
 extern void UHD_Pipe_Send(uint32_t ul_pipe, uint32_t ul_token_type);
 extern uint32_t UHD_Pipe_Is_Transfer_Complete(uint32_t ul_pipe, uint32_t ul_token_type);
+
+/** @cond 0 */
+/**INDENT-OFF**/
+#ifdef __cplusplus
+}
+#endif
+/**INDENT-ON**/
+/** @endcond */
 
 #endif /* USB_HOST_H_INCLUDED */

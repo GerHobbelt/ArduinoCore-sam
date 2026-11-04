@@ -41,8 +41,9 @@
  *
  */
 
+#include "../chip.h"
+
 #include <string.h>
-#include "ssc.h"
 
 /// @cond 0
 /**INDENT-OFF**/

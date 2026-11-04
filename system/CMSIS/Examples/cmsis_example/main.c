@@ -135,7 +135,7 @@ int main(void)
 	WDT->WDT_MR = WDT_MR_WDDIS;
 
 	/* Set up SysTick Timer for 1 msec interrupts. */
-	if (SysTick_Config(SystemCoreClock / (uint32_t) 1000)) {
+	if (SysTick_Config(SystemCoreClock / SYSTICK_FREQUENCY)) {
 		/* Capture error. */
 		while (1) {
 		}

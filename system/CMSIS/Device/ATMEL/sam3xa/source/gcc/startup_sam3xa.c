@@ -27,25 +27,16 @@
  * ----------------------------------------------------------------------------
  */
 
-#include "sam3xa.h"
+#include "../../include/sam3xa.h"
 
-/* Initialize segments */
-extern uint32_t _sfixed;
-extern uint32_t _efixed;
-extern uint32_t _etext;
-extern uint32_t _srelocate;
-extern uint32_t _erelocate;
-extern uint32_t _szero;
-extern uint32_t _ezero;
-extern uint32_t _sstack;
-extern uint32_t _estack;
+#include "system_layout.h"
 
-/** \cond DOXYGEN_SHOULD_SKIP_THIS */
-int main(void);
-/** \endcond */
+// shut up warning: 'retain' attribute ignored [-Wattributes]
+#pragma GCC diagnostic ignored "-Wattributes"
 
-// Arduino: we must setup hardware before doing this
-// void __libc_init_array(void);
+#ifdef __cplusplus
+ extern "C" {
+#endif
 
 // Arduino: handlers weak symbols moved into main
 
@@ -186,7 +177,7 @@ void Reset_Handler(void)
 	}
 
 	/* Set the vector table base address */
-	pSrc = (uint32_t *) & _sfixed;
+	pSrc = (uint32_t *) & exception_table;
 	SCB->VTOR = ((uint32_t) pSrc & SCB_VTOR_TBLOFF_Msk);
 
 	if (((uint32_t) pSrc >= IRAM0_ADDR) && ((uint32_t) pSrc < NFC_RAM_ADDR)) {
@@ -204,3 +195,8 @@ void Reset_Handler(void)
 	/* Infinite loop */
 	while (1);
 }
+
+#ifdef __cplusplus
+ }
+#endif
+

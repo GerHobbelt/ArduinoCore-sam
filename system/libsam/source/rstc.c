@@ -41,7 +41,7 @@
  *
  */
  
-#include "rstc.h"
+#include "../chip.h"
 
 /// @cond 0
 /**INDENT-OFF**/

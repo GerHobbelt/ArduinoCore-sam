@@ -1,0 +1,59 @@
+/*
+  Copyright (c) 2012 Arduino.  All right reserved.
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  See the GNU Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+#ifndef BIN_SYSTEM_LAYOUT_H
+#define BIN_SYSTEM_LAYOUT_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void banzai(void);
+
+void svcHook(void) __attribute__((weak));
+void pendSVHook(void) __attribute__((weak));
+int sysTickHook(void) __attribute__((weak));
+
+/* Initialize segments */
+extern uint32_t _sfixed;
+extern uint32_t _efixed;
+extern uint32_t _etext;
+extern uint32_t _srelocate;
+extern uint32_t _erelocate;
+extern uint32_t _szero;
+extern uint32_t _ezero;
+extern uint32_t _sstack;
+extern uint32_t _estack;
+
+extern const uint32_t _sbss;
+extern const uint32_t _ebss;
+
+extern const uint32_t _end;
+
+/** \cond DOXYGEN_SHOULD_SKIP_THIS */
+extern int main(void) __attribute__((weak));
+
+// Arduino: we must setup hardware before doing this
+extern void __libc_init_array(void);
+/** \endcond */
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif
