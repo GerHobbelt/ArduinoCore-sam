@@ -50,10 +50,12 @@ uint32_t EndPoints[] =
 #endif
 };
 
+#if 0
 /** Pulse generation counters to keep track of the number of milliseconds remaining for each pulse type */
 #define TX_RX_LED_PULSE_MS 100
 volatile uint8_t TxLEDPulse; /**< Milliseconds remaining for data Tx LED pulse */
 volatile uint8_t RxLEDPulse; /**< Milliseconds remaining for data Rx LED pulse */
+#endif
 
 static char isRemoteWakeUpEnabled = 0;
 static char isEndpointHalt = 0;
@@ -205,8 +207,11 @@ uint32_t USBD_Send(uint32_t ep, const void* d, uint32_t len)
 	if ((r != 0) && (r % epSize) == 0)
 		UDD_Send(ep & 0xF, NULL, 0);
 
-    //TXLED1;                    // light the TX LED
-    //TxLEDPulse = TX_RX_LED_PULSE_MS;
+#if 0
+    TXLED1;                    // light the TX LED
+    TxLEDPulse = TX_RX_LED_PULSE_MS;
+#endif
+
     return r;
 }
 
