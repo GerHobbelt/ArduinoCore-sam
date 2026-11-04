@@ -34,8 +34,8 @@
  *
  *  Methods and definitions for Global time tick and wait functions.
  *
- *  Defines a common and simpliest use of Time Tick, to increase tickCount
- *  every 1ms, the application can get this value through GetTickCount().
+ *  Defines a common and simplest use of Time Tick, to increase tickCount
+ *  every (SYSTICK_FREQUENCY / 1000) ms, the application can get this value through GetTickCount().
  *
  *  \par Usage
  *
@@ -65,6 +65,10 @@
  *         Global functions
  *----------------------------------------------------------------------------*/
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern uint32_t TimeTick_Configure( uint32_t dwNew_MCK ) ;
 
 extern void TimeTick_Increment( void ) ;
@@ -74,5 +78,9 @@ extern uint32_t GetTickCount( void ) ;
 extern void Wait( uint32_t dwMs ) ;
 
 extern void Sleep( uint32_t dwMs ) ;
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _TIMETICK_ */

@@ -19,22 +19,21 @@
 
 #define ARDUINO_MAIN
 #include "Arduino.h"
-
-/*
- * Cortex-M3 Systick IT handler
- */
-/*
-extern void SysTick_Handler( void )
-{
-  // Increment tick count each ms
-  TimeTick_Increment() ;
-}
-*/
+#include "wiring.h"
 
 // Weak empty variant initialization function.
 // May be redefined by variant files.
 void initVariant() __attribute__((weak));
 void initVariant() { }
+
+
+void initUSB() __attribute__((weak));
+void initUSB() { 
+#if defined(USBCON)
+    USBDevice.attach();
+#endif
+}
+
 
 void setupBrownout() {
 	/* Disable the brown-out detector during configuration,
@@ -71,6 +70,7 @@ void setupBrownout() {
 		;
 }
 
+
 /*
  * \brief Main entry point of Arduino application
  */
@@ -86,12 +86,12 @@ int main( void )
 
     initVariant();
 
-    delay(1);
+    delay(2);   
+	// ^^^^^^ the side effect of this call is that it happens to validate/check whether the SysTick interrupt is running properly.
+	// If it isn't, this one will hang forever...
 
-#if defined(USBCON)
-    USBDevice.attach();
-#endif
-
+    initUSB();
+    
 	/* Let the brown-out detector automatically reset the microcontroller
 	if the voltage drops too low. */
 	SYSCTRL->BOD33.bit.ENABLE = 0;
@@ -106,9 +106,17 @@ int main( void )
     {
         loop();
 
-        if (serialEventRun)
-            serialEventRun();
+		yield();
+		
+        serialEventRun();
     }
 
     return 0;
 }
+
+// Ensure our version of sbrk is used by forcing a reference to it here
+// (without this, an undefined reference only occurs later when linking
+// newlib, and the dummy from libgloss/nosys will be used instead).
+// This variable will be optimized away later.
+extern "C" void *_sbrk(int);
+void * force_reference_to_sbrk = (void*)&_sbrk;

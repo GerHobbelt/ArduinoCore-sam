@@ -105,7 +105,7 @@ extern char* ltoa( long value, char *string, int radix )
     i = v % radix;
     v = v / radix;
     if (i < 10)
-      *tp++ = i+'0';
+      *tp++ = i + '0';
     else
       *tp++ = i + 'a' - 10;
   }
@@ -149,7 +149,7 @@ extern char* ultoa( unsigned long value, char *string, int radix )
     i = v % radix;
     v = v / radix;
     if (i < 10)
-      *tp++ = i+'0';
+      *tp++ = i + '0';
     else
       *tp++ = i + 'a' - 10;
   }

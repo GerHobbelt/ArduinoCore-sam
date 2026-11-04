@@ -29,7 +29,7 @@
 
 #include "chip.h"
 
-#if 0 //SAM3U_SERIES
+#if 0 //SAM3U_SERIES -- migrated to USBCore.cpp
 
 #include "USB_device.h"
 #include "udphs.h"
@@ -42,7 +42,7 @@ int _cmark;
 int _cend;
 
 // Global variable for endpoint number
-unsigned int NumEndpoint=0;
+unsigned int NumEndpoint = 0;
 
 
 void USBD_WaitIN(void)

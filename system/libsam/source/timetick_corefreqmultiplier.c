@@ -27,92 +27,14 @@
  * ----------------------------------------------------------------------------
  */
 
-/**
- *  \file
- *  Implement simple system tick usage.
- */
-
 /*----------------------------------------------------------------------------
  *         Headers
  *----------------------------------------------------------------------------*/
 
-#include "chip.h"
+#include "../chip.h"
 
-/*----------------------------------------------------------------------------
- *         Local variables
- *----------------------------------------------------------------------------*/
+#include "variant.h"
 
-/** Tick Counter united by ms */
-static volatile uint32_t _dwTickCount = 0;
-
-/*----------------------------------------------------------------------------
- *         Exported Functions
- *----------------------------------------------------------------------------*/
-
-/**
- *  \brief Handler for Sytem Tick interrupt.
- */
-extern void TimeTick_Increment( void )
-{
-    _dwTickCount++ ;
-}
-
-/**
- *  \brief Configures the SAM3 SysTick & reset tickCount.
- *  Systick interrupt handler will generate an interrupt every 1 ms and increase a
- *  tickCount.
- *  \param dwNew_MCK  Current master clock.
- */
-extern uint32_t TimeTick_Configure( uint32_t dwNew_MCK )
-{
-    _dwTickCount = 0 ;
-
-    return SysTick_Config( dwNew_MCK / 1000 ) ;
-}
-
-/**
- *  \brief Get current Tick Count, in ms.
- */
-extern uint32_t GetTickCount( void )
-{
-    return _dwTickCount ;
-}
-
-/**
- *  \brief Sync Wait for several ms
- */
-extern void Wait( uint32_t dwMs )
-{
-    uint32_t dwStart ;
-    uint32_t dwCurrent ;
-
-    dwStart = _dwTickCount ;
-    do
-    {
-        dwCurrent = _dwTickCount ;
-    } while ( dwCurrent - dwStart < dwMs ) ;
-}
-
-/**
- *  \brief Sync Sleep for several ms
- */
-extern void Sleep( uint32_t dwMs )
-{
-    uint32_t dwStart ;
-    uint32_t dwCurrent ;
-
-    dwStart = _dwTickCount ;
-
-    do
-    {
-        dwCurrent = _dwTickCount ;
-
-        if ( dwCurrent - dwStart >= dwMs )
-        {
-            break ;
-        }
-
-        __WFI() ;
-    } while( 1 ) ;
-}
+// hacky fix for https://web.archive.org/web/20260108152405/https://gcc.gnu.org/bugzilla/show_bug.cgi?id=83271: extern
+extern WEAK const uint8_t SystemCoreTickFreqMultiplier = 1; // = 1 (or higher); an application setting which will only be set once, so can be stored in ROM
 

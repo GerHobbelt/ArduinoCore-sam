@@ -17,13 +17,13 @@
 */
 
 #include "Arduino.h"
-#include "Reset.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-static void __halt() {
+static void __halt() 
+{
 	// Halts
 	while (1)
 		;
@@ -36,17 +36,26 @@ void MemManage_Handler (void) __attribute__ ((weak, alias("__halt")));
 void BusFault_Handler  (void) __attribute__ ((weak, alias("__halt")));
 void UsageFault_Handler(void) __attribute__ ((weak, alias("__halt")));
 void DebugMon_Handler  (void) __attribute__ ((weak, alias("__halt")));
-void SVC_Handler       (void) { svcHook(); }
-void PendSV_Handler    (void) {	pendSVHook(); }
+
+void SVC_Handler(void)
+{ 
+	svcHook(); 
+}
+
+void PendSV_Handler(void)
+{	
+	pendSVHook(); 
+}
 
 void SysTick_Handler(void)
 {
 	if (sysTickHook())
 		return;
 
+	// check if a hardware reset was requested (to occur after a set time):
 	tickReset();
 
-	// Increment tick count each ms
+	// Increment tick count each tick ~ every (1000 / SYSTICK_FREQUENCY) ms
 	TimeTick_Increment();
 }
 

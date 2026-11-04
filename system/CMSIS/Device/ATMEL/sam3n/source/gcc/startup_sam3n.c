@@ -95,6 +95,7 @@ void DACC_Handler       ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
 void PWM_Handler        ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
 
 /* Exception Table */
+__attribute__ ((used))
 __attribute__ ((section(".vectors")))
 const DeviceVectors exception_table = {
 	/* Configure Initial Stack Pointer, using linker-generated symbols */

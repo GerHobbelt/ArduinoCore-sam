@@ -311,7 +311,7 @@ void serialEvent() __attribute__((weak));
 void serialEvent() { }
 
 // IT handlers
-void UART_Handler(void)  __attribute__((weak));
+__attribute__((weak))
 void UART_Handler(void)
 {
   Serial.IrqHandler();
@@ -344,22 +344,26 @@ void serialEvent4() __attribute__((weak));
 void serialEvent4() { }
 
 // IT handlers
-__attribute__((weak)) void USART0_Handler(void)
+__attribute__((weak)) 
+void USART0_Handler(void)
 {
   Serial1.IrqHandler();
 }
 
-__attribute__((weak)) void USART1_Handler(void)
+__attribute__((weak)) 
+void USART1_Handler(void)
 {
   Serial2.IrqHandler();
 }
 
-__attribute__((weak)) void USART3_Handler(void)
+__attribute__((weak)) 
+void USART3_Handler(void)
 {
   Serial3.IrqHandler();
 }
 
-__attribute__((weak)) void USART2_Handler(void)
+__attribute__((weak)) 
+void USART2_Handler(void)
 {
   Serial4.IrqHandler();
 }
@@ -381,14 +385,12 @@ __attribute__((weak)) void serialEventRun(void)
 extern "C" {
 #endif
 
-void __libc_init_array(void);
-
 __attribute__((weak)) void init( void )
 {
   SystemInit();
 
-  // Set Systick to 1ms interval, common to all SAM3 variants
-  if (SysTick_Config(SystemCoreClock / 1000))
+  // Set Systick to (1000 / SYSTICK_FREQUENCY) ms interval, common to all SAM3 variants
+  if (TimeTick_Configure(SystemCoreClock))
   {
     // Capture error
     while (true);
