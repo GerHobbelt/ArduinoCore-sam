@@ -40,6 +40,7 @@
 
 #include "variant.h"
 
+
 /*----------------------------------------------------------------------------
  *         Local variables
  *----------------------------------------------------------------------------*/
@@ -113,6 +114,8 @@ extern void Wait( uint32_t dwMs )
     dwStart = GetTickCount();
     do
     {
+		yield();
+		
         dwCurrent = GetTickCount();
     } while ( dwCurrent - dwStart < dwMs );
 }
@@ -129,8 +132,10 @@ extern void Sleep( uint32_t dwMs )
 	
     dwStart = GetTickCount();
 
-    do
+    for(;;)
     {
+		yield();
+		
         dwCurrent = GetTickCount();
 
         if ( dwCurrent - dwStart >= dwMs )
@@ -139,6 +144,6 @@ extern void Sleep( uint32_t dwMs )
         }
 
         __WFI();
-    } while( 1 );
+    }
 }
 

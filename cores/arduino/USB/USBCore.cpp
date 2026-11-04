@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include "PluggableUSB.h"
 #include <stdint.h>
+#include "sync.h"			// __Guard
 
 //#define TRACE_CORE(x)    x
 #define TRACE_CORE(x)
@@ -49,12 +50,16 @@ uint32_t EndPoints[] =
 #endif
 };
 
+#if 0
 /** Pulse generation counters to keep track of the number of milliseconds remaining for each pulse type */
 #define TX_RX_LED_PULSE_MS 100
 volatile uint8_t TxLEDPulse; /**< Milliseconds remaining for data Tx LED pulse */
 volatile uint8_t RxLEDPulse; /**< Milliseconds remaining for data Rx LED pulse */
+#endif
+
 static char isRemoteWakeUpEnabled = 0;
 static char isEndpointHalt = 0;
+
 //==================================================================
 //==================================================================
 
@@ -120,18 +125,6 @@ uint32_t _cdcComposite = 0;
 //==================================================================
 
 #define USB_RECV_TIMEOUT
-class LockEP
-{
-    irqflags_t flags;
-public:
-    LockEP(uint32_t ep __attribute__ ((unused))) : flags(cpu_irq_save())
-    {
-    }
-    ~LockEP()
-    {
-        cpu_irq_restore(flags);
-    }
-};
 
 //    Number of bytes, assumes an rx endpoint
 uint32_t USBD_Available(uint32_t ep)
@@ -214,13 +207,16 @@ uint32_t USBD_Send(uint32_t ep, const void* d, uint32_t len)
 	if ((r != 0) && (r % epSize) == 0)
 		UDD_Send(ep & 0xF, NULL, 0);
 
-    //TXLED1;                    // light the TX LED
-    //TxLEDPulse = TX_RX_LED_PULSE_MS;
+#if 0
+    TXLED1;                    // light the TX LED
+    TxLEDPulse = TX_RX_LED_PULSE_MS;
+#endif
+
     return r;
 }
 
-uint16_t _cmark;
-uint16_t _cend;
+static uint16_t _cmark;
+static uint16_t _cend;
 
 void USBD_InitControl(int end)
 {
@@ -863,6 +859,11 @@ uint32_t USBD_Connected(void)
     return f != UDD_GetFrameNumber();
 }
 
+bool USBD_Configured(void)
+{
+    return (_usbInitialized != 0UL) && (_usbConfiguration != 0);
+}
+
 
 //=======================================================================
 //=======================================================================
@@ -898,6 +899,7 @@ bool USBDevice_::detach(void)
     if (_usbInitialized != 0UL)
     {
         UDD_Detach();
+        _usbConfiguration = 0;
         return true;
     }
     else
@@ -908,9 +910,9 @@ bool USBDevice_::detach(void)
 
 //    Check for interrupts
 //    TODO: VBUS detection
-bool USBDevice_::configured()
+bool USBDevice_::configured() const
 {
-    return _usbConfiguration;
+	return USBD_Configured();
 }
 
 void USBDevice_::poll()
