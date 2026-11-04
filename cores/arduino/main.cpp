@@ -19,11 +19,21 @@
 
 #define ARDUINO_MAIN
 #include "Arduino.h"
+#include "wiring.h"
 
 // Weak empty variant initialization function.
 // May be redefined by variant files.
 void initVariant() __attribute__((weak));
 void initVariant() { }
+
+
+void initUSB() __attribute__((weak));
+void initUSB() { 
+#if defined(USBCON)
+    USBDevice.attach();
+#endif
+}
+
 
 /*
  * \brief Main entry point of Arduino application
@@ -42,10 +52,8 @@ int main( void )
 	// ^^^^^^ the side effect of this call is that it happens to validate/check whether the SysTick interrupt is running properly.
 	// If it isn't, this one will hang forever...
 
-#if defined(USBCON)
-    USBDevice.attach();
-#endif
-
+    initUSB();
+    
     setup();
 
     for (;;)
