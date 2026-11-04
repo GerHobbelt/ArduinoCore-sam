@@ -30,7 +30,7 @@ static interruptCB callbacksPioD[32];
 /* Configure PIO interrupt sources */
 static void __initialize() {
 	int i;
-	for (i=0; i<32; i++) {
+	for (i = 0; i < 32; i++) {
 		callbacksPioA[i] = NULL;
 		callbacksPioB[i] = NULL;
 #if !( SAM3A4 || SAM3A8 )
@@ -81,7 +81,7 @@ void attachInterrupt(uint32_t pin, void (*callback)(void), uint32_t mode)
 	uint32_t pos = 0;
 
 	uint32_t t;
-	for (t = mask; t>1; t>>=1, pos++)
+	for (t = mask; t > 1; t >>= 1, pos++)
 		;
 
 	// Set callback function
@@ -144,22 +144,24 @@ extern "C" {
 void PIOA_Handler(void) {
   uint32_t isr = PIOA->PIO_ISR;
   uint8_t leading_zeros;
-  while((leading_zeros=__CLZ(isr))<32)
+  while((leading_zeros = __CLZ(isr)) < 32)
   {
-    uint8_t pin=32-leading_zeros-1;
-    if(callbacksPioA[pin]) callbacksPioA[pin]();
-    isr=isr&(~(1<<pin));
+    uint8_t pin = 32 - leading_zeros - 1;
+    if (callbacksPioA[pin]) 
+	  callbacksPioA[pin]();
+    isr = isr & (~(1 << pin));
   }
 }
 
 void PIOB_Handler(void) {
   uint32_t isr = PIOB->PIO_ISR;
   uint8_t leading_zeros;
-  while((leading_zeros=__CLZ(isr))<32)
+  while((leading_zeros = __CLZ(isr)) < 32)
   {
-    uint8_t pin=32-leading_zeros-1;
-    if(callbacksPioB[pin]) callbacksPioB[pin]();
-    isr=isr&(~(1<<pin));
+    uint8_t pin = 32 - leading_zeros - 1;
+    if (callbacksPioB[pin]) 
+	  callbacksPioB[pin]();
+    isr = isr & (~(1 << pin));
   }
 }
 
@@ -168,22 +170,24 @@ void PIOB_Handler(void) {
 void PIOC_Handler(void) {
   uint32_t isr = PIOC->PIO_ISR;
   uint8_t leading_zeros;
-  while((leading_zeros=__CLZ(isr))<32)
+  while((leading_zeros = __CLZ(isr)) < 32)
   {
-    uint8_t pin=32-leading_zeros-1;
-    if(callbacksPioC[pin]) callbacksPioC[pin]();
-    isr=isr&(~(1<<pin));
+    uint8_t pin = 32 - leading_zeros - 1;
+    if (callbacksPioC[pin]) 
+	  callbacksPioC[pin]();
+    isr = isr & (~(1 << pin));
   }
 }
 
 void PIOD_Handler(void) {
   uint32_t isr = PIOD->PIO_ISR;
   uint8_t leading_zeros;
-  while((leading_zeros=__CLZ(isr))<32)
+  while((leading_zeros = __CLZ(isr)) < 32)
   {
-    uint8_t pin=32-leading_zeros-1;
-    if(callbacksPioD[pin]) callbacksPioD[pin]();
-    isr=isr&(~(1<<pin));
+    uint8_t pin = 32 - leading_zeros - 1;
+    if (callbacksPioD[pin]) 
+	  callbacksPioD[pin]();
+    isr = isr & (~(1 << pin));
   }
 }
 

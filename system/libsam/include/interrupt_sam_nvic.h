@@ -110,6 +110,7 @@ extern "C" {
 //@}
 
 typedef bool irqflags_t;
+
 extern volatile bool g_interrupt_enabled;
 
 static inline void cpu_irq_enable(void)

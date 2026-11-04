@@ -25,6 +25,8 @@
 
 UARTClass::UARTClass( Uart *pUart, IRQn_Type dwIrq, uint32_t dwId, RingBuffer *pRx_buffer, RingBuffer *pTx_buffer )
 {
+  initialized = 0;
+  
   _rx_buffer = pRx_buffer;
   _tx_buffer = pTx_buffer;
 

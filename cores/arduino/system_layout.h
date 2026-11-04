@@ -25,9 +25,9 @@ extern "C" {
 
 void banzai(void);
 
-void svcHook(void);
-void pendSVHook(void);
-int sysTickHook(void);
+void svcHook(void) __attribute__((weak));
+void pendSVHook(void) __attribute__((weak));
+int sysTickHook(void) __attribute__((weak));
 
 /* Initialize segments */
 extern uint32_t _sfixed;
@@ -46,7 +46,7 @@ extern const uint32_t _ebss;
 extern const uint32_t _end;
 
 /** \cond DOXYGEN_SHOULD_SKIP_THIS */
-extern int main(void);
+extern int main(void) __attribute__((weak));
 
 // Arduino: we must setup hardware before doing this
 extern void __libc_init_array(void);

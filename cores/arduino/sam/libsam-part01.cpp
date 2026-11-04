@@ -14,6 +14,7 @@
 #include "../../../system/libsam/source/spi.c"
 #include "../../../system/libsam/source/tc.c"
 #include "../../../system/libsam/source/timetick.cpp"
+#include "../../../system/libsam/source/timetick_corefreqmultiplier.c"
 #include "../../../system/libsam/source/twi.c"
 #include "../../../system/libsam/source/wdt.c"
 

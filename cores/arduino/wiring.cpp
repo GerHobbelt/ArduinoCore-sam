@@ -56,7 +56,7 @@ uint32_t micros( void )
         count2  = GetTickCount();
     } while ((pend != pend2) || (count != count2) || (ticks2 < ticks));
 
-    return ((count2 + pend2) * (1000000 / SYSTICK_FREQUENCY)) + (SysTick->LOAD + 1 - ticks2) / (SystemCoreClock / 1000000);
+    return ((count2 + pend2) * SYSTICK_USECS_PER_TICK) + (SysTick->LOAD + 1 - ticks2) / (SystemCoreClock / 1000000);
 }
 #else
 uint32_t micros( void )
@@ -71,7 +71,7 @@ uint32_t micros( void )
         count = GetTickCount();
     }
     
-    return (count + pend) * (1000000 / SYSTICK_FREQUENCY) + (SysTick->LOAD + 1 - ticks) / (SystemCoreClock / 1000000);
+    return (count + pend) * SYSTICK_USECS_PER_TICK + (SysTick->LOAD + 1 - ticks) / (SystemCoreClock / 1000000);
 }
 #endif
 

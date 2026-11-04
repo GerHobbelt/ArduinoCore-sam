@@ -52,6 +52,7 @@ void SysTick_Handler(void)
 	if (sysTickHook())
 		return;
 
+	// check if a hardware reset was requested (to occur after a set time):
 	tickReset();
 
 	// Increment tick count each tick ~ every (1000 / SYSTICK_FREQUENCY) ms

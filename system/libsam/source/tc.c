@@ -40,7 +40,10 @@
 
 #include "chip.h"
 
+#include "variant.h"
+
 #include <assert.h>
+
 
 /*------------------------------------------------------------------------------
  *         Global functions

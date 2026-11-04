@@ -107,7 +107,7 @@ class UARTClass : public HardwareSerial
 	  return v;
 	}
 	
-    operator bool() { 
+    operator bool() const override { 
 		return initialized;
 	}
 
